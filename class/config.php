@@ -46,3 +46,25 @@ function clearOptionalData(){
     update_option('wpme_document',"");
     update_option('wpme_phone',"");
 }
+
+
+function getApiAddresses(){
+    $token = get_option('wpme_token');
+    $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
+    $client = new WP_Http();
+    $response = $client->get('https://melhorenvio.com.br/api/v2/me/addresses',$params);
+    if( $response instanceof WP_Error){
+        return false;
+    }else{
+        return (array) json_decode($response['body']);
+    }
+}
+
+function defineAddress(array $address){
+    update_option('wpme_address_id','');
+    update_option('wpme_address_id','');
+    update_option('wpme_address_id','');
+    update_option('wpme_address_id','');
+    update_option('wpme_address_id','');
+    update_option('wpme_address_id','');
+}

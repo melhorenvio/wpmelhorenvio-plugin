@@ -43,13 +43,18 @@ class WPMelhorEnvio
                 add_submenu_page("wpme_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpme_melhor-envio-requests", "pedidos");
                 add_submenu_page("wpme_pedidos","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpme_melhor-envio-request", "pedido");
                 add_submenu_page("wpme_pedidos","Melhor Envio - Relatório", "Relatório", "administrator", "wpme_melhor-envio-relato", "relatorio");
-                add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpme_melhor-envio-config", "configuracoes");
+                add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpme_melhor-envio-config", "wpme_config");
                 add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações da Conta", "Sua Conta Melhor Envio", "administrator", "wpme_melhor-envio-subscription", "wpme_cadastro");
             }
 
             function wpme_cadastro(){
                 include_once 'class/config.php';
                 include_once 'views/apikey.php';
+            }
+
+            function wpme_config(){
+                include_once 'class/config.php';
+                include_once 'views/address.php';
             }
         }
     }
