@@ -1,15 +1,25 @@
 <style>
     .wpme_button{
-             padding: 8px 30px;
-             border-radius: 30px;
-             border: solid 1px #e7505a;
-             color: #e7505a;
-             background-color: rgba(0,0,0,0);
-             font-size: 1.300rem;
-             display: inline-block;
-             transition: 200ms;
-             margin: 5px;
-         }
+        padding: 8px 30px;
+        border-radius: 30px;
+        border: solid 1px #e7505a;
+        color: #e7505a;
+        background-color: rgba(0,0,0,0);
+        font-size: 1.300rem;
+        display: inline-block;
+        transition: 200ms;
+        margin: 5px;
+    }
+
+    ::-webkit-scrollbar              { background-color: rgba(200,200,200,0.3);width: 8px}
+    ::-webkit-scrollbar-button       { display: none}
+    ::-webkit-scrollbar-track        { /* 3 */ }
+    ::-webkit-scrollbar-track-piece  { }
+    ::-webkit-scrollbar-thumb        {  background-color: rgba(255,255,255,1);
+                                        border-radius: 5px;
+                                        }
+    ::-webkit-scrollbar-corner       { display: none;}
+    ::-webkit-resizer                { display: none; }
 
     .wpme_button:hover{
         padding: 8px 30px;
@@ -41,16 +51,20 @@
 
     .wpme_inputtext{
         border: none !important;
-        border-bottom: solid 1px #ffffff !important;
+        box-shadow: none !important;
+        border: solid 1px #ffffff !important;
         background-color:transparent !important;
         margin:30px 0 0;
+        color: #DDDDDD !important;
         width:100%;
+        min-height: 150px;
+        max-height: 250px;
     }
 
     .wpme_inputtext:focus{
         border: none !important;
         box-shadow: none !important;
-        border-bottom: solid 2px #ffffff !important;
+        border: solid 1px #bbddff !important;
         transition: 100ms;
         background-color:transparent !important;
         margin:29px 0 0;
@@ -89,18 +103,29 @@
     }
 </style>
 
+<?php
+if(isset($_POST['wpme_token'])){
+    $token = trim($_POST['wpme_token']);
+    if(updateUserData($token)){
+        echo "sucesso";
+    }
+}
+
+?>
+
+
 <div class="wpme_body_init">
     <div class="wpme_mainform">
         <div class="wpme_tutorial">
             <h1>Melhor Envio</h1>
         </div>
-    <form>
+        <form action="<?= $_SERVER['REQUEST_URI'] ?>" method="post">
 
-       <label>Cole aqui seu Token de acesso</label>
-        <input type="text" class="wpme_inputtext"> <br>
-        <p>Para utilizar o Plugin é necessário estar cadastrado no <a href="https://melhorenvio.com.br">Melhor Envio</a>.</p>
-        <p>Encontre seu <a href=""> Token de Acesso</a></p>
-        <button class="wpme_button" type="submit">Salvar</button>
-    </form>
+            <label>Cole aqui seu Token de acesso</label>
+            <textarea type="text" class="wpme_inputtext" name="wpme_token"></textarea> <br>
+            <p>Para utilizar o Plugin é necessário estar cadastrado no <a href="https://melhorenvio.com.br">Melhor Envio</a>.</p>
+            <p>Encontre seu <a href=""> Token de Acesso</a></p>
+            <button class="wpme_button" type="submit">Salvar</button>
+        </form>
     </div>
 </div>

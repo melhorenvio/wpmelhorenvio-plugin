@@ -48,6 +48,7 @@ class WPMelhorEnvio
             }
 
             function wpme_cadastro(){
+                include_once 'class/config.php';
                 include_once 'views/apikey.php';
             }
         }
