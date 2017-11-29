@@ -1,4 +1,9 @@
+
+
+
 <style>
+
+
     .wpme_button{
         padding: 8px 30px;
         border-radius: 30px;
@@ -79,7 +84,6 @@
         margin: 20px 0;
         height: 80vh;
         display: flex;
-        color:#DDDDFF;
         padding: 10px;
     }
 
@@ -101,20 +105,40 @@
     .wpme_body_init a:hover{
         text-decoration: underline;
     }
+
+    .absolute{
+        position: absolute;
+        z-index: 100;
+        max-width: 350px;
+    }
 </style>
 
-<?php
-if(isset($_POST['wpme_token'])){
-    $token = trim($_POST['wpme_token']);
-    if(updateUserData($token)){
-        echo "sucesso";
-    }
-}
-
-?>
 
 
 <div class="wpme_body_init">
+<div class="absolute">
+    <?php
+    if(isset($_POST['wpme_token'])){
+        $token = trim($_POST['wpme_token']);
+        if(updateUserData($token)){
+            ?>
+            <div class="notice notice-success is-dismissible">
+                <h4>Token Válido</h4>
+                <p> Token aceito </p>
+            </div>
+            <?php
+        }else{
+            ?>
+            <div class="notice notice-error is-dismissible">
+                <h2>Token Inválido</h2>
+                <p>Favor utilizar um Token Válido, siga o <a href="tutorial">tutorial</a> para descobrir como achar o seu token.</p>
+            </div>
+            <?php
+        }
+    }
+
+    ?>
+</div>
     <div class="wpme_mainform">
         <div class="wpme_tutorial">
             <h1>Melhor Envio</h1>
@@ -122,7 +146,7 @@ if(isset($_POST['wpme_token'])){
         <form action="<?= $_SERVER['REQUEST_URI'] ?>" method="post">
 
             <label>Cole aqui seu Token de acesso</label>
-            <textarea type="text" class="wpme_inputtext" name="wpme_token"></textarea> <br>
+            <textarea type="text" class="wpme_inputtext" name="wpme_token" ><?=get_option('wpme_token')?></textarea> <br>
             <p>Para utilizar o Plugin é necessário estar cadastrado no <a href="https://melhorenvio.com.br">Melhor Envio</a>.</p>
             <p>Encontre seu <a href=""> Token de Acesso</a></p>
             <button class="wpme_button" type="submit">Salvar</button>
