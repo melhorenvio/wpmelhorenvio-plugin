@@ -123,6 +123,54 @@
         font-size: 1.300rem;
     }
 
+    input[type=checkbox].toggle{
+        margin:3px;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+        color: #2bf;
+        width: 4em;
+        height: 1.7em;
+        border-radius: 2em;
+        background-color: #888;
+        transition: background-color 0.3s ease-in-out;
+        outline: 0;
+        position: relative;
+    }
+
+    input[type=checkbox].toggle:checked{
+        background-color: #2bf;
+        color: #2bf;
+        outline: 0;
+    }
+
+    input[type=checkbox].toggle::after{
+        content:'';
+        padding: 0;
+        left:0;
+        position: absolute;
+        background-color: #fff;
+        border-radius: 50%;
+        width: 1.6em;
+        height: 1.6em;
+        transform: scale(1.1);
+        transition: 0.3s;
+    }
+
+    input[type=checkbox].toggle:checked::after{
+        content:'';
+        padding: 0;
+        left:2.4em;
+        position: absolute;
+        background-color: #fff;
+        border-radius: 50%;
+        width: 1.6em;
+        height: 1.6em;
+        transform: scale(1.1);
+        transition: 0.3s;
+    }
+
+
     .wpme_address ul {
         padding: 15px 0;
     }
@@ -132,6 +180,27 @@
         margin: 0;
         color: #777789;
     }
+
+    .wpme_pluginconf{
+
+    }
+
+    .wpme_pluginconf label{
+        display: inline-block;
+        width: 100%;
+        padding: 3px;
+    }
+
+    .wpme_pluginconf div{
+        width: 200px;
+        text-align: center;
+        display: inline-block;
+        float: left;
+    }
+
+
+
+
 </style>
 <div class="wpme_config">
 <h2>Escolha o endereço para cálculo de frete</h2>
@@ -151,6 +220,7 @@
                         <ul>
                             <li><?= $address->address?>,<?= $address->number?> - <?= $address->complement?></li>
                             <li><?= $address->district?> - <?= $address->city->city?> / <?= $address->city->state->state_abbr?></li>
+                            <li>CEP: <?=$address->postal_code?></li>
                         </ul>
                     </div>
                     </label>
@@ -162,7 +232,7 @@
         ?>
     </div>
 
-    <h2>Escolha seus serviços</h2>
+    <h2>Selecione seus métodos de envio</h2>
         <ul class="wpme_options">
         <?php
         $services = getApiShippingServices();
@@ -186,11 +256,46 @@
 }
 ?>
     </ul>
-
+        <h2>Funcionamento do Plugin</h2>
     <div class="wpme_pluginconf">
-        <label>
-            <input>
+        <div>
+            <label title="Disponibiliza o método de envio para o seu cliente">
+                Calculo de fretes
+            </label >
+            <input type="checkbox" class="toggle">
+        </div>
+        <div>
+            <label title="Adiciona o aviso de recebimento na cotação de frete">
+                Aviso de Recebimento
+            </label>
+                <input type="checkbox" class="toggle">
+        </div>
+        <div>
+        <label title="Adiciona mão própria na cotação de frete">
+            Mão Propria</label>
+            <input type="checkbox" class="toggle">
+        </div>
+        <div>
+            <label title="Declara o valor dos produtos enviados para a transportadora">
+            Valor Declarado
+        </label >
+            <input type="checkbox" class="toggle">
+        </div>
+        <div>
+        <label title="Adiciona automáticamente a um sistema de rastreio com notificações para os clientes">
+            Adicionar ao Melhor Rastreio
         </label>
+            <input type="checkbox" class="toggle">
+        </div>
+        <label>
+            Dias extras
+            <input type="text">
+        </label>
+        <label>
+            Porcentagem de lucro
+            <input type="text">
+        </label>
+
     </div>
 
 
