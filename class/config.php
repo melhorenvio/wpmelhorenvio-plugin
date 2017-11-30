@@ -72,11 +72,17 @@ function getApiShippingServices(){
     }
 }
 
-function defineAddress(array $address){
-    update_option('wpme_address_id','');
-    update_option('wpme_address_id','');
-    update_option('wpme_address_id','');
-    update_option('wpme_address_id','');
-    update_option('wpme_address_id','');
-    update_option('wpme_address_id','');
+function defineConfig($address,$services,$pluginconfig){
+    if(
+       update_option('wpme_address',$address)
+    || update_option('wpme_services',$services)
+    || update_option('wpme_pluginconfig',$pluginconfig)
+    ){
+        return true;
+    }
+    return false;
+}
+
+function verifyLogin(){
+
 }

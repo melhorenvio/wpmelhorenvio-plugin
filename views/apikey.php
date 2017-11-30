@@ -16,15 +16,8 @@
         margin: 5px;
     }
 
-    ::-webkit-scrollbar              { background-color: rgba(200,200,200,0.3);width: 8px}
-    ::-webkit-scrollbar-button       { display: none}
-    ::-webkit-scrollbar-track        { /* 3 */ }
-    ::-webkit-scrollbar-track-piece  { }
-    ::-webkit-scrollbar-thumb        {  background-color: rgba(255,255,255,1);
-                                        border-radius: 5px;
-                                        }
-    ::-webkit-scrollbar-corner       { display: none;}
-    ::-webkit-resizer                { display: none; }
+
+
 
     .wpme_button:hover{
         padding: 8px 30px;
