@@ -1,5 +1,6 @@
 <?php
 defined('ABSPATH') or die('No script kiddies please!');
+
 /**
  * Check if WooCommerce is active
  * @package melhorenvio
@@ -22,6 +23,7 @@ class WPMelhorEnvioIntegration extends WC_Integration
     {
 
         global $woocommerce;
+
         $this->id = 'wpmelhorenvio';
         $this->method_title = __('Melhor Envio', 'wpmelhorenvio');
         $this->method_description = __('Um modo de integração que mostra para o cliente final o cálculo do seu frete no Melhor Envio.');

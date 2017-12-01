@@ -56,6 +56,12 @@ class WPMelhorEnvio
                 include_once 'class/config.php';
                 include_once 'views/address.php';
             }
+
+            function wpme_pedidos(){
+
+            }
+
+            include_once 'class/shipping.php';
         }
     }
 

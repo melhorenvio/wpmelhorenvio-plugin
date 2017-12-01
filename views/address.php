@@ -353,7 +353,7 @@ if(isset($_POST['submit'])){
         <ul class="wpme_options">
             <?php
             $services = getApiShippingServices();
-            $active_services = json_decode(get_option('wpme_services'));
+            $active_services = is_array(json_decode(get_option('wpme_services')))? json_decode(get_option('wpme_services')) : array();
             foreach($services as $i => $service){
                 ?><li>
                 <label>
