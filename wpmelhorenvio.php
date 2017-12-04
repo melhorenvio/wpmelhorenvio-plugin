@@ -71,8 +71,8 @@ class WPMelhorEnvio
      */
     public function me_add_integration(){
 
-        $integrations[] = 'WPMelhorEnvioIntegration';
-        return $integrations;
+        $wpme_integrations[] = 'WPME_WPMelhorEnvioIntegration';
+        return $wpme_integrations;
     }
 }
 

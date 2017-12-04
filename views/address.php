@@ -298,9 +298,9 @@ if(isset($_POST['submit'])){
         text-align: center;
     }
 
-   .addenderecos{
-       text-decoration: none;
-   }
+    .addenderecos{
+        text-decoration: none;
+    }
 
     .addenderecos:hover{
 
@@ -314,38 +314,35 @@ if(isset($_POST['submit'])){
             $addresses = getApiAddresses();
             $saved_address = json_decode(get_option('wpme_address'));
             if(isset($addresses['data'])){
-                foreach ($addresses['data'] as $address){
+            foreach ($addresses['data'] as $address){
 
-                    ?>
+                ?>
 
-                    <ul class="wpme_address">
-                        <li><label for="<?=$address->id?>">
-                                <div class="wpme_address-top"><input type="radio" name="address" value='<?php echo json_encode($address) ?>' id="<?=$address->id?>" <?= $address->id == $saved_address->id? "checked" :""?>     required ><h2><?= $address->label ?></h2>
-                                </div>
-                                <div class="wpme_address-body">
-                                    <ul>
-                                        <li><?= $address->address?>,<?= $address->number?> - <?= $address->complement?></li>
-                                        <li><?= $address->district?> - <?= $address->city->city?> / <?= $address->city->state->state_abbr?></li>
-                                        <li>CEP: <?=$address->postal_code?></li>
-                                    </ul>
-                                </div>
-                            </label>
-                        </li>
-                    </ul>
+                <ul class="wpme_address">
+                    <li><label for="<?=$address->id?>">
+                            <div class="wpme_address-top"><input type="radio" name="address" value='<?php echo json_encode($address) ?>' id="<?=$address->id?>" <?= $address->id == $saved_address->id? "checked" :""?>     required ><h2><?= $address->label ?></h2>
+                            </div>
+                            <div class="wpme_address-body">
+                                <ul>
+                                    <li><?= $address->address?>,<?= $address->number?> - <?= $address->complement?></li>
+                                    <li><?= $address->district?> - <?= $address->city->city?> / <?= $address->city->state->state_abbr?></li>
+                                    <li>CEP: <?=$address->postal_code?></li>
+                                </ul>
+                            </div>
+                        </label>
+                    </li>
+                </ul>
 
-                    <?php
-                }
+                <?php
+            }
             ?>
-            <a href="https://www.melhorenvio.com.br/painel/gerenciar/perfil" class="addenderecos">
             <div class="wpme_address">
-                <div class="wpme_address-top">
-                    <h2> <span class="dashicons dashicons-plus"></span> Adicionar Endereços</h2>
-                </div>
-                <div class="wpme_address-body">
-
-                </div>
+                <a href="https://www.melhorenvio.com.br/painel/gerenciar/perfil" class="addenderecos">
+                    <div class="wpme_address-top">
+                        <h2> <span class="dashicons dashicons-plus"></span> Adicionar Endereços</h2>
+                    </div>
+                </a>
             </div>
-            </a>
         </div>
     </div>
     <div class="wpme_basepadding">
