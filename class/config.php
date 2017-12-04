@@ -75,8 +75,8 @@ function getApiShippingServices(){
 function defineConfig($address,$services,$pluginconfig){
     if(
        update_option('wpme_address',$address)
-    || update_option('wpme_services',$services)
-    || update_option('wpme_pluginconfig',$pluginconfig)
+    | update_option('wpme_services',$services)
+    | update_option('wpme_pluginconfig',$pluginconfig)
     ){
         return true;
     }

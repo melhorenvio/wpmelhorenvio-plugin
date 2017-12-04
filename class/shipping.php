@@ -31,14 +31,26 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
                 public function calculate_shipping($package = array())
                 {
-                    $rate = array(
-                        'id'       => $this->id,
-                        'label'    => "Label for the rate",
-                        'cost'     => '10.99',
-                        'calc_tax' => 'per_item'
-                    );
+                    include_once 'quotation.php';
+                    $rates = wpme_getCotacao($package);
+                    $optionals = getOptionals();
+                    if($optionals->CF){
+                        foreach($rates as $rating){
+                            $rating->price = $rating->price * (100+$optionals->PL) / 100;
+                            $rating->delivery_time = $rating->delivery_time + $optionals->DE;
+                            $label = $rating->delivery_time > 1 ? " (".$rating->delivery_time." Dias)" : " (".$rating->delivery_time." Dia)";
+                            if($rating->price > 0){
+                                $rate = array(
+                                    'id'       => "wpme_".$rating->company->name."_".$rating->name,
+                                    'label'    => $rating->company->name." ".$rating->name.$label,
+                                    'cost'     => $rating->price,
+                                    'calc_tax' => 'per_item'
+                                );
+                            }
 
-                    $this->add_rate( $rate );
+                            $this->add_rate( $rate );
+                        }
+                    }
                 }
             }
         }
