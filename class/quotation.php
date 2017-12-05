@@ -74,11 +74,13 @@ function wpme_getTo($package){
 
 function wpme_getOptionals(){
     $optionals = json_decode(get_option('wpme_pluginconfig'));
+    $optionals->PL = is_numeric($optionals->PL) ? $optionals->PL : 0;
+    $optionals->DE = is_numeric($optionals->DE) ? $optionals->DE : 0;
     return $optionals;
 }
 
 function wpme_getSavedServices(){
-    $services = join(json_decode(',',get_option('wpme_services')));
+    $services = join(',',json_decode(get_option('wpme_services')));
     return $services;
 }
 
