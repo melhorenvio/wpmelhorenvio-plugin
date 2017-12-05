@@ -18,26 +18,16 @@ function wpme_getJsonOrders(){
             'id'                   => $order->get_id(),
             'number'               => $order->get_order_number(),
             'currency'             => $order->get_currency(),
-            'prices_include_tax'   => $order->get_prices_include_tax(),
-            'date_created'         => wc_rest_prepare_date_response( $order->get_date_created() ),  // v1 API used UTC.
             'date_modified'        => wc_rest_prepare_date_response( $order->get_date_modified() ), // v1 API used UTC.
             'customer_id'          => $order->get_customer_id(),
-            'shipping_total'       => wc_format_decimal( $order->get_shipping_total(), $dp ),
-            'shipping_tax'         => wc_format_decimal( $order->get_shipping_tax(), $dp ),
-            'cart_tax'             => wc_format_decimal( $order->get_cart_tax(), $dp ),
-            'billing'              => array(),
             'shipping'             => array(),
             'customer_note'        => $order->get_customer_note(),
             'date_completed'       => wc_rest_prepare_date_response( $order->get_date_completed(), false ), // v1 API used local time.
             'date_paid'            => wc_rest_prepare_date_response( $order->get_date_paid(), false ), // v1 API used local time.
             'cart_hash'            => $order->get_cart_hash(),
             'line_items'           => array(),
-            'tax_lines'            => array(),
-            'shipping_lines'       => array(),
-            'fee_lines'            => array(),
         );
         // Add addresses.
-        $data['billing']  = $order->get_address( 'billing' );
         $data['shipping'] = $order->get_address( 'shipping' );
         // Add line items.
         foreach ( $order->get_items() as $item_id => $item ) {
@@ -65,47 +55,19 @@ function wpme_getJsonOrders(){
                 'name'         => $item['name'],
                 'sku'          => $product_sku,
                 'product_id'   => (int) $product_id,
+                'height'       => $item['height'],
+                'width'        => $item['width'],
+                'length'       => $item['length'],
+                'weight'       => $item['weight'],
                 'variation_id' => (int) $variation_id,
                 'quantity'     => wc_stock_amount( $item['qty'] ),
                 'tax_class'    => ! empty( $item['tax_class'] ) ? $item['tax_class'] : '',
                 'price'        => wc_format_decimal( $order->get_item_total( $item, false, false ), $dp ),
-                'subtotal'     => wc_format_decimal( $order->get_line_subtotal( $item, false, false ), $dp ),
-                'subtotal_tax' => wc_format_decimal( $item['line_subtotal_tax'], $dp ),
-                'total'        => wc_format_decimal( $order->get_line_total( $item, false, false ), $dp ),
-                'total_tax'    => wc_format_decimal( $item['line_tax'], $dp ),
-                'taxes'        => array(),
-                'meta'         => $item_meta,
             );
-            $item_line_taxes = maybe_unserialize( $item['line_tax_data'] );
-            if ( isset( $item_line_taxes['total'] ) ) {
-                $line_tax = array();
-                foreach ( $item_line_taxes['total'] as $tax_rate_id => $tax ) {
-                    $line_tax[ $tax_rate_id ] = array(
-                        'id'       => $tax_rate_id,
-                        'total'    => $tax,
-                        'subtotal' => '',
-                    );
-                }
-                foreach ( $item_line_taxes['subtotal'] as $tax_rate_id => $tax ) {
-                    $line_tax[ $tax_rate_id ]['subtotal'] = $tax;
-                }
-                $line_item['taxes'] = array_values( $line_tax );
+
             }
             $data['line_items'][] = $line_item;
-        }
-        // Add taxes.
-        foreach ( $order->get_items( 'tax' ) as $key => $tax ) {
-            $tax_line = array(
-                'id'                 => $key,
-                'rate_code'          => $tax['name'],
-                'rate_id'            => $tax['rate_id'],
-                'label'              => isset( $tax['label'] ) ? $tax['label'] : $tax['name'],
-                'compound'           => (bool) $tax['compound'],
-                'tax_total'          => wc_format_decimal( $tax['tax_amount'], $dp ),
-                'shipping_tax_total' => wc_format_decimal( $tax['shipping_tax_amount'], $dp ),
-            );
-            $data['tax_lines'][] = $tax_line;
-        }
+
         // Add shipping.
         foreach ( $order->get_shipping_methods() as $shipping_item_id => $shipping_item ) {
             $shipping_line = array(
@@ -116,16 +78,6 @@ function wpme_getJsonOrders(){
                 'total_tax'    => wc_format_decimal( '', $dp ),
                 'taxes'        => array(),
             );
-            $shipping_taxes = $shipping_item->get_taxes();
-            if ( ! empty( $shipping_taxes['total'] ) ) {
-                $shipping_line['total_tax'] = wc_format_decimal( array_sum( $shipping_taxes['total'] ), $dp );
-                foreach ( $shipping_taxes['total'] as $tax_rate_id => $tax ) {
-                    $shipping_line['taxes'][] = array(
-                        'id'       => $tax_rate_id,
-                        'total'    => $tax,
-                    );
-                }
-            }
             $data['shipping_lines'][] = $shipping_line;
         }
 
