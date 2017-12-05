@@ -96,7 +96,7 @@ if(isset($_POST['submit'])){
         float: left;
         width: 200px;
         border-radius: 5px;
-        margin: 15px 0;
+        margin: 0 0 15px;
         border:solid 1px #cccccc;
         padding: 20px;
         background-color: #fefeff;

@@ -50,22 +50,23 @@
     }
 
     .btn.comprar{
-        border:solid 1px rgba(110,190,130,1);
+        border:solid 1px rgba(80,190,130,1);
         color: rgba(110,190,130,1);
     }
 
     .btn.comprar:hover{
-        background-color: rgba(110,200,130,1);
+        background-color: rgba(80,200,130,1);
         color: rgba(255,255,255,.9);
     }
 
     .btn.imprimir{
-        border:solid 1px rgba(160,10,50,1);
-        color: rgba(160,10,40,.9);
+        border:solid 1px rgba(160,10,50,.6);
+        color: rgba(160,10,40,.6);
     }
 
     .btn.imprimir:hover{
-        background-color: rgba(150,10,50,1);
+        background-color: rgba(150,10,50,.6);
+        border:solid 1px rgba(160,10,50,.1);
         color: rgba(255,255,255,.9);
     }
 
@@ -77,6 +78,16 @@
     .btn.melhorenvio:hover{
 
         background-color: rgba(30,140,160,1);
+        color: rgba(255,255,255,.9);
+    }
+
+    .btn.melhorrastreio{
+        border:solid 1px rgba(254,78,41,.8);
+        color: rgba(254,78,41,.7);
+    }
+
+    .btn.melhorrastreio:hover{
+        background-color: rgba(254,78,41,.9);
         color: rgba(255,255,255,.9);
     }
 
@@ -98,29 +109,30 @@
             </tr>
             </thead>
             <tbody>
-                <tr v-for="pedido in pedidos">
-                    <td></td>
-                    <td>{{pedido.id}}</td>
-                    <td>{{pedido.date_created}}</td>
-                    <td>{{pedido.total}}</td>
-                    <td><span></span>
-                        <span></span>
-                    </td>
-                    <td>{{stripcode(pedido.shipping_lines[0].method_id)}}</td>
-                    <td>
-                        <ul>
-                            <li>{{pedido.shipping.address_1}} {{pedido.shipping.address_2}} - {{pedido.shipping.postcode}}</li>
-                            <li>{{pedido.shipping.neighborhood}} - {{pedido.shipping.city}} / {{pedido.shipping.state}}</li>
-                            <li>{{pedido.shipping.first_name}} {{pedido.shipping.last_name}}</li>
-                        </ul>
-                    </td>
-                    <td>
-                        <a href="javascript;" class="btn"> Calcular </a>
-                        <a href="javascript;" class="btn comprar"> Comprar </a>
-                        <a href="javascript;" class="btn melhorenvio"> Pagar </a>
-                        <a href="javascript;" class="btn imprimir"> Imprimir </a>
-                    </td>
-                </tr>
+            <tr v-for="pedido in pedidos">
+                <td></td>
+                <td>{{pedido.id}}</td>
+                <td>{{pedido.date_created}}</td>
+                <td>{{pedido.total}}</td>
+                <td><span></span>
+                    <span></span>
+                </td>
+                <td>{{stripcode(pedido.shipping_lines[0].method_id)}}</td>
+                <td>
+                    <ul>
+                        <li>{{pedido.shipping.address_1}} {{pedido.shipping.address_2}} - {{pedido.shipping.postcode}}</li>
+                        <li>{{pedido.shipping.neighborhood}} - {{pedido.shipping.city}} / {{pedido.shipping.state}}</li>
+                        <li>{{pedido.shipping.first_name}} {{pedido.shipping.last_name}}</li>
+                    </ul>
+                </td>
+                <td>
+                    <a href="javascript;" class="btn"> Calcular </a>
+                    <a href="javascript;" class="btn comprar"> Comprar </a>
+                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>
+                    <a href="javascript;" class="btn imprimir"> Imprimir </a>
+                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>
+                </td>
+            </tr>
             </tbody>
         </table>
     </div>
@@ -133,18 +145,53 @@
         data: {
             message: 'Hello Vue!',
             pedidos: <?php  echo wpme_getJsonOrders(); ?>,
-            user_token: "<?php echo get_option('wpme_token')?>"
+            user_token: "<?php echo get_option('wpme_token')?>",
+            user_info: {
+                firstname:'',
+                lastname:'',
+                thumbnail:'',
+                document:'',
+                balance:'',
+
+
+            }
+        },
+
+        created: function(){
+            this.load()
         },
 
         methods: {
-             stripcode: function(string) {
+            stripcode: function(string) {
                 string = string.replace('wpme_','');
                 return string.replace('_','');
             },
 
-             getQuotation: function(){
+            getQuotation: function(){
 
-             }
+            },
+
+            load: function(){
+                this.getOrders();
+                this.getUser();
+            },
+
+            getOrders: function(){
+
+            },
+
+            getUser: function(){
+                axios({
+                    method:'get',
+                    url:'https://melhorenvio.com.br/api/v2/me',
+                    headers:{'Authorization': 'Bearer '+this.user_token,
+                             'Accept' : 'application/json'}
+                })
+                    .then(function(response) {
+                        console.log(response.data)
+                       this.user_info = response.data
+                    });
+            }
 
 
         }

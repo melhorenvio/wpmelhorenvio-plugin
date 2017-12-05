@@ -16,31 +16,17 @@ function wpme_getJsonOrders(){
     foreach($orders as $order){
         $data = array(
             'id'                   => $order->get_id(),
-            'parent_id'            => $order->get_parent_id(),
-            'status'               => $order->get_status(),
-            'order_key'            => $order->get_order_key(),
             'number'               => $order->get_order_number(),
             'currency'             => $order->get_currency(),
-            'version'              => $order->get_version(),
             'prices_include_tax'   => $order->get_prices_include_tax(),
             'date_created'         => wc_rest_prepare_date_response( $order->get_date_created() ),  // v1 API used UTC.
             'date_modified'        => wc_rest_prepare_date_response( $order->get_date_modified() ), // v1 API used UTC.
             'customer_id'          => $order->get_customer_id(),
-            'discount_total'       => wc_format_decimal( $order->get_total_discount(), $dp ),
-            'discount_tax'         => wc_format_decimal( $order->get_discount_tax(), $dp ),
             'shipping_total'       => wc_format_decimal( $order->get_shipping_total(), $dp ),
             'shipping_tax'         => wc_format_decimal( $order->get_shipping_tax(), $dp ),
             'cart_tax'             => wc_format_decimal( $order->get_cart_tax(), $dp ),
-            'total'                => wc_format_decimal( $order->get_total(), $dp ),
-            'total_tax'            => wc_format_decimal( $order->get_total_tax(), $dp ),
             'billing'              => array(),
             'shipping'             => array(),
-            'payment_method'       => $order->get_payment_method(),
-            'payment_method_title' => $order->get_payment_method_title(),
-            'transaction_id'       => $order->get_transaction_id(),
-            'customer_ip_address'  => $order->get_customer_ip_address(),
-            'customer_user_agent'  => $order->get_customer_user_agent(),
-            'created_via'          => $order->get_created_via(),
             'customer_note'        => $order->get_customer_note(),
             'date_completed'       => wc_rest_prepare_date_response( $order->get_date_completed(), false ), // v1 API used local time.
             'date_paid'            => wc_rest_prepare_date_response( $order->get_date_paid(), false ), // v1 API used local time.
@@ -49,8 +35,6 @@ function wpme_getJsonOrders(){
             'tax_lines'            => array(),
             'shipping_lines'       => array(),
             'fee_lines'            => array(),
-            'coupon_lines'         => array(),
-            'refunds'              => array(),
         );
         // Add addresses.
         $data['billing']  = $order->get_address( 'billing' );
