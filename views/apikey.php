@@ -2,6 +2,15 @@
 
 
 <style>
+    ::-webkit-scrollbar              { background-color: rgba(50,50,50,0.7);width: 8px; height: 8px; border-radius: 5px;}
+    ::-webkit-scrollbar-button       { display: none}
+    ::-webkit-scrollbar-track        { /* 3 */ }
+    ::-webkit-scrollbar-track-piece  { }
+    ::-webkit-scrollbar-thumb        {  background-color: rgba(255,255,255,1);
+        border-radius: 5px;
+    }
+    ::-webkit-scrollbar-corner       { display: none;}
+    ::-webkit-resizer                { display: none; }
 
 
     .wpme_button{
@@ -16,6 +25,9 @@
         margin: 5px;
     }
 
+    .wpme_button:focus{
+        outline: none;
+    }
 
 
 

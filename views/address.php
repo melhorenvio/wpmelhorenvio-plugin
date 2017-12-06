@@ -39,7 +39,7 @@ if(isset($_POST['submit'])){
 
 
 <style>
-    ::-webkit-scrollbar              { background-color: rgba(100,100,100,0.5);width: 8px; height: 8px; border-radius: 5px;}
+    ::-webkit-scrollbar              { background-color: rgba(50,50,50,0.7);width: 8px; height: 8px; border-radius: 5px;}
     ::-webkit-scrollbar-button       { display: none}
     ::-webkit-scrollbar-track        { /* 3 */ }
     ::-webkit-scrollbar-track-piece  { }
@@ -48,7 +48,6 @@ if(isset($_POST['submit'])){
     }
     ::-webkit-scrollbar-corner       { display: none;}
     ::-webkit-resizer                { display: none; }
-
 
     .wpme_button{
         padding: 8px 30px;
@@ -75,6 +74,23 @@ if(isset($_POST['submit'])){
         cursor: pointer !important;
     }
 
+    .wpme_button:active{
+        outline: none;
+        padding: 8px 30px;
+        border-radius: 30px;
+        border: solid 1px #e7505a;
+        color: #FFFFFF;
+        transition: 200ms;
+        background-color: #e7505a;
+        font-size: 1.300rem;
+        display: inline-block;
+        margin: 5px;
+        cursor: pointer !important;
+    }
+
+    .wpme_button:focus{
+        outline: none;
+    }
 
     .wpme_config h2{
         text-align: center;

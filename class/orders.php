@@ -10,9 +10,8 @@ include_once ABSPATH.'/wp-content/plugins/woocommerce/includes/wc-order-function
 
 function wpme_getJsonOrders(){
     $orders = wc_get_orders([]);
-    $dp    = is_null( null ) ? wc_get_price_decimals() : absint( $request['dp'] );
+    $dp    = is_null( null ) ? wc_get_price_decimals() : 2 ;
     $datas = array();
-
     foreach($orders as $order){
         $data = array(
             'id'                   => $order->get_id(),
@@ -55,10 +54,10 @@ function wpme_getJsonOrders(){
                 'name'         => $item['name'],
                 'sku'          => $product_sku,
                 'product_id'   => (int) $product_id,
-                'height'       => $item['height'],
-                'width'        => $item['width'],
-                'length'       => $item['length'],
-                'weight'       => $item['weight'],
+//                'height'       => $item['product_id']->getHeight(),
+//                'width'        => $item['product_id']->getWidth(),
+//                'length'       => $item['product_id']->getLength(),
+//                'weight'       => $item['product_id']->getWeight(),
                 'variation_id' => (int) $variation_id,
                 'quantity'     => wc_stock_amount( $item['qty'] ),
                 'tax_class'    => ! empty( $item['tax_class'] ) ? $item['tax_class'] : '',

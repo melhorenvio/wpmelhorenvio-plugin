@@ -82,14 +82,16 @@
     }
 
     .btn.melhorrastreio{
-        border:solid 1px rgba(254,78,41,.8);
-        color: rgba(254,78,41,.7);
+        border:solid 1px rgba(254,78,41,.4);
+        color: rgba(254,78,41,.6);
     }
 
     .btn.melhorrastreio:hover{
-        background-color: rgba(254,78,41,.9);
+        background-color: rgba(254,78,41,.65);
         color: rgba(255,255,255,.9);
     }
+
+    .btn-melhor
 
 
 </style>
