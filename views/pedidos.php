@@ -183,12 +183,12 @@
             },
 
             getUser: function(){
+                form_data = new FormData;
+                form_data.append('action', 'wpme_getCustomerTrackingAPI');
                 axios({
                     method:'post',
                     url:'/jadlogwp/wordpress/wp-admin/admin-ajax.php',
-                    data:{
-                        action:' wpme_getCustomerTrackingAPI'
-                    }
+                    data: form_data
                 })
                         .then(function(response) {
                             console.log(response.data)
