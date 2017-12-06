@@ -50,25 +50,32 @@ if( !class_exists('WP_MelhorEnvio')):
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpme_melhor-envio-config", "wpme_config");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações da Conta", "Sua Conta Melhor Envio", "administrator", "wpme_melhor-envio-subscription", "wpme_cadastro");
                 }
-
                 function wpme_cadastro(){
                     include_once 'class/config.php';
                     include_once 'views/apikey.php';
                 }
-
                 function wpme_config(){
                     include_once 'class/config.php';
                     include_once 'views/address.php';
                 }
-
                 function wpme_pedidos(){
                     include_once 'class/orders.php';
                     include_once 'views/pedidos.php';
                 }
-
                 include_once 'class/shipping.php';
             }
+
+
+
+            file_get_contents('php://input');
+            include_once 'class/orders.php';
+            add_action( 'wp_ajax_wpme_getCustomerTrackingAPI', 'wpme_getCustomerTrackingAPI' );
+            add_action( 'wp_ajax_wpme_ticketAcquirementAPI', 'wpme_ticketAcquirementAPI' );
+            add_action( 'wp_ajax_wpme_ticketPrintingAPI', 'wpme_ticketPrintingAPI' );
+            add_action( 'wp_ajax_wpme_getCustomerCotacaoAPI', 'wpme_getCustomerCotacaoAPI' );
+
         }
+
 
 
         /**

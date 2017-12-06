@@ -184,14 +184,16 @@
 
             getUser: function(){
                 axios({
-                    method:'get',
-                    url:'https://melhorenvio.com.br/api/v2/me',
-                    headers:{'Authorization': 'Bearer '+this.user_token,
-                             'Accept' : 'application/json'}
+                    method:'post',
+                    url:'/jadlogwp/wordpress/wp-admin/admin-ajax.php',
+                    data:{
+                        action:' wpme_getCustomerTrackingAPI'
+                    }
                 })
-                    .then(function(response) {
-                        console.log(response.data)
+                        .then(function(response) {
+                            console.log(response.data)
                        this.user_info = response.data
+                        console.log(response.data);
                     });
             }
 

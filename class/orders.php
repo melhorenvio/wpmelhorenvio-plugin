@@ -7,6 +7,7 @@
  */
 
 include_once ABSPATH.'/wp-content/plugins/woocommerce/includes/wc-order-functions.php';
+include_once 'quotation.php';
 
 function wpme_getJsonOrders(){
     $orders = wc_get_orders([]);
@@ -39,6 +40,11 @@ function wpme_getJsonOrders(){
                 $product_id   = $item->get_product_id();
                 $variation_id = $item->get_variation_id();
                 $product_sku  = $product->get_sku();
+                $product_height = $product->get_height();
+                $product_width = $product->get_width();
+                $product_length = $product->get_length();
+                $product_weight = $product->get_weight();
+
             }
             $item_meta = array();
             $hideprefix = 'true' === false ? null : '_';
@@ -54,9 +60,13 @@ function wpme_getJsonOrders(){
                 'name'         => $item['name'],
                 'sku'          => $product_sku,
                 'product_id'   => (int) $product_id,
+                'height'       =>  max($product_height , 0),
+                'width'        =>  max($product_width,0),
+                'length'       =>  max($product_length,0),
+                'weight'       =>  max($product_weight,0),
 //                'height'       => $item['product_id']->getHeight(),
 //                'width'        => $item['product_id']->getWidth(),
-//                'length'       => $item['product_id']->getLength(),
+//                  'length'        => $item['product_id']->getLength(),
 //                'weight'       => $item['product_id']->getWeight(),
                 'variation_id' => (int) $variation_id,
                 'quantity'     => wc_stock_amount( $item['qty'] ),
@@ -64,8 +74,8 @@ function wpme_getJsonOrders(){
                 'price'        => wc_format_decimal( $order->get_item_total( $item, false, false ), $dp ),
             );
 
-            }
-            $data['line_items'][] = $line_item;
+        }
+        $data['line_items'][] = $line_item;
 
         // Add shipping.
         foreach ( $order->get_shipping_methods() as $shipping_item_id => $shipping_item ) {
@@ -84,4 +94,49 @@ function wpme_getJsonOrders(){
     }
 
     return json_encode($datas);
+}
+
+function wpme_getCustomerCotacaoAPI($request){
+    $client = new WP_Http();
+    $height = 20;
+    $width  = 20;
+    $weight = 20;
+    $length = 20;
+    $valor  = 20;
+    $cep_origin = 96010280;
+    $cep_destination = 98700000;
+    $opcionais = wpme_getOptionals();
+    $seguro = wpme_getValueInsurance($valor,$opcionais->VD);
+    $params = array(
+        'headers'           =>  ['Content-Type'  => 'application/json',
+            'Accept'        =>  'application/json',
+            'Authorization' =>  'Bearer '.$token],
+        'body'  =>[
+            'from'      => $cep_origin,
+            'to'        => $cep_destination,
+            'width'     => $width,
+            'height'    => $height,
+            'length'    => $length,
+            'weight'    => $weight,
+            'services'  => wpme_getSavedServices(),
+            'receipt'   => $opcionais->AR,
+            'own_hand'  => $opcionais->MP,
+            'insurance_value' => $seguro
+        ],
+        'timeout'=>10);
+
+    $response = $client->get("https://melhorenvio.com.br/api/v2/calculator",$params);
+    return is_array($response) ?  $response['body'] : [];
+}
+
+function wpme_getCustomerTrackingAPI($request){
+    return 20;
+}
+
+function wpme_ticketAcquirementAPI($request){
+
+}
+
+function wpme_ticketPrintingAPI($request){
+
 }

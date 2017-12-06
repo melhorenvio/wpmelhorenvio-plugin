@@ -9,11 +9,6 @@ include_once ABSPATH.WPINC.'/option.php';
 include_once ABSPATH.WPINC.'/class-requests.php';
 //include_once ABSPATH . 'wp-content/plugins/woocommerce-extra-checkout-fields-for-brazil/includes/class-extra-checkout-fields-for-brazil-api.php';
 
-
-function wpme_getCustomerCotacao($request){
-
-}
-
 function wpme_getCotacao($package){
     $client = new WP_Http();
     $token = get_option('wpme_token');
