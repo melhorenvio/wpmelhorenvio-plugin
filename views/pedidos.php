@@ -14,7 +14,7 @@
         padding: 10px 20px;
     }
     td{
-        padding: 10px;
+        padding: 5px;
         text-align: center;
         margin: 0;
     }
@@ -118,6 +118,11 @@
         background-color: rgba(50,50,150,0.05) !important;
     }
 
+    table ul li{
+        padding: 0px;
+        margin: 0px;
+    }
+
 </style>
 <div id="app">
     <div>
@@ -139,18 +144,18 @@
                 <td>{{pedido.date_created}}23/09/2017 </td>
                 <td>
                     <ul>
+                        <li><strong>{{pedido.shipping.first_name}} {{pedido.shipping.last_name}} </strong></li>
                         <li>{{pedido.shipping.address_1}} {{pedido.shipping.address_2}} - {{pedido.shipping.postcode}}</li>
-                        <li>{{pedido.shipping.neighborhood}} - {{pedido.shipping.city}} / {{pedido.shipping.state}}</li>
-                        <li>{{pedido.shipping.first_name}} {{pedido.shipping.last_name}}</li>
+                        <li>{{pedido.shipping.neighborhood}} - {{pedido.shipping.city}}/{{pedido.shipping.state}}</li>
                     </ul>
                 </td>
                 <td>
                     <select class="select">
-                        <option v-for="cotacao in pedido.cotacoes" v-if="(! cotacao.error )">{{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>
+                        <option v-for="cotacao in pedido.cotacoes" v-if="(! cotacao.error )" :class="'selected' pedido.shipping_lines[0].method_id == cotacao.company.name+cotacao.name">{{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>
                     </select>
                 </td>
                 <td>
-                    <a href="javascript;" class="btn"> Calcular </a>
+                    <a href="javascript;" class="btn comprar"> Comprar </a>
 <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
 <!--                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>-->
 <!--                    <a href="javascript;" class="btn imprimir"> Imprimir </a>-->
