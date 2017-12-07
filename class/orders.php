@@ -20,6 +20,7 @@ function wpme_getJsonOrders(){
             'currency'             => $order->get_currency(),
             'date_modified'        => wc_rest_prepare_date_response( $order->get_date_modified() ), // v1 API used UTC.
             'customer_id'          => $order->get_customer_id(),
+            'cotacoes'             => array(),
             'shipping'             => array(),
             'customer_note'        => $order->get_customer_note(),
             'date_completed'       => wc_rest_prepare_date_response( $order->get_date_completed(), false ), // v1 API used local time.
@@ -63,11 +64,7 @@ function wpme_getJsonOrders(){
                 'height'       =>  max($product_height , 0),
                 'width'        =>  max($product_width,0),
                 'length'       =>  max($product_length,0),
-                'weight'       =>  max($product_weight,0),
-//                'height'       => $item['product_id']->getHeight(),
-//                'width'        => $item['product_id']->getWidth(),
-//                  'length'        => $item['product_id']->getLength(),
-//                'weight'       => $item['product_id']->getWeight(),
+                'weight'       =>  max($product_weight,1),
                 'variation_id' => (int) $variation_id,
                 'quantity'     => wc_stock_amount( $item['qty'] ),
                 'tax_class'    => ! empty( $item['tax_class'] ) ? $item['tax_class'] : '',
@@ -89,24 +86,21 @@ function wpme_getJsonOrders(){
             );
             $data['shipping_lines'][] = $shipping_line;
         }
-
+        $data['cotacoes'] = json_decode(wpme_getCustomerCotacaoAPI($data));
         array_push($datas, $data);
     }
-
     return json_encode($datas);
 }
 
-function wpme_getCustomerCotacaoAPI($request){
+function wpme_getCustomerCotacaoAPI($order){
     $client = new WP_Http();
-    $height = 20;
-    $width  = 20;
-    $weight = 20;
-    $length = 20;
-    $valor  = 20;
-    $cep_origin = 96010280;
-    $cep_destination = 98700000;
+
+    $pacote = wpme_getPackageInternal($order);
+
+    $cep_origin = wpme_getFrom();
+    $cep_destination = $order['shipping']['postcode'];
     $opcionais = wpme_getOptionals();
-    $seguro = wpme_getValueInsurance($valor,$opcionais->VD);
+    $seguro = wpme_getValueInsurance($pacote->value,$opcionais->VD);
     $params = array(
         'headers'           =>  ['Content-Type'  => 'application/json',
             'Accept'        =>  'application/json',
@@ -114,10 +108,10 @@ function wpme_getCustomerCotacaoAPI($request){
         'body'  =>[
             'from'      => $cep_origin,
             'to'        => $cep_destination,
-            'width'     => $width,
-            'height'    => $height,
-            'length'    => $length,
-            'weight'    => $weight,
+            'width'     => $pacote->width,
+            'height'    => $pacote->height,
+            'length'    => $pacote->length,
+            'weight'    => $pacote->weight,
             'services'  => wpme_getSavedServices(),
             'receipt'   => $opcionais->AR,
             'own_hand'  => $opcionais->MP,
@@ -129,14 +123,65 @@ function wpme_getCustomerCotacaoAPI($request){
     return is_array($response) ?  $response['body'] : [];
 }
 
-function wpme_getCustomerTrackingAPI($request){
+
+function wpme_getPackageInternal($package){
+    $volume =0;
+    $weight =0;
+    $total  =0;
+    $pacote = new stdClass();
+    foreach ($package['line_items'] as $item){
+        $width = $item['width'];
+        $height = $item['height'];
+        $length = $item['length'];
+        $weight = $item['weight']  * $item['quantity'];
+        $valor = wc_get_product($item['product_id'])->get_price() * $item['quantity'];
+        $volume  = $volume +  (int) ($width * $length * $height) * $item['quantity'];
+        $total += $valor ;
+    }
+    $side   =  ceil(pow($volume,1/3));
+    $pacote->width  = $side >= 12  ? $side : 12;
+    $pacote->height = $side >= 4   ? $side : 4;
+    $pacote->length = $side >= 17  ? $side : 17;
+    $pacote->weight = $weight;
+    $pacote->value = $valor;
+    return $pacote;
+}
+
+
+
+function wpme_getCustomerTrackingAPI(){
     return 20;
 }
 
-function wpme_ticketAcquirementAPI($request){
+function wpme_ticketAcquirementAPI(){
 
 }
 
-function wpme_ticketPrintingAPI($request){
+function wpme_ticketPrintingAPI(){
 
+}
+
+function wpme_getBalanceAPI(){
+    $token = get_option('wpme_token');
+    $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
+    $client = new WP_Http();
+    $response = $client->get('https://melhorenvio.com.br/api/v2/me/balance',$params);
+    if( $response instanceof WP_Error){
+        return false;
+    }else{
+        return $response['body'];
+    }
+}
+
+function wpme_getCustomerInfoAPI(){
+
+    $token = get_option('wpme_token');
+    $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
+    $client = new WP_Http();
+    $response = $client->get('https://melhorenvio.com.br/api/v2/me',$params);
+    if( $response instanceof WP_Error){
+        return false;
+    }else{
+        return $response['body'];
+    }
 }

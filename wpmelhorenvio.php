@@ -66,17 +66,40 @@ if( !class_exists('WP_MelhorEnvio')):
             }
 
 
-
-            file_get_contents('php://input');
             include_once 'class/orders.php';
-            add_action( 'wp_ajax_wpme_getCustomerTrackingAPI', 'wpme_getCustomerTrackingAPI' );
-            add_action( 'wp_ajax_wpme_ticketAcquirementAPI', 'wpme_ticketAcquirementAPI' );
-            add_action( 'wp_ajax_wpme_ticketPrintingAPI', 'wpme_ticketPrintingAPI' );
-            add_action( 'wp_ajax_wpme_getCustomerCotacaoAPI', 'wpme_getCustomerCotacaoAPI' );
+            add_action( 'wp_ajax_wpme_ajax_getTracking', 'wpme_ajax_getTracking' );
+                function wpme_ajax_getTracking(){
+                    echo wpme_getCustomerCotacaoAPI();
+                    die();
+                }
+            add_action( 'wp_ajax_wpme_ticketAcquirementAPI', 'wpme_ajax_ticketAcquirementAPI' );
+            function wpme_ajax_ticketAcquirementAPI(){
+                echo wpme_ticketAcquirementAPI();
+                die();
 
+            }
+            add_action( 'wp_ajax_wpme_ticketPrintingAPI', 'wpme_ajax_ticketPrintingAPI' );
+            function wpme_ajax_ticketPrintingAPI(){
+                echo wpme_ticketPrintingAPI();
+                die();
+            }
+            add_action( 'wp_ajax_wpme_getCustomerCotacaoAPI', 'wpme_ajax_getCustomerCotacaoAPI' );
+            function wpme_ajax_getCustomerCotacaoAPI(){
+                echo wpme_getCustomerCotacaoAPI();
+                die();
+            }
+            add_action( 'wp_ajax_wpme_ajax_getCustomerInfoAPI', 'wpme_ajax_getCustomerInfoAPI' );
+            function wpme_ajax_getCustomerInfoAPI(){
+                echo wpme_getCustomerInfoAPI();
+                die();
+            }
+
+            add_action( 'wp_ajax_wpme_ajax_getBalanceAPI', 'wpme_ajax_getBalanceAPI' );
+            function wpme_ajax_getBalanceAPI(){
+                echo wpme_getBalanceAPI();
+                die();
+            }
         }
-
-
 
         /**
          * Adiciona uma nova integração ao WooCommerce
