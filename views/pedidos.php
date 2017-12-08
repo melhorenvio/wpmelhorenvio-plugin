@@ -138,7 +138,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="pedido in pedidos_page">
+            <tr v-for="(pedido,i) in pedidos_page">
                 <td><input type="checkbox"></td>
                 <td>{{pedido.id}}</td>
                 <td>{{pedido.date_created}}23/09/2017 </td>
@@ -150,8 +150,8 @@
                     </ul>
                 </td>
                 <td>
-                    <select class="select">
-                        <option v-for="cotacao in pedido.cotacoes" v-if="(! cotacao.error )"  :class="{'selected': pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}">{{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>
+                    <select class="select" v-model="selected_shipment[i]">
+                        <option v-for="cotacao in pedido.cotacoes" v-if="(! cotacao.error )"  :class="{'selected': pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}" >{{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>
                     </select>
                 </td>
                 <td>
@@ -191,6 +191,7 @@
             message: 'Hello Vue!',
             pedidos: <?php  echo wpme_getJsonOrders(); ?>,
             total:0,
+            selected_shipment:[],
             page:1,
             perpage:10,
             user_info: {
