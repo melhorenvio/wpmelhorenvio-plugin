@@ -98,6 +98,7 @@ function wpme_getCustomerCotacaoAPI($order){
     $pacote = wpme_getPackageInternal($order);
 
     $cep_origin = wpme_getFrom();
+    $token = get_option('wpme_token');
     $cep_destination = $order['shipping']['postcode'];
     $opcionais = wpme_getOptionals();
     $seguro = wpme_getValueInsurance($pacote->value,$opcionais->VD);

@@ -151,7 +151,7 @@
                 </td>
                 <td>
                     <select class="select">
-                        <option v-for="cotacao in pedido.cotacoes" v-if="(! cotacao.error )" :class="'selected' pedido.shipping_lines[0].method_id == cotacao.company.name+cotacao.name">{{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>
+<!--                        <option v-for="cotacao in pedido.cotacoes" v-if="(! cotacao.error )"  :class="{'selected': pedido.shipping_lines[0].method_id.equals('wpme_'.concat(cotacao.company.name).concat(cotacao.name).valueOf())}">{{cotacao.company.name}} {{cotacao.name}}{{pedido.shipping_lines[0].method_id}}{{'wpme_'.concat(cotacao.company.name).concat(cotacao.name)}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>-->
                     </select>
                 </td>
                 <td>
