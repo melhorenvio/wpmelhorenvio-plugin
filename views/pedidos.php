@@ -4,6 +4,10 @@
         border-collapse: collapse;
         margin: 10px 0;
     }
+
+    thead td{
+        background-color: rgba(50,50,150,0.08) !important;
+    }
     tr{
         width: 100%;
         transition: 300ms;
@@ -182,7 +186,21 @@
         <table>
             <thead>
             <tr>
-                <th><input type="checkbox"></th>
+                <td><input type="checkbox" @click="selectall" v-model="selectallatt"></td>
+                <td>
+                    <a href="javascript;" class="btn comprar-hard"> Comprar </a>
+                </td>
+                <td>
+                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>
+                </td>
+                <td>
+                    <a href="javascript;" class="btn imprimir"> Imprimir </a>
+                </td>
+                <td colspan="2">
+
+                </td>
+            </tr>
+            <tr><th></th>
                 <th>Pedido</th>
                 <th>Data</th>
                 <th>Destinatário</th>
@@ -192,7 +210,8 @@
             </thead>
             <tbody>
             <tr v-for="(pedido,i) in pedidos_page">
-                <td><input type="checkbox"></td>
+
+                <td><input type="checkbox" v-model="pedidos_checked[pedido.id]" :value="pedido"></td>
                 <td>{{pedido.id}}</td>
                 <td>{{pedido.date_created}}23/09/2017 </td>
                 <td>
@@ -219,6 +238,9 @@
             <tfoot>
                 <tr>
                     <td>
+
+                    </td>
+                    <td>
                         <a href="javascript;" class="btn comprar-hard"> Comprar </a>
                     </td>
                     <td>
@@ -227,7 +249,7 @@
                     <td>
                         <a href="javascript;" class="btn imprimir"> Imprimir </a>
                     </td>
-                    <td colspan="3">
+                    <td colspan="2">
 
                     </td>
                 </tr>
@@ -250,9 +272,11 @@
             message: 'Hello Vue!',
             pedidos: <?php  echo wpme_getJsonOrders(); ?>,
             total:0,
+            pedidos_checked:[],
             selected_shipment:[],
             page:1,
-            perpage:1,
+            selectallatt:false,
+            perpage:10,
             user_info: {
                 firstname:'',
                 lastname:'',
@@ -297,6 +321,16 @@
                 this.page = valor;
             },
 
+            selectall: function (){
+                var vm = this;
+                this.pedidos_page.forEach( function (pedido) {
+                        vm.pedidos_checked[pedido.id] = !vm.selectallatt
+
+                })
+            },
+
+
+
             getUser: function(){
                 var data = {
                     action:'wpme_ajax_getCustomerInfoAPI',
@@ -319,7 +353,6 @@
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
                     vm.user_info.balance = resposta.balance;
-                    console.log(resposta);
                 });
             }
 
