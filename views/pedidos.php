@@ -2,6 +2,7 @@
     table{
         width: 100%;
         border-collapse: collapse;
+        margin: 10px 0;
     }
     tr{
         width: 100%;
@@ -116,11 +117,63 @@
 
     tfoot tr td{
         background-color: rgba(50,50,150,0.05) !important;
+        padding: 13px 0;
     }
 
     table ul li{
         padding: 0px;
         margin: 0px;
+    }
+
+    .wpme_pagination{
+        display: inline;
+        margin: auto;
+        width: inherit;
+        text-align: center;
+    }
+
+    .wpme_pagination li{
+        display: inline-block;
+        text-align: center;
+        padding: 0px 0px 0px -1px;
+    }
+
+    .wpme_pagination_wrapper{
+        display: block;
+        margin: 20px auto;
+        text-align: center;
+        width: 100%;
+    }
+
+    .wpme_pagination li  a{
+        border: solid 1px rgba(190,190,190,.8);
+        box-sizing: border-box;
+        padding: 7px 12px;
+        background-color: #fff;
+        text-decoration: none;
+        color: rgba(30,120,200,1);
+        transition: 200ms;
+    }
+
+    .wpme_pagination li a:hover{
+        transition: 200ms;
+        background-color: rgba(230,230,255,1);
+    }
+
+    .wpme_pagination li.active a{
+        background-color: rgba(30,160,230,.8);
+        color: rgba(255,255,255,.95);
+
+    }
+
+    .wpme_pagination li a:active{
+        outline: none;
+        box-shadow: none;
+    }
+
+    .wpme_pagination li a:focus{
+        outline: none;
+        box-shadow: none;
     }
 
 </style>
@@ -151,7 +204,7 @@
                 </td>
                 <td>
                     <select class="select" v-model="selected_shipment[i]">
-                        <option v-for="cotacao in pedido.cotacoes" v-if="(! cotacao.error )"  :class="{'selected': pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}" >{{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>
+                        <option v-for="cotacao in pedido.cotacoes" v-if="(! cotacao.error )"  :class="{'selected': pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}" :value="cotacao.id">{{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>
                     </select>
                 </td>
                 <td>
@@ -174,12 +227,18 @@
                     <td>
                         <a href="javascript;" class="btn imprimir"> Imprimir </a>
                     </td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td colspan="3">
+
+                    </td>
                 </tr>
             </tfoot>
         </table>
+        <div class="wpme_pagination_wrapper">
+            <ul class="wpme_pagination" v-for="i in Math.ceil(total/perpage)" v-show="total > perpage">
+                <li :class="{'active': i == page}"><a href="javascript:;" @click.prevent="pagego(i)">{{i}}</a></li>
+            </ul>
+        </div>
+
     </div>
 </div>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -193,7 +252,7 @@
             total:0,
             selected_shipment:[],
             page:1,
-            perpage:10,
+            perpage:1,
             user_info: {
                 firstname:'',
                 lastname:'',
@@ -230,8 +289,12 @@
                 this.getBalance();
             },
 
-            getOrders: function(){
+//            getOrders: function(){
+//
+//            },
 
+            pagego: function(valor){
+                this.page = valor;
             },
 
             getUser: function(){
