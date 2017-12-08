@@ -155,8 +155,86 @@ function wpme_getCustomerTrackingAPI(){
 }
 
 function wpme_ticketAcquirementAPI(){
+    $client = new WP_Http();
 
+
+    $params = array(
+        'headers'           =>  ['Content-Type'  => 'application/json',
+            'Accept'        =>  'application/json',
+            'Authorization' =>  'Bearer '.$token],
+        'body'  =>[
+            'from'      => $object_from,
+            'to'        => $object_to,
+            'package'   => $object_package,
+            'options'   => $object_options,
+            'coupon'    => ''
+        ],
+        'timeout'=>10);
+    $response = $client->post('https://melhorenvio.com.br/api/v2/me/cart');
 }
+
+
+function wpme_getObjectFrom($object){
+    $return = new stdClass();
+    $return->name = '';
+    $return->phone = '';
+    $return->email = '';
+    $return->document = '';
+    $return->company_document = '';
+    $return->state_register = '';
+    $return->address = '';
+    $return->complement = '';
+    $return->number = '';
+    $return->district = '';
+    $return->city = '';
+    $return->state_abbr = '';
+    $return->country_id = '';
+    $return->postal_code = '';
+    $return->note = '';
+}
+
+function wpme_getObjectTo($object){
+    $return = new stdClass();
+    $return->name = '';
+    $return->phone = '';
+    $return->email = '';
+    $return->document = '';
+    $return->company_document = '';
+    $return->state_register = '';
+    $return->address = '';
+    $return->complement = '';
+    $return->number = '';
+    $return->district = '';
+    $return->city = '';
+    $return->state_abbr = '';
+    $return->country_id = '';
+    $return->postal_code = '';
+    $return->note = '';
+}
+
+function wpme_getObjectPackage($object){
+    $return = new stdClass();
+    $return->weight = '';
+    $return->width = '';
+    $return->height = '';
+    $return->length = '';
+}
+
+function wpme_getObjectOptions($object){
+    $return = new stdClass();
+    $return->insurance_value = '';
+    $return->receipt = '';
+    $return->own_hand = '';
+    $return->collect = '';
+    $return->reverse = '';
+    $return->non_commercial = '';
+    $return->invoice = new stdClass();
+        $return->invoice->number = '';
+        $return->invoice->key = '';
+    $return->reminder = '';
+}
+
+
 
 function wpme_ticketPrintingAPI(){
 
