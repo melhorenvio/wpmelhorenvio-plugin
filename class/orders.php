@@ -92,6 +92,10 @@ function wpme_getJsonOrders(){
     return json_encode($datas);
 }
 
+function wpme_buyShipment($request){
+
+}
+
 function wpme_getCustomerCotacaoAPI($order){
     $client = new WP_Http();
 
@@ -148,11 +152,6 @@ function wpme_getPackageInternal($package){
     return $pacote;
 }
 
-
-
-function wpme_getCustomerTrackingAPI(){
-    return 20;
-}
 
 function wpme_ticketAcquirementAPI(){
     $client = new WP_Http();

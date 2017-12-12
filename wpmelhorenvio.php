@@ -72,6 +72,13 @@ if( !class_exists('WP_MelhorEnvio')):
                     echo wpme_getCustomerCotacaoAPI();
                     die();
                 }
+
+
+            add_action( 'wp_ajax_wpme_ajax_getJsonOrders', 'wpme_ajax_getJsonOrders' );
+            function wpme_ajax_getJsonOrders(){
+                echo wpme_getJsonOrders();
+                die();
+            }
             add_action( 'wp_ajax_wpme_ticketAcquirementAPI', 'wpme_ajax_ticketAcquirementAPI' );
             function wpme_ajax_ticketAcquirementAPI(){
                 echo wpme_ticketAcquirementAPI();

@@ -226,36 +226,36 @@
                         <option v-for="cotacao in pedido.cotacoes"
                                 v-if="(! cotacao.error )"
                                 :class="{'selected': pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}" :value="cotacao.id"
-                                >{{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>
+                        >{{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>
                     </select>
                 </td>
                 <td>
                     <a href="javascript;" class="btn comprar"> Comprar </a>
-<!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
-<!--                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>-->
-<!--                    <a href="javascript;" class="btn imprimir"> Imprimir </a>-->
-<!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
+                    <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
+                    <!--                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>-->
+                    <!--                    <a href="javascript;" class="btn imprimir"> Imprimir </a>-->
+                    <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
             </tr>
             </tbody>
             <tfoot>
-                <tr>
-                    <td>
+            <tr>
+                <td>
 
-                    </td>
-                    <td>
-                        <a href="javascript;" class="btn comprar-hard"> Comprar </a>
-                    </td>
-                    <td>
-                        <a href="javascript;" class="btn melhorenvio"> Pagar </a>
-                    </td>
-                    <td>
-                        <a href="javascript;" class="btn imprimir"> Imprimir </a>
-                    </td>
-                    <td colspan="2">
+                </td>
+                <td>
+                    <a href="javascript;" class="btn comprar-hard"> Comprar </a>
+                </td>
+                <td>
+                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>
+                </td>
+                <td>
+                    <a href="javascript;" class="btn imprimir"> Imprimir </a>
+                </td>
+                <td colspan="2">
 
-                    </td>
-                </tr>
+                </td>
+            </tr>
             </tfoot>
         </table>
         <div class="wpme_pagination_wrapper">
@@ -273,10 +273,10 @@
         el: '#app',
         data: {
             message: 'Hello Vue!',
-            pedidos: <?php  echo wpme_getJsonOrders(); ?>,
+            pedidos: [],
             total:0,
             pedidos_checked:[],
-            selected_shipment:[],
+            selected_shipment: [],
             page:1,
             selectallatt:false,
             perpage:10,
@@ -299,6 +299,20 @@
             },
 
 
+            selected_shipmeent: function () {
+                var array = [];
+                this.pedidos_page.forEach(function (pedido,index) {
+                    pedido.cotacoes.forEach(function (cotacao) {
+                        if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name))
+                            array[index] = cotacao.id;
+                    })
+
+
+                });
+                return array;
+            }
+
+
         },
         methods: {
             stripcode: function(string) {
@@ -316,9 +330,25 @@
                 this.getBalance();
             },
 
-//            getOrders: function(){
-//
-//            },
+            getOrders: function(){
+                var data = {
+                    action:'wpme_ajax_getJsonOrders',
+                }
+                vm = this;
+                jQuery.post(ajaxurl, data, function(response) {
+                    resposta = JSON.parse(response);
+                    vm.pedidos = resposta;
+                    var array = [];
+                    resposta.forEach(function (pedido,index) {
+                        pedido.cotacoes.forEach(function (cotacao) {
+                            if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)){
+                                array[index] = cotacao.id;
+                            }
+                        });
+                    });
+                    vm.selected_shipment = array;
+                });
+            },
 
             pagego: function(valor){
                 this.page = valor;
@@ -327,7 +357,7 @@
             selectall: function (){
                 var vm = this;
                 this.pedidos_page.forEach( function (pedido) {
-                        vm.pedidos_checked[pedido.id] = !vm.selectallatt
+                    vm.pedidos_checked[pedido.id] = !vm.selectallatt
 
                 })
             },
