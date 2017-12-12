@@ -93,7 +93,11 @@ function wpme_getJsonOrders(){
 }
 
 function wpme_buyShipment($request){
-
+    $shipment = new stdClass();
+    $shipment->from = wpme_getObjectFrom();
+    $shipment->to = wpme_getObjectTo();
+    $shipment->package = wpme_getObjectPackage();
+    $shipment->options = wpme_getObjectOptions();
 }
 
 function wpme_getCustomerCotacaoAPI($order){
@@ -173,7 +177,28 @@ function wpme_ticketAcquirementAPI(){
 }
 
 
-function wpme_getObjectFrom($object){
+function wpme_getObjectFrom(){
+    $from = wpme_getFrom();
+
+    $return = new stdClass();
+    $return->name = get_option('wpme_name');
+    $return->phone = get_option('wpme_phone');
+    $return->email = get_option('wpme_email');
+    $return->document = get_option('wpme_document');
+    $return->company_document = '';
+    $return->state_register = '';
+    $return->address = get_option('wpme_address');
+    $return->complement = '';
+    $return->number = $from->number;
+    $return->district = $from->district;
+    $return->city = $from->city;
+    $return->state_abbr = $from->state->state_abbr;
+    $return->country_id = $from->country->id;
+    $return->postal_code = $from->postal_code;
+    $return->note = '';
+}
+
+function wpme_getObjectTo(){
     $return = new stdClass();
     $return->name = '';
     $return->phone = '';
@@ -192,26 +217,7 @@ function wpme_getObjectFrom($object){
     $return->note = '';
 }
 
-function wpme_getObjectTo($object){
-    $return = new stdClass();
-    $return->name = '';
-    $return->phone = '';
-    $return->email = '';
-    $return->document = '';
-    $return->company_document = '';
-    $return->state_register = '';
-    $return->address = '';
-    $return->complement = '';
-    $return->number = '';
-    $return->district = '';
-    $return->city = '';
-    $return->state_abbr = '';
-    $return->country_id = '';
-    $return->postal_code = '';
-    $return->note = '';
-}
-
-function wpme_getObjectPackage($object){
+function wpme_getObjectPackage(){
     $return = new stdClass();
     $return->weight = '';
     $return->width = '';
@@ -219,7 +225,7 @@ function wpme_getObjectPackage($object){
     $return->length = '';
 }
 
-function wpme_getObjectOptions($object){
+function wpme_getObjectOptions(){
     $return = new stdClass();
     $return->insurance_value = '';
     $return->receipt = '';
