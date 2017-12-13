@@ -179,7 +179,8 @@ function wpme_ticketAcquirementAPI(){
 
 function wpme_getObjectFrom(){
     $from = wpme_getFrom();
-
+    $to = wpme_getObjectTo();
+    $package = wpme_getPackage();
     $return = new stdClass();
     $return->name = get_option('wpme_name');
     $return->phone = get_option('wpme_phone');
@@ -219,10 +220,27 @@ function wpme_getObjectTo(){
 
 function wpme_getObjectPackage(){
     $return = new stdClass();
-    $return->weight = '';
-    $return->width = '';
-    $return->height = '';
-    $return->length = '';
+
+    $volume =0;
+    $weight =0;
+    $total  =0;
+    $pacote = new stdClass();
+//    foreach ($_POST[] as $item){
+        $width = $_POST['width'];
+        $height = $_POST['height'];
+        $length = $_POST['length'];
+        $weight = $_POST['weight']  * $_POST['quantity'];
+        $valor = wc_get_product($item['product_id'])->get_price() * $item['quantity'];
+        $volume  = $volume +  (int) ($width * $length * $height) * $item['quantity'];
+        $total += $valor;
+//    }
+    $side   =  ceil(pow($volume,1/3));
+
+    $return->weight = $side > 17 ? $side : 17;
+
+    $return->width =  $side > 12 ? $side : 12;
+    $return->height = $side > 4 ? $side : 4;
+    $return->length = $side > 17 ? $side : 17;
 }
 
 function wpme_getObjectOptions(){

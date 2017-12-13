@@ -358,8 +358,7 @@
                 var vm = this;
                 this.pedidos_page.forEach( function (pedido) {
                     vm.pedidos_checked[pedido.id] = !vm.selectallatt
-
-                })
+                });
             },
 
 
