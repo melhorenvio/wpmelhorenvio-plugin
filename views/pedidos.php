@@ -320,6 +320,29 @@
                 return string.replace('_','');
             },
 
+            addToCart: function(ind){
+
+                pedido = this.pedidos_page[ind];
+                var data = {
+                    action: "wpme_ajax_ticketAcquirementAPI",
+                    to_name: pedido.first_name+" "+pedido.last_name,
+                    to_phone: pedido,
+//                    to_email:
+//                    to_document:
+//                    to_company_document:
+//                    to_state_register:
+                    to_address_: pedido.shipping.address,
+                    to_complement: pedido.shipping.address_2,
+                    to_number:  pedido.shipping.number,
+                    to_district: pedido.shipping.neighborhood,
+                    to_city:    pedido.shipping.city,
+                    to_state_abbr: pedido.shipping.state,
+                    to_country_id: pedido.shipping.country,
+                    to_postal_code: pedido.shipping.postcode,
+                    to_note: ''
+                }
+            },
+
             getQuotation: function(){
 
             },

@@ -185,10 +185,10 @@ function wpme_getObjectFrom(){
     $return->phone = get_option('wpme_phone');
     $return->email = get_option('wpme_email');
     $return->document = get_option('wpme_document');
-    $return->company_document = '';
-    $return->state_register = '';
+    $return->company_document = '';// Falta aqui
+    $return->state_register = '';// Falta // Falta aquiaqui
     $return->address = get_option('wpme_address');
-    $return->complement = '';
+    $return->complement = ''; // Falta aqui
     $return->number = $from->number;
     $return->district = $from->district;
     $return->city = $from->city;
