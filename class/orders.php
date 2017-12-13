@@ -15,18 +15,23 @@ function wpme_getJsonOrders(){
     $datas = array();
     foreach($orders as $order){
         $data = array(
-            'id'                   => $order->get_id(),
-            'number'               => $order->get_order_number(),
-            'currency'             => $order->get_currency(),
-            'date_modified'        => wc_rest_prepare_date_response( $order->get_date_modified() ), // v1 API used UTC.
-            'customer_id'          => $order->get_customer_id(),
-            'cotacoes'             => array(),
-            'shipping'             => array(),
-            'customer_note'        => $order->get_customer_note(),
-            'date_completed'       => wc_rest_prepare_date_response( $order->get_date_completed(), false ), // v1 API used local time.
-            'date_paid'            => wc_rest_prepare_date_response( $order->get_date_paid(), false ), // v1 API used local time.
-            'cart_hash'            => $order->get_cart_hash(),
-            'line_items'           => array(),
+        'id'                             => $order->get_id(),
+            'number'                     => $order->get_order_number(),
+            'currency'                   => $order->get_currency(),
+            'date_modified'              => wc_rest_prepare_date_response( $order->get_date_modified() ), // v1 API used UTC.
+            'customer_id'                => $order->get_customer_id(),
+            'customer_email'             => $order->get_billing_email(),
+            'customer_phone'             => $order->get_billing_phone(),
+            'customer_document'          => $order->billing_cpf,
+            'customer_company_document'  => $order->billing_cnpj,
+            'customer_state_register'    => $order->billing_ie,
+            'cotacoes'                   => array(),
+            'shipping'                   => array(),
+            'customer_note'              => $order->get_customer_note(),
+            'date_completed'             => wc_rest_prepare_date_response( $order->get_date_completed(), false ), // v1 API used local time.
+            'date_paid'                  => wc_rest_prepare_date_response( $order->get_date_paid(), false ), // v1 API used local time.
+            'cart_hash'                  => $order->get_cart_hash(),
+            'line_items'                 => array(),
         );
         // Add addresses.
         $data['shipping'] = $order->get_address( 'shipping' );
@@ -92,12 +97,16 @@ function wpme_getJsonOrders(){
     return json_encode($datas);
 }
 
-function wpme_buyShipment($request){
+function wpme_buyShipment(){
     $shipment = new stdClass();
-    $shipment->from = wpme_getObjectFrom();
-    $shipment->to = wpme_getObjectTo();
+    $shipment->service = $_POST['service_id'];
+    $shipment->from = wpme_getObjectFrom(); //semi-ok
+    $shipment->to = wpme_getObjectTo(); //semi-ok
     $shipment->package = wpme_getObjectPackage();
-    $shipment->options = wpme_getObjectOptions();
+//    $shipment->options = wpme_getObjectOptions();
+
+    var_dump($shipment);
+
 }
 
 function wpme_getCustomerCotacaoAPI($order){
@@ -158,29 +167,30 @@ function wpme_getPackageInternal($package){
 
 
 function wpme_ticketAcquirementAPI(){
-    $client = new WP_Http();
+     wpme_buyShipment();
 
-
-    $params = array(
-        'headers'           =>  ['Content-Type'  => 'application/json',
-            'Accept'        =>  'application/json',
-            'Authorization' =>  'Bearer '.$token],
-        'body'  =>[
-            'from'      => $object_from,
-            'to'        => $object_to,
-            'package'   => $object_package,
-            'options'   => $object_options,
-            'coupon'    => ''
-        ],
-        'timeout'=>10);
-    $response = $client->post('https://melhorenvio.com.br/api/v2/me/cart');
+//    $client = new WP_Http();
+//
+//
+//    $params = array(
+//        'headers'           =>  ['Content-Type'  => 'application/json',
+//            'Accept'        =>  'application/json',
+//            'Authorization' =>  'Bearer '.$token],
+//        'body'  =>[
+//            'from'      => $object_from,
+//            'to'        => $object_to,
+//            'package'   => $object_package,
+//            'options'   => $object_options,
+//            'coupon'    => ''
+//        ],
+//        'timeout'=>10);
+//    $response = $client->post('https://melhorenvio.com.br/api/v2/me/cart');
 }
 
 
 function wpme_getObjectFrom(){
     $from = wpme_getFrom();
-    $to = wpme_getObjectTo();
-    $package = wpme_getPackage();
+    $address = json_decode(get_option('wpme_address'));
     $return = new stdClass();
     $return->name = get_option('wpme_name');
     $return->phone = get_option('wpme_phone');
@@ -188,34 +198,38 @@ function wpme_getObjectFrom(){
     $return->document = get_option('wpme_document');
     $return->company_document = '';// Falta aqui
     $return->state_register = '';// Falta // Falta aquiaqui
-    $return->address = get_option('wpme_address');
-    $return->complement = ''; // Falta aqui
-    $return->number = $from->number;
-    $return->district = $from->district;
-    $return->city = $from->city;
-    $return->state_abbr = $from->state->state_abbr;
-    $return->country_id = $from->country->id;
-    $return->postal_code = $from->postal_code;
+    $return->address = $address->address;
+    $return->complement = ''; $address->complement;
+    $return->number = $address->number;
+    $return->district = $address->district;
+    $return->city = $address->city->city;
+    $return->state_abbr = $address->state->state_abbr;
+    $return->country_id = $address->country->id;
+    $return->postal_code = $address->postal_code;
     $return->note = '';
+
+    return $return;
 }
 
 function wpme_getObjectTo(){
     $return = new stdClass();
-    $return->name = '';
-    $return->phone = '';
-    $return->email = '';
-    $return->document = '';
-    $return->company_document = '';
-    $return->state_register = '';
-    $return->address = '';
-    $return->complement = '';
-    $return->number = '';
-    $return->district = '';
-    $return->city = '';
-    $return->state_abbr = '';
-    $return->country_id = '';
-    $return->postal_code = '';
+    $return->name = $_POST['to_name'];
+    $return->phone = $_POST['to_phone'];
+    $return->email = $_POST['to_email'];
+    $return->document = $_POST['to_document'];
+    $return->company_document = $_POST['to_company_document'];
+    $return->state_register = $_POST['to_state_register'];
+    $return->address = $_POST['to_address'];
+    $return->complement = $_POST['to_complement'];
+    $return->number = $_POST['to_number'];
+    $return->district = $_POST['to_district'];
+    $return->city = $_POST['to_city'];
+    $return->state_abbr = $_POST['to_state_abbr'];
+    $return->country_id = $_POST['to_country_id'];
+    $return->postal_code = $_POST['to_postal_code'];
     $return->note = '';
+
+    return $return;
 }
 
 function wpme_getObjectPackage(){
@@ -225,7 +239,7 @@ function wpme_getObjectPackage(){
     $weight =0;
     $total  =0;
     $pacote = new stdClass();
-//    foreach ($_POST[] as $item){
+    foreach ($_POST['line_items'] as $item){
         $width = $_POST['width'];
         $height = $_POST['height'];
         $length = $_POST['length'];
@@ -233,23 +247,23 @@ function wpme_getObjectPackage(){
         $valor = wc_get_product($item['product_id'])->get_price() * $item['quantity'];
         $volume  = $volume +  (int) ($width * $length * $height) * $item['quantity'];
         $total += $valor;
-//    }
+    }
     $side   =  ceil(pow($volume,1/3));
-
-    $return->weight = $side > 17 ? $side : 17;
-
     $return->width =  $side > 12 ? $side : 12;
     $return->height = $side > 4 ? $side : 4;
     $return->length = $side > 17 ? $side : 17;
+
+    return $return;
 }
 
 function wpme_getObjectOptions(){
+
     $return = new stdClass();
     $return->insurance_value = '';
     $return->receipt = '';
     $return->own_hand = '';
     $return->collect = '';
-    $return->reverse = '';
+    $return->reverse = false;
     $return->non_commercial = '';
     $return->invoice = new stdClass();
         $return->invoice->number = '';

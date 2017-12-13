@@ -230,7 +230,7 @@
                     </select>
                 </td>
                 <td>
-                    <a href="javascript;" class="btn comprar"> Comprar </a>
+                    <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)"> Comprar </a>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
                     <!--                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>-->
                     <!--                    <a href="javascript;" class="btn imprimir"> Imprimir </a>-->
@@ -325,13 +325,14 @@
                 pedido = this.pedidos_page[ind];
                 var data = {
                     action: "wpme_ajax_ticketAcquirementAPI",
-                    to_name: pedido.first_name+" "+pedido.last_name,
-                    to_phone: pedido,
-//                    to_email:
-//                    to_document:
-//                    to_company_document:
-//                    to_state_register:
-                    to_address_: pedido.shipping.address,
+                    service_id: this.selected_shipment[ind],
+                    to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
+                    to_phone: pedido.customer_phone,
+                    to_email: pedido.customer_email,
+                    to_document: pedido.customer_document,
+                    to_company_document: pedido.customer_company_document,
+                    to_state_register: pedido.customer_state_register,
+                    to_address: pedido.shipping.address_1,
                     to_complement: pedido.shipping.address_2,
                     to_number:  pedido.shipping.number,
                     to_district: pedido.shipping.neighborhood,
@@ -339,8 +340,13 @@
                     to_state_abbr: pedido.shipping.state,
                     to_country_id: pedido.shipping.country,
                     to_postal_code: pedido.shipping.postcode,
-                    to_note: ''
+                    to_note: pedido.customer_note,
+                    line_items: pedido.line_items
                 }
+                jQuery.post(ajaxurl, data, function(response) {
+                        //resposta = JSON.parse(response);
+                        console.log(response);
+                });
             },
 
             getQuotation: function(){

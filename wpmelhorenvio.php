@@ -33,6 +33,30 @@ if( !class_exists('WP_MelhorEnvio')):
             }
         }
 
+        public function install()
+        {
+            global $wp_version;
+            if (!is_plugin_active('woocommerce/woocommerce.php'))
+            {
+                deactivate_plugins(plugin_basename(__FILE__)); /* Deactivate plugin */
+                wp_die(__('You must run WooCommerce 2.x to install Melhor Envio  plugin', 'wpme_melhorenvio'), __('WC not activated', 'wpme_melhorenvio'), array('back_link' => true));
+                return;
+            }
+            if (!is_plugin_active('woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php'))
+            {
+                deactivate_plugins(plugin_basename(__FILE__)); /* Deactivate plugin */
+                wp_die(__('You must run WooCommerce Extra Checkout Fields for Brazil 3.6.x to install Melhor Envio plugin', 'wpme_melhorenvio'), __('WC Extra Checkout Fields not activated', 'wpme_melhorenvio'), array('back_link' => true));
+                return;
+            }
+            if ((float)$wp_version < 3.5)
+            {
+                deactivate_plugins(plugin_basename(__FILE__)); /* Deactivate plugin */
+                wp_die(__('You must run at least WordPress version 3.5 to install Melhor Envio plugin', 'wpme_melhorenvio'), __('WP not compatible', 'wpme_melhorenvio'), array('back_link' => true));
+                return;
+            }
+            define('MELHORENVIO_FILE_PATH', dirname(__FILE__));
+        }
+
         public function init()
         {
             if(class_exists('WC_Integration')){
@@ -79,7 +103,7 @@ if( !class_exists('WP_MelhorEnvio')):
                 echo wpme_getJsonOrders();
                 die();
             }
-            add_action( 'wp_ajax_wpme_ticketAcquirementAPI', 'wpme_ajax_ticketAcquirementAPI' );
+            add_action( 'wp_ajax_wpme_ajax_ticketAcquirementAPI', 'wpme_ajax_ticketAcquirementAPI' );
             function wpme_ajax_ticketAcquirementAPI(){
                 echo wpme_ticketAcquirementAPI();
                 die();
