@@ -332,7 +332,7 @@
                 pedido = this.pedidos_page[ind];
                 var data = {
                     action: "wpme_ajax_ticketAcquirementAPI",
-                    valor_declarado: price,
+                    valor_declarado: pedido.price,
                     service_id: this.selected_shipment[ind],
                     from_name: this.user_info.firstname+" "+ this.user_info.lastname,
                     to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
