@@ -18,6 +18,7 @@ function wpme_getJsonOrders(){
         'id'                             => $order->get_id(),
             'number'                     => $order->get_order_number(),
             'currency'                   => $order->get_currency(),
+            'price'                      => $order->get_total(),
             'date_modified'              => wc_rest_prepare_date_response( $order->get_date_modified() ), // v1 API used UTC.
             'customer_id'                => $order->get_customer_id(),
             'customer_email'             => $order->get_billing_email(),
@@ -192,7 +193,7 @@ function wpme_getObjectFrom(){
     $from = wpme_getFrom();
     $address = json_decode(get_option('wpme_address'));
     $return = new stdClass();
-    $return->name = get_option('wpme_name');
+    $return->name = $_POST['from_name'];
     $return->phone = get_option('wpme_phone');
     $return->email = get_option('wpme_email');
     $return->document = get_option('wpme_document');
@@ -258,17 +259,22 @@ function wpme_getObjectPackage(){
 
 function wpme_getObjectOptions(){
 
+    $options = wpme_getOptionals();
     $return = new stdClass();
-    $return->insurance_value = '';
-    $return->receipt = '';
-    $return->own_hand = '';
-    $return->collect = '';
+    if($options->VD){
+        $return->insurance_value = $_POST['valor_declarado'];
+    }else{
+        $return->insurance_value = '';
+    }
+    $return->receipt = $options->AR;
+    $return->own_hand = $options->MP;
+    $return->collect = false;
     $return->reverse = false;
-    $return->non_commercial = '';
+    $return->non_commercial = true; //rever
     $return->invoice = new stdClass();
-        $return->invoice->number = '';
-        $return->invoice->key = '';
-    $return->reminder = '';
+        $return->invoice->number = ''; //rever
+        $return->invoice->key = ''; //rever
+    $return->reminder = ''; //rever
 }
 
 

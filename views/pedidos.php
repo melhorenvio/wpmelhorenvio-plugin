@@ -10,6 +10,7 @@
     }
     tr{
         width: 100%;
+        padding: 0px;
         transition: 300ms;
     }
     th{
@@ -19,7 +20,7 @@
         padding: 10px 20px;
     }
     td{
-        padding: 5px;
+        padding: 0 5px;
         text-align: center;
         margin: 0;
     }
@@ -41,6 +42,7 @@
     .btn{
         display: inline-block;
         padding: 8px 18px;
+        margin: 13px 4px;
         text-decoration: none;
         border: solid 1px rgba(130,130,190,.6);
         border-radius:25px;
@@ -108,11 +110,11 @@
 
     select{
         box-shadow: none;
-        height: 40px !important;
+        height: 35px !important;
         line-height: 40px !important;
         border-radius: 7px !important;
         padding: 15px 35px;
-        font-size: .900em ;
+        font-size: .940em ;
     }
 
     .selected{
@@ -121,12 +123,17 @@
 
     tfoot tr td{
         background-color: rgba(50,50,150,0.05) !important;
-        padding: 13px 0;
+    }
+
+    table ul{
+        padding: 0;
+        margin: 5px;
     }
 
     table ul li{
         padding: 0px;
         margin: 0px;
+        line-height: 15px;
     }
 
     .wpme_pagination{
@@ -325,7 +332,9 @@
                 pedido = this.pedidos_page[ind];
                 var data = {
                     action: "wpme_ajax_ticketAcquirementAPI",
+                    valor_declarado: price,
                     service_id: this.selected_shipment[ind],
+                    from_name: this.user_info.firstname+" "+ this.user_info.lastname,
                     to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
                     to_phone: pedido.customer_phone,
                     to_email: pedido.customer_email,
