@@ -8,6 +8,7 @@
 
 include_once ABSPATH.'/wp-content/plugins/woocommerce/includes/wc-order-functions.php';
 include_once 'quotation.php';
+include_once 'tracking.php';
 
 function wpme_getJsonOrders(){
     $orders = wc_get_orders([]);
@@ -102,7 +103,7 @@ function wpme_buyShipment(){
     $shipment = new stdClass();
     $shipment->service = $_POST['service_id'];
     $shipment->from = wpme_getObjectFrom(); //semi-ok
-    $shipment->to = wpme_getObjectgiTo(); //semi-ok
+    $shipment->to = wpme_getObjectTo(); //semi-ok
     $shipment->package = wpme_getObjectPackage();
     $shipment->options = wpme_getObjectOptions();
 
@@ -179,19 +180,9 @@ function wpme_ticketAcquirementAPI(){
             'Authorization' =>  'Bearer '.$token
         ],
         'body'  => $json_object,
-
-//            [
-//            'service'   => $object->service,
-//            'from'      => $object->from,
-//            'to'        => $object->to,
-//            'package'   => $object->package,
-//            'options'   => $object->options,
-//            'coupon'    => ''
-//        ],
         'timeout'=>10);
-    var_dump($params);
     $response = $client->post('https://melhorenvio.com.br/api/v2/me/cart',$params);
-    echo json_encode($response);
+    return $response['body'];
 }
 
 
@@ -284,6 +275,22 @@ function wpme_getObjectOptions(){
     $return->reminder = ''; //rever
 
     return $return;
+}
+
+function wpme_addTrackingAPI(){
+    $order_id = $_POST['order_id'];
+    $tracking = $_POST['tracking'];
+    echo json_encode(wpme_data_insertTracking($order_id, $tracking));
+}
+
+function wpme_deleteTrackingAPI(){
+
+}
+
+function wpme_getTrackingsData(){
+    $order_id = $_POST['order_id'];
+    echo json_encode(wpme_data_getTracking($order_id));
+//    var_dump(wpme_data_getTracking($order_id));
 }
 
 

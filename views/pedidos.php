@@ -190,6 +190,32 @@
 </style>
 <div id="app">
     <div>
+        <div class="data_client">
+            <div>
+                <img src="http://placehold.it/100x100">
+            </div>
+            <div>
+                <h2>Antonio Augusto</h2>
+                <p>Saldo: R$200,00</p>
+            </div>
+            <div>
+                <h5>Endereço</h5>
+                <!--                <label for="--><?//=$address->id?><!--">-->
+                <!--                    <div class="wpme_address-top"><input type="radio" name="address" value='--><?php //echo json_encode($address) ?><!--' id="--><?//=$address->id?><!--" --><?//= $address->id == $saved_address->id? "checked" :""?><!--     required ><h2>--><?//= $address->label ?><!--</h2>-->
+                <!--                    </div>-->
+                <!--                    <div class="wpme_address-body">-->
+                <!--                        <ul>-->
+                <!--                            <li>--><?//= $address->address?><!--,--><?//= $address->number?><!-- - --><?//= $address->complement?><!--</li>-->
+                <!--                            <li>--><?//= $address->district?><!-- - --><?//= $address->city->city?><!-- / --><?//= $address->city->state->state_abbr?><!--</li>-->
+                <!--                            <li>CEP: --><?//=$address->postal_code?><!--</li>-->
+                <!--                        </ul>-->
+                <!--                    </div>-->
+                <!--                </label>-->
+            </div>
+            <div>
+                <h5>Opcionais</h5>
+            </div>
+        </div>
         <table>
             <thead>
             <tr>
@@ -219,7 +245,9 @@
             <tr v-for="(pedido,i) in pedidos_page">
 
                 <td><input type="checkbox" v-model="pedidos_checked[pedido.id]" :value="pedido"></td>
-                <td>{{pedido.id}}</td>
+                <td>{{pedido.id}}
+                    {{ tracking_codes[pedido.id] }}
+                </td>
                 <td>{{pedido.date_created}}23/09/2017 </td>
                 <td>
                     <ul>
@@ -237,9 +265,9 @@
                     </select>
                 </td>
                 <td>
-                    <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)"> Comprar </a>
+                    <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" v-if="typeof tracking_codes[pedido.id] !== 'undefined'"> Comprar </a>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
-                                        <a href="javascript;" class="btn melhorenvio"> Pagar </a>
+                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>
                     <!--                    <a href="javascript;" class="btn imprimir"> Imprimir </a>-->
                     <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
@@ -284,6 +312,7 @@
             total:0,
             pedidos_checked:[],
             selected_shipment: [],
+            tracking_codes:[],
             page:1,
             selectallatt:false,
             perpage:10,
@@ -293,6 +322,10 @@
                 thumbnail:'',
                 balance:''
             }
+        },
+
+        watch: {
+            tracking_codes:[]
         },
 
         created: function(){
@@ -329,6 +362,7 @@
 
             addToCart: function(ind){
                 pedido = this.pedidos_page[ind];
+                vm = this;
                 var data = {
                     action: "wpme_ajax_ticketAcquirementAPI",
                     valor_declarado: pedido.price,
@@ -352,8 +386,8 @@
                     line_items: pedido.line_items
                 }
                 jQuery.post(ajaxurl, data, function(response) {
-                        //resposta = JSON.parse(response);
-                        console.log(response);
+                    resposta = JSON.parse(response);
+                    vm.addTracking(pedido.id,resposta.id);
                 });
             },
 
@@ -362,16 +396,40 @@
             },
 
             load: function(){
-                this.getOrders();
                 this.getUser();
                 this.getBalance();
+                this.getOrders();
+            },
+
+            getTrackings: function(){
+                tracking_codes = [];
+                vm = this;
+                this.pedidos.forEach(function (pedido){
+                    var data = {
+                        action:'wpme_ajax_getTrackingsData',
+                        order_id: pedido.id
+                    }
+                    jQuery.post(ajaxurl, data, function(response) {
+                        resposta = JSON.parse(response);
+                        resposta.forEach(function(tracking){
+                            console.log(tracking);
+                            index = tracking.order_id;
+                            trk = tracking.tracking_id
+                            vm.tracking_codes[index] = trk;
+                        })
+
+                    });
+                });
+
+
+
+
             },
 
             getTracking: function(){
                 tracking_codes = [];
                 this.pedidos.forEach(function (pedido) {
                     tracking_codes.push(pedido.id);
-                    console.log(pedido.id);
                 });
 
                 var data = {
@@ -388,10 +446,25 @@
 
             },
 
+            addTracking: function(order_id,tracking){
+                var data = {
+                    action: "wpme_ajax_addTrackingAPI",
+                    order_id:order_id,
+                    tracking:tracking
+                }
+                vm = this;
+                jQuery.post(ajaxurl, data, function(response) {
+                    if(tracking != null){
+                        vm.tracking_codes.id = {order_id:order_id,tracking:tracking.tracking_id};
+                    }
+                });
+            },
+
             getOrders: function(){
                 var data = {
-                    action:'wpme_ajax_getJsonOrders',
-                }
+                    action:'wpme_ajax_getJsonOrders'
+                };
+
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
@@ -405,7 +478,7 @@
                         });
                     });
                     vm.selected_shipment = array;
-                    vm.getTracking();
+                    vm.getTrackings();
                 });
             },
 
@@ -419,8 +492,6 @@
                     vm.pedidos_checked[pedido.id] = !vm.selectallatt
                 });
             },
-
-
 
             getUser: function(){
                 var data = {

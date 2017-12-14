@@ -21,6 +21,9 @@ Domain Path: /languages
 */
 
 if( !class_exists('WP_MelhorEnvio')):
+    include_once 'includes/wpmeinstaller.php';
+    /* Register plugin status hooks */
+    register_activation_hook(__FILE__,'wpme_install');
 
     class WPMelhorEnvio
     {
@@ -31,30 +34,6 @@ if( !class_exists('WP_MelhorEnvio')):
             if( is_plugin_active('woocommerce/woocommerce.php')){
                 add_action('plugins_loaded',array($this,'init'));
             }
-        }
-
-        public function install()
-        {
-            global $wp_version;
-            if (!is_plugin_active('woocommerce/woocommerce.php'))
-            {
-                deactivate_plugins(plugin_basename(__FILE__)); /* Deactivate plugin */
-                wp_die(__('You must run WooCommerce 2.x to install Melhor Envio  plugin', 'wpme_melhorenvio'), __('WC not activated', 'wpme_melhorenvio'), array('back_link' => true));
-                return;
-            }
-            if (!is_plugin_active('woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php'))
-            {
-                deactivate_plugins(plugin_basename(__FILE__)); /* Deactivate plugin */
-                wp_die(__('You must run WooCommerce Extra Checkout Fields for Brazil 3.6.x to install Melhor Envio plugin', 'wpme_melhorenvio'), __('WC Extra Checkout Fields not activated', 'wpme_melhorenvio'), array('back_link' => true));
-                return;
-            }
-            if ((float)$wp_version < 3.5)
-            {
-                deactivate_plugins(plugin_basename(__FILE__)); /* Deactivate plugin */
-                wp_die(__('You must run at least WordPress version 3.5 to install Melhor Envio plugin', 'wpme_melhorenvio'), __('WP not compatible', 'wpme_melhorenvio'), array('back_link' => true));
-                return;
-            }
-            define('MELHORENVIO_FILE_PATH', dirname(__FILE__));
         }
 
         public function init()
@@ -136,6 +115,19 @@ if( !class_exists('WP_MelhorEnvio')):
                 echo wpme_getTrackingAPI();
                 die();
             }
+
+
+            add_action('wp_ajax_wpme_ajax_addTrackingAPI','wpme_ajax_addTrackingAPI');
+            function wpme_ajax_addTrackingAPI(){
+                echo wpme_addTrackingAPI();
+                die();
+            }
+
+            add_action('wp_ajax_wpme_ajax_getTrackingsData','wpme_ajax_getTrackingsData');
+            function wpme_ajax_getTrackingsData(){
+                echo wpme_getTrackingsData();
+                die();
+            }
         }
 
         /**
@@ -146,9 +138,8 @@ if( !class_exists('WP_MelhorEnvio')):
             $wpme_integrations[] = 'WPME_WPMelhorEnvioIntegration';
             return $wpme_integrations;
         }
+
+
     }
-
-
     $WPMelhorEnvioIntegration = new WPMelhorEnvio(__FILE__);
-
 endif;
