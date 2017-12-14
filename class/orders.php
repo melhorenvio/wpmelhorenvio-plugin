@@ -102,7 +102,7 @@ function wpme_buyShipment(){
     $shipment = new stdClass();
     $shipment->service = $_POST['service_id'];
     $shipment->from = wpme_getObjectFrom(); //semi-ok
-    $shipment->to = wpme_getObjectTo(); //semi-ok
+    $shipment->to = wpme_getObjectgiTo(); //semi-ok
     $shipment->package = wpme_getObjectPackage();
     $shipment->options = wpme_getObjectOptions();
 
@@ -293,7 +293,8 @@ function wpme_ticketPrintingAPI(){
 }
 
 function wpme_getTrackingAPI(){
-    $object = $_POST['tracking_codes'];
+    $body = new stdClass();
+    $body->orders = json_encode($_POST['tracking_codes']);;
     $token = get_option('wpme_token');
     $client = new WP_Http();
     $params = array(
@@ -302,10 +303,10 @@ function wpme_getTrackingAPI(){
             'Accept'        =>  'application/json',
             'Authorization' =>  'Bearer '.$token
         ],
-        'body'  => $object,
+        'body'  => $body,
         'timeout'=>10);
     $response = $client->post('https://melhorenvio.com.br/api/v2/me/shipment/tracking',$params);
-    echo $response['body'];
+    echo json_encode($response);
 }
 
 

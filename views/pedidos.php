@@ -373,7 +373,7 @@
                     tracking_codes.push(pedido.id);
                     console.log(pedido.id);
                 });
-                console.log(tracking_codes)
+
                 var data = {
                     action:'wpme_ajax_getTrackingAPI',
                     tracking_codes: tracking_codes
