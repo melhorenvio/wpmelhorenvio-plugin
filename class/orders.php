@@ -104,9 +104,9 @@ function wpme_buyShipment(){
     $shipment->from = wpme_getObjectFrom(); //semi-ok
     $shipment->to = wpme_getObjectTo(); //semi-ok
     $shipment->package = wpme_getObjectPackage();
-//    $shipment->options = wpme_getObjectOptions();
+    $shipment->options = wpme_getObjectOptions();
 
-    var_dump($shipment);
+    return $shipment;
 
 }
 
@@ -168,24 +168,30 @@ function wpme_getPackageInternal($package){
 
 
 function wpme_ticketAcquirementAPI(){
-     wpme_buyShipment();
+    $object = wpme_buyShipment();
+    $token = get_option('wpme_token');
+    $client = new WP_Http();
+    $json_object = json_encode($object);
+    $params = array(
+        'headers'           =>  [
+            'Content-Type'  => 'application/json',
+            'Accept'        =>  'application/json',
+            'Authorization' =>  'Bearer '.$token
+        ],
+        'body'  => $json_object,
 
-//    $client = new WP_Http();
-//
-//
-//    $params = array(
-//        'headers'           =>  ['Content-Type'  => 'application/json',
-//            'Accept'        =>  'application/json',
-//            'Authorization' =>  'Bearer '.$token],
-//        'body'  =>[
-//            'from'      => $object_from,
-//            'to'        => $object_to,
-//            'package'   => $object_package,
-//            'options'   => $object_options,
+//            [
+//            'service'   => $object->service,
+//            'from'      => $object->from,
+//            'to'        => $object->to,
+//            'package'   => $object->package,
+//            'options'   => $object->options,
 //            'coupon'    => ''
 //        ],
-//        'timeout'=>10);
-//    $response = $client->post('https://melhorenvio.com.br/api/v2/me/cart');
+        'timeout'=>10);
+    var_dump($params);
+    $response = $client->post('https://melhorenvio.com.br/api/v2/me/cart',$params);
+    echo json_encode($response);
 }
 
 
@@ -198,14 +204,14 @@ function wpme_getObjectFrom(){
     $return->email = get_option('wpme_email');
     $return->document = get_option('wpme_document');
     $return->company_document = '';// Falta aqui
-    $return->state_register = '';// Falta // Falta aquiaqui
+    $return->state_register = ''; // Falta aqui
     $return->address = $address->address;
     $return->complement = ''; $address->complement;
     $return->number = $address->number;
     $return->district = $address->district;
     $return->city = $address->city->city;
     $return->state_abbr = $address->state->state_abbr;
-    $return->country_id = $address->country->id;
+    $return->country_id = 'BR';
     $return->postal_code = $address->postal_code;
     $return->note = '';
 
@@ -215,7 +221,7 @@ function wpme_getObjectFrom(){
 function wpme_getObjectTo(){
     $return = new stdClass();
     $return->name = $_POST['to_name'];
-    $return->phone = $_POST['to_phone'];
+    $return->phone = str_replace("-","",str_replace(")","",str_replace("(","",$_POST['to_phone'])));
     $return->email = $_POST['to_email'];
     $return->document = $_POST['to_document'];
     $return->company_document = $_POST['to_company_document'];
@@ -253,6 +259,7 @@ function wpme_getObjectPackage(){
     $return->width =  $side > 12 ? $side : 12;
     $return->height = $side > 4 ? $side : 4;
     $return->length = $side > 17 ? $side : 17;
+    $return->weight = $weight > 1 ? $weight :1;
 
     return $return;
 }
@@ -275,6 +282,8 @@ function wpme_getObjectOptions(){
         $return->invoice->number = ''; //rever
         $return->invoice->key = ''; //rever
     $return->reminder = ''; //rever
+
+    return $return;
 }
 
 
@@ -282,6 +291,23 @@ function wpme_getObjectOptions(){
 function wpme_ticketPrintingAPI(){
 
 }
+
+function wpme_getTrackingAPI(){
+    $object = $_POST['tracking_codes'];
+    $token = get_option('wpme_token');
+    $client = new WP_Http();
+    $params = array(
+        'headers'           =>  [
+            'Content-Type'  => 'application/json',
+            'Accept'        =>  'application/json',
+            'Authorization' =>  'Bearer '.$token
+        ],
+        'body'  => $object,
+        'timeout'=>10);
+    $response = $client->post('https://melhorenvio.com.br/api/v2/me/shipment/tracking',$params);
+    echo $response['body'];
+}
+
 
 function wpme_getBalanceAPI(){
     $token = get_option('wpme_token');

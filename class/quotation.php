@@ -73,8 +73,8 @@ function wpme_getTo($package){
 
 function wpme_getOptionals(){
     $optionals = json_decode(get_option('wpme_pluginconfig'));
-//    $optionals->PL = is_numeric($optionals->PL) ? $optionals->PL : 0;
-//    $optionals->DE = is_numeric($optionals->DE) ? $optionals->DE : 0;
+    $optionals->PL = $optionals->PL ? 1 : 0;
+    $optionals->DE = $optionals->DE ? 1 : 0;
     return $optionals;
 }
 

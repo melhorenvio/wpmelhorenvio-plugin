@@ -130,6 +130,12 @@ if( !class_exists('WP_MelhorEnvio')):
                 echo wpme_getBalanceAPI();
                 die();
             }
+
+            add_action('wp_ajax_wpme_ajax_getTrackingAPI','wpme_ajax_getTrackingAPI');
+            function wpme_ajax_getTrackingAPI(){
+                echo wpme_getTrackingAPI();
+                die();
+            }
         }
 
         /**

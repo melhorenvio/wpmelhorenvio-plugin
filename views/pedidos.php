@@ -239,7 +239,7 @@
                 <td>
                     <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)"> Comprar </a>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
-                    <!--                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>-->
+                                        <a href="javascript;" class="btn melhorenvio"> Pagar </a>
                     <!--                    <a href="javascript;" class="btn imprimir"> Imprimir </a>-->
                     <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
@@ -328,7 +328,6 @@
             },
 
             addToCart: function(ind){
-
                 pedido = this.pedidos_page[ind];
                 var data = {
                     action: "wpme_ajax_ticketAcquirementAPI",
@@ -368,6 +367,27 @@
                 this.getBalance();
             },
 
+            getTracking: function(){
+                tracking_codes = [];
+                this.pedidos.forEach(function (pedido) {
+                    tracking_codes.push(pedido.id);
+                    console.log(pedido.id);
+                });
+                console.log(tracking_codes)
+                var data = {
+                    action:'wpme_ajax_getTrackingAPI',
+                    tracking_codes: tracking_codes
+                }
+
+                jQuery.post(ajaxurl, data, function(response) {
+                    console.log(response);
+                    resposta = JSON.parse(response);
+                    console.log(resposta);
+                });
+
+
+            },
+
             getOrders: function(){
                 var data = {
                     action:'wpme_ajax_getJsonOrders',
@@ -385,6 +405,7 @@
                         });
                     });
                     vm.selected_shipment = array;
+                    vm.getTracking();
                 });
             },
 
