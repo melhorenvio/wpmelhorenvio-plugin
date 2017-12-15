@@ -265,7 +265,7 @@
                     </select>
                 </td>
                 <td>
-                    <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" v-if="typeof tracking_codes[pedido.id] !== 'undefined'"> Comprar </a>
+                    <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" v-if="typeof tracking_codes === 'undefined' || typeof tracking_codes[pedido.id] === 'undefined'"> Comprar </a>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
                     <a href="javascript;" class="btn melhorenvio"> Pagar </a>
                     <!--                    <a href="javascript;" class="btn imprimir"> Imprimir </a>-->
@@ -312,7 +312,7 @@
             total:0,
             pedidos_checked:[],
             selected_shipment: [],
-            tracking_codes:[],
+            tracking_codes: [],
             page:1,
             selectallatt:false,
             perpage:10,
@@ -324,20 +324,40 @@
             }
         },
 
-        watch: {
-            tracking_codes:[]
-        },
-
         created: function(){
             this.load()
         },
 
+        watch: {
+            com_tracking_codes: function(){
+                tracking_codes = [];
+                this.pedidos_page.forEach(function (pedido){
+                var data = {
+                    action:'wpme_ajax_getTrackingsData',
+                    order_id: pedido.id
+                }
+                vm = this;
+                jQuery.post(ajaxurl, data, function(response) {
+                    resposta = JSON.parse(response);
+                    resposta.forEach(function(tracking){
+                        console.log(tracking);
+                        index = tracking.order_id;
+                        trk = tracking.tracking_id
+                        vm.tracking_codes[index] = trk;
+                    })
+
+                });
+            });
+            }
+
+        },
+
         computed:{
+
             pedidos_page: function () {
                 this.total = this.pedidos.length;
                 return this.pedidos.slice(((this.page -1) * this.perpage), this.page*this.perpage);
             },
-
 
             selected_shipmeent: function () {
                 var array = [];
@@ -455,7 +475,7 @@
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
                     if(tracking != null){
-                        vm.tracking_codes.id = {order_id:order_id,tracking:tracking.tracking_id};
+                        vm.tracking_codes[order_id]= tracking;
                     }
                 });
             },
