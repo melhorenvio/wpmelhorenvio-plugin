@@ -1,4 +1,76 @@
 <style>
+
+    .mask{
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(20,20,20,.6);
+        position: fixed;
+        top:0;
+        left: 0;
+        display: flex;
+    }
+
+    .modal h1{
+        padding: 15px;
+    }
+
+    .modal{
+        background-color:rgba(250,250,255,.90);
+        width: 800px;
+        max-width: 80%;
+        margin:auto;
+        vertical-align: middle;
+        horiz-align: center;
+        height: 350px;
+        padding: 20px;
+        text-align: center;
+        border-radius:20px;
+        overflow: auto;
+    }
+
+    .modal .select{
+        display: flex;
+        flex-wrap: wrap;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        horiz-align: center;
+        vert-align: middle;
+        width: 700px;
+    }
+
+    .modal a{
+        display: inline-block;
+        padding: 15px;
+        border-radius: 8px;
+        box-sizing: border-box;
+        border: solid 2px rgba(50,180,250,0);
+        transition: 300ms;
+        margin: 0px 20px;
+        width: 200px;
+        height: 100px;
+    }
+    .modal a:hover{
+        border: solid 2px rgba(50,180,250,1);
+        transition: 300ms;
+
+    }
+
+    .modal a .pgsaldo{
+        height: 100px;
+        display: inline-block;
+        text-decoration: none;
+    }
+    .modal a .pgsaldo h4{
+        padding: 0px;
+        font-size: 1.1rem;
+        margin: 0px;
+    }
+
+    .modal a .pgsaldo p{
+        color:rgba(50,205,50,1);
+    }
+
     table{
         width: 100%;
         border-collapse: collapse;
@@ -265,9 +337,9 @@
                     </select>
                 </td>
                 <td>
-                    <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" v-if="typeof tracking_codes === 'undefined' || typeof tracking_codes[pedido.id] === 'undefined'"> Comprar </a>
+                    <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" v-if="typeof show_buy_button[pedido.id] === 'undefined' || show_buy_button[pedido.id]"> Comprar </a>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
-                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>
+                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>
                     <!--                    <a href="javascript;" class="btn imprimir"> Imprimir </a>-->
                     <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
@@ -275,18 +347,15 @@
             </tbody>
             <tfoot>
             <tr>
-                <td>
 
-                </td>
-                <td>
+                <td colspan="3">
                     <a href="javascript;" class="btn comprar-hard"> Comprar </a>
-                </td>
-                <td>
+
                     <a href="javascript;" class="btn melhorenvio"> Pagar </a>
-                </td>
-                <td>
+
                     <a href="javascript;" class="btn imprimir"> Imprimir </a>
                 </td>
+                <td></td>
                 <td colspan="2">
 
                 </td>
@@ -297,6 +366,26 @@
             <ul class="wpme_pagination" v-for="i in Math.ceil(total/perpage)" v-show="total > perpage">
                 <li :class="{'active': i == page}"><a href="javascript:;" @click.prevent="pagego(i)">{{i}}</a></li>
             </ul>
+        </div>
+        <div class="mask" v-show="show_mask">
+            <div class="modal" v-show="show_modal">
+                <h1>Escolha seu método de pagamento</h1>
+                <div class="select">
+                    <a href="">
+                        <img src="https://melhorenvio.com.br/images/payment/moip.png">
+                    </a>
+                    <a href="">
+                        <img src="https://melhorenvio.com.br/images/payment/mpago.png">
+                    </a>
+                    <a href="">
+                        <div class="pgsaldo">
+                            <h4>Pagar com Saldo</h4>
+                            <p>Saldo <strong>R$ 300,00</strong></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="message"></div>
         </div>
 
     </div>
@@ -310,9 +399,20 @@
             message: 'Hello Vue!',
             pedidos: [],
             total:0,
+            show_mask:false,
+            show_modal:false,
+            message:{
+                show_message:false,
+                title:'',
+                message:''
+            },
             pedidos_checked:[],
             selected_shipment: [],
-            tracking_codes: [],
+            tracking_codes:[],
+            show_buy_button: [],
+            show_print_button: [],
+            show_pay_button:[],
+            show_tracking_button:[],
             page:1,
             selectallatt:false,
             perpage:10,
@@ -329,25 +429,17 @@
         },
 
         watch: {
-            com_tracking_codes: function(){
-                tracking_codes = [];
-                this.pedidos_page.forEach(function (pedido){
-                var data = {
-                    action:'wpme_ajax_getTrackingsData',
-                    order_id: pedido.id
-                }
-                vm = this;
-                jQuery.post(ajaxurl, data, function(response) {
-                    resposta = JSON.parse(response);
-                    resposta.forEach(function(tracking){
-                        console.log(tracking);
-                        index = tracking.order_id;
-                        trk = tracking.tracking_id
-                        vm.tracking_codes[index] = trk;
-                    })
-
-                });
-            });
+            tracking_codes: function(tc){
+                    vm = this;
+                    console.log(this.tracking_codes);
+                    this.tracking_codes.forEach(function (codego) {
+                        console.log(codego);
+                        if(typeof codego === 'undefined'){
+                             vm.show_buy_button[index] = true;
+                        }else{
+                            vm.show_buy_button[index] = false;
+                        }
+                    });
             }
 
         },
@@ -422,7 +514,7 @@
             },
 
             getTrackings: function(){
-                tracking_codes = [];
+                this.tracking_codes = [];
                 vm = this;
                 this.pedidos.forEach(function (pedido){
                     var data = {
@@ -432,7 +524,6 @@
                     jQuery.post(ajaxurl, data, function(response) {
                         resposta = JSON.parse(response);
                         resposta.forEach(function(tracking){
-                            console.log(tracking);
                             index = tracking.order_id;
                             trk = tracking.tracking_id
                             vm.tracking_codes[index] = trk;
@@ -440,10 +531,16 @@
 
                     });
                 });
+            },
 
-
-
-
+            payTicket: function(tracking_code){
+                var data = {
+                    action:'wpme_ajax_payTicketAPI',
+                    orders: [tracking_code]
+                }
+                jQuery.post(ajaxurl, data, function(response) {
+                    console.log(response);
+                });
             },
 
             getTracking: function(){
@@ -458,9 +555,7 @@
                 }
 
                 jQuery.post(ajaxurl, data, function(response) {
-                    console.log(response);
                     resposta = JSON.parse(response);
-                    console.log(resposta);
                 });
 
 

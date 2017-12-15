@@ -111,6 +111,7 @@ function wpme_buyShipment(){
 
 }
 
+
 function wpme_getCustomerCotacaoAPI($order){
     $client = new WP_Http();
 
@@ -185,6 +186,29 @@ function wpme_ticketAcquirementAPI(){
     return $response['body'];
 }
 
+
+function wpme_payTicket(){
+    $client = new WP_Http();
+    $token = get_option('wpme_token');
+
+    $object = new stdClass();
+    $object->orders     = $_POST['orders'];
+//    $object->gateway    = isset($_POST['gateway'])?$_POST['gateway']:'';
+//    $object->redirect   = $_POST['redirect'];
+    $json_object = json_encode($object);
+    $params = array(
+        'headers'           =>  [
+            'Content-Type'  => 'application/json',
+            'Accept'        =>  'application/json',
+            'Authorization' =>  'Bearer '.$token
+        ],
+        'body'  => $json_object,
+        'timeout'=>10);
+
+    $response = $client->post('https://melhorenvio.com.br/api/v2/me/shipment/checkout',$params);
+    echo $response['body'];
+
+}
 
 function wpme_getObjectFrom(){
     $from = wpme_getFrom();
@@ -273,6 +297,7 @@ function wpme_getObjectOptions(){
         $return->invoice->number = ''; //rever
         $return->invoice->key = ''; //rever
     $return->reminder = ''; //rever
+    $return->plataform= "WooCommerce";
 
     return $return;
 }
