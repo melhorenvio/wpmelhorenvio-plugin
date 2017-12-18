@@ -16,15 +16,17 @@
 
     .modal{
         background-color:rgba(250,250,255,.90);
+        max-width: 60%;
+        display: block;
         width: 800px;
-        max-width: 80%;
         margin:auto;
-        vertical-align: middle;
-        horiz-align: center;
-        height: 350px;
+        left: 25%;
+        top: 30%;
+        height: 290px;
         padding: 20px;
         text-align: center;
-        border-radius:20px;
+        position: absolute;
+        border-radius:10px;
         overflow: auto;
     }
 
@@ -32,11 +34,11 @@
         display: flex;
         flex-wrap: wrap;
         padding: 15px;
-        display: flex;
+        position: relative;
         align-items: center;
         horiz-align: center;
         vert-align: middle;
-        width: 700px;
+        width: 750px;
     }
 
     .modal a{
@@ -49,6 +51,12 @@
         margin: 0px 20px;
         width: 200px;
         height: 100px;
+    }
+
+    .modal a img{
+        width: 120px;
+        margin: auto;
+        vertical-align: middle;
     }
     .modal a:hover{
         border: solid 2px rgba(50,180,250,1);
@@ -69,6 +77,17 @@
 
     .modal a .pgsaldo p{
         color:rgba(50,205,50,1);
+    }
+
+   .modal .close-modal ,.modal .close-modal:focus {
+        position: absolute;
+        font-size: 3.100rem;
+        text-decoration: none;
+        border: none !important;
+        width: 20px;
+        height: 10px;
+        top: 0px;
+        right: 10px;
     }
 
     table{
@@ -259,6 +278,47 @@
         box-shadow: none;
     }
 
+
+
+    .wpme_flex{
+        display: flex;
+        float: left;
+        width: 100%;
+        position: relative;
+        padding: 0;
+        flex:1 ;
+        order: 3;
+        overflow-y: hidden;
+        overflow-x: auto;
+    }
+
+    .wpme_address{
+        text-align: left;
+        border-radius: 5px;
+        border: solid 1px #cccccc;
+        padding: 20px;
+        width: 300px;
+        min-width: 300px;
+        margin:15px 7px;
+        background: #fefeff;
+    }
+
+    .wpme_address .wpme_address-top{
+        width: 100%;
+        border-bottom: solid 1px #ddddef;
+
+    }
+
+    .wpme_address .wpme_address-top h2{
+        display: inline-block;
+        padding:0 20px ;
+        margin: 0 0 15px;
+        text-align: center;
+        color: #777789;
+        font-weight: 300;
+        font-size: 1.300rem;
+    }
+
 </style>
 <div id="app">
     <div>
@@ -272,17 +332,17 @@
             </div>
             <div>
                 <h5>Endereço</h5>
-                <!--                <label for="--><?//=$address->id?><!--">-->
-                <!--                    <div class="wpme_address-top"><input type="radio" name="address" value='--><?php //echo json_encode($address) ?><!--' id="--><?//=$address->id?><!--" --><?//= $address->id == $saved_address->id? "checked" :""?><!--     required ><h2>--><?//= $address->label ?><!--</h2>-->
-                <!--                    </div>-->
-                <!--                    <div class="wpme_address-body">-->
-                <!--                        <ul>-->
-                <!--                            <li>--><?//= $address->address?><!--,--><?//= $address->number?><!-- - --><?//= $address->complement?><!--</li>-->
-                <!--                            <li>--><?//= $address->district?><!-- - --><?//= $address->city->city?><!-- / --><?//= $address->city->state->state_abbr?><!--</li>-->
-                <!--                            <li>CEP: --><?//=$address->postal_code?><!--</li>-->
-                <!--                        </ul>-->
-                <!--                    </div>-->
-                <!--                </label>-->
+                                <div class="wpme_address">
+                                    <div class="wpme_address-top"><h2>{{endereco.label}}</h2>
+                                    </div>
+                                    <div class="wpme_address-body">
+                                        <ul>
+                                            <li>{{endereco.address}}, {{endereco.number}} -{{endereco.complement}}</li>
+                                            <li>{{endereco.district}} - {{ endereco.city.city}} / {{endereco.city.state.state_abbr}}</li>
+                                            <li>CEP: {{endereco.postal_code}}</li>
+                                        </ul>
+                                    </div>
+                                </div>
             </div>
             <div>
                 <h5>Opcionais</h5>
@@ -340,7 +400,7 @@
                     <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" v-if="typeof show_buy_button[pedido.id] === 'undefined' || show_buy_button[pedido.id]"> Comprar </a>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
                     <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>
-                    <!--                    <a href="javascript;" class="btn imprimir"> Imprimir </a>-->
+                                        <a href="javascript;" class="btn imprimir"> Imprimir </a>
                     <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
             </tr>
@@ -367,8 +427,10 @@
                 <li :class="{'active': i == page}"><a href="javascript:;" @click.prevent="pagego(i)">{{i}}</a></li>
             </ul>
         </div>
-        <div class="mask" v-show="show_mask">
+        <div class="mask" v-show="show_mask" @click.prevent="toogleModal">
+        </div>
             <div class="modal" v-show="show_modal">
+                <a href="javascript;" @click.prevent="toogleModal()" class="close-modal"> &times </a>
                 <h1>Escolha seu método de pagamento</h1>
                 <div class="select">
                     <a href="">
@@ -384,9 +446,10 @@
                         </div>
                     </a>
                 </div>
+                <p><strong>Escolha o método de pagamento para finalizar a sua compra</strong></p>
             </div>
             <div class="message"></div>
-        </div>
+
 
     </div>
 </div>
@@ -399,13 +462,15 @@
             message: 'Hello Vue!',
             pedidos: [],
             total:0,
-            show_mask:false,
-            show_modal:false,
+            show_mask:true,
+            show_modal:true,
             message:{
                 show_message:false,
                 title:'',
                 message:''
             },
+            opcionais:{},
+            endereco:{},
             pedidos_checked:[],
             selected_shipment: [],
             tracking_codes:[],
@@ -472,6 +537,11 @@
                 return string.replace('_','');
             },
 
+            toogleModal: function(){
+                this.show_mask = !this.show_mask;
+                this.show_modal = !this.show_modal;
+            },
+
             addToCart: function(ind){
                 pedido = this.pedidos_page[ind];
                 vm = this;
@@ -510,7 +580,23 @@
             load: function(){
                 this.getUser();
                 this.getBalance();
+                this.getAddress();
+                this.getOptionals();
                 this.getOrders();
+            },
+
+            getAddress: function(){
+                data = {
+                    action: "wpme_ajax_getAddressAPI"
+                }
+                vm = this;
+                jQuery.post(ajaxurl,data,function(response){
+                    vm.endereco = JSON.parse(response);
+                });
+            },
+
+            getOptionals: function(){
+
             },
 
             getTrackings: function(){

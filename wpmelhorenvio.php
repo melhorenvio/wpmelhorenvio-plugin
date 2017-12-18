@@ -132,6 +132,13 @@ if( !class_exists('WP_MelhorEnvio')):
             add_action('wp_ajax_wpme_ajax_payTicketAPI','wpme_ajax_payTicketAPI');
             function wpme_ajax_payTicketAPI(){
                 echo wpme_payTicket();
+                die();
+            }
+
+            add_action('wp_ajax_wpme_ajax_getAddressAPI','wpme_ajax_getAddressAPI');
+            function wpme_ajax_getAddressAPI(){
+                echo get_option('wpme_address');
+                die();
             }
         }
 
