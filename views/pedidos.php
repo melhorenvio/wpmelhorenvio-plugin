@@ -799,7 +799,6 @@
                     vm.user_info.firstname = resposta.firstname;
                     vm.user_info.lastname = resposta.lastname;
                     vm.user_info.thumbnail = resposta.thumbnail;
-                    vm.user_info.balance = resposta.balance;
                 });
             },
 
