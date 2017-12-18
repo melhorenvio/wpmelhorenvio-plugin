@@ -79,7 +79,7 @@
         color:rgba(50,205,50,1);
     }
 
-   .modal .close-modal ,.modal .close-modal:focus {
+    .modal .close-modal ,.modal .close-modal:focus {
         position: absolute;
         font-size: 3.100rem;
         text-decoration: none;
@@ -298,8 +298,10 @@
         border: solid 1px #cccccc;
         padding: 20px;
         width: 300px;
+        box-sizing: border-box;
         min-width: 300px;
         margin:15px 7px;
+        height:160px;
         background: #fefeff;
     }
 
@@ -319,49 +321,126 @@
         font-size: 1.300rem;
     }
 
+    .circle{
+        display: inline-block;
+        vertical-align: middle;
+        width: 10px;
+        height: 10px;
+        margin: 0 5px;
+        border: solid 1px rgba(240,50,50,.95);
+        border-radius: 50%;
+    }
+
+    .circle.true{
+        background-color: rgba(50,180,40,1);
+        border: solid 1px rgba(40,170,40,.95);
+    }
+
+
+    .wpme_optionals{
+        text-align: left;
+        border-radius: 5px;
+        border: solid 1px #cccccc;
+        padding: 10px;
+        width: 300px;
+        box-sizing: border-box;
+        min-width: 300px;
+        margin:15px 7px;
+        background: #fefeff;
+        height:160px;
+    }
+    .wpme_optionals ul{
+        margin: 0;
+    }
+    .data_client{
+        display: flex;
+    }
+
+    .profile{
+        box-sizing: border-box;
+        display: inline-block;
+        text-align: left;
+        border-radius: 5px;
+        border: solid 1px #cccccc;
+        padding: 10px;
+        max-width: 400px;
+        min-width: 300px;
+        margin:0 7px;
+        height:160px;
+        background: #fefeff;
+    }
+
+    .profile img{
+        border-radius:50%;
+        float: left;
+        display: inline-block;
+    }
+
+    .profile .about{
+        float: left;
+        padding: 0 10px;
+        display: inline-block;
+    }
+
 </style>
 <div id="app">
     <div>
         <div class="data_client">
             <div>
-                <img src="http://placehold.it/100x100">
-            </div>
-            <div>
-                <h2>Antonio Augusto</h2>
-                <p>Saldo: R$200,00</p>
+                <h5>Usuário</h5>
+                <div class="profile">
+                    <img :src="user_info.thumbnail" v-if="user_info.thumbnail" width="100px">
+                    <img src="https://www.melhorrastreio.com.br/img/bgpdr.png" v-if="!user_info.thumbnail" width="100px">
+                    <div class="about">
+                        <h2>{{user_info.firstname}}</h2>
+                        <p>Saldo: R$ {{user_info.balance}}</p>
+                    </div>
+                </div>
             </div>
             <div>
                 <h5>Endereço</h5>
-                                <div class="wpme_address">
-                                    <div class="wpme_address-top"><h2>{{endereco.label}}</h2>
-                                    </div>
-                                    <div class="wpme_address-body">
-                                        <ul>
-                                            <li>{{endereco.address}}, {{endereco.number}} -{{endereco.complement}}</li>
-                                            <li>{{endereco.district}} - {{ endereco.city.city}} / {{endereco.city.state.state_abbr}}</li>
-                                            <li>CEP: {{endereco.postal_code}}</li>
-                                        </ul>
-                                    </div>
-                                </div>
+                <div class="wpme_address">
+                    <div class="wpme_address-top"><h2>{{endereco.label}}</h2>
+                    </div>
+                    <div class="wpme_address-body">
+                        <ul>
+                            <li>{{endereco.address}}, {{endereco.number}} -{{endereco.complement}}</li>
+                            <li>{{endereco.district}} - {{ endereco.city.city}} / {{endereco.city.state.state_abbr}}</li>
+                            <li>CEP: {{endereco.postal_code}}</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
             <div>
                 <h5>Opcionais</h5>
+                <div class="wpme_optionals">
+                    <ul>
+                        <li>  Aviso de Recebimento :<span class="circle" :class="{'true' : opcionais.AR}"> </span></li>
+                        <li>  Disponível para o cliente:<span class="circle" :class="{'true' : opcionais.CF}"> </span></li>
+                        <li>  Dias extras: {{opcionais.DE}}</li>
+                        <li>  Mão Própria :<span class="circle" :class="{'true' : opcionais.MP}"> </span></li>
+                        <li>  Porcentagem de lucro {{opcionais.PL}}%</li>
+                        <li>  Valor Decladado:<span class="circle" :class="{'true' : opcionais.VD}"> </span></li>
+                    </ul>
+
+
+
+
+                </div>
             </div>
         </div>
         <table>
             <thead>
             <tr>
                 <td><input type="checkbox" @click="selectall" v-model="selectallatt"></td>
-                <td>
+                <td colspan="2">
                     <a href="javascript;" class="btn comprar-hard"> Comprar </a>
-                </td>
-                <td>
+
                     <a href="javascript;" class="btn melhorenvio"> Pagar </a>
-                </td>
-                <td>
+
                     <a href="javascript;" class="btn imprimir"> Imprimir </a>
                 </td>
-                <td colspan="2">
+                <td colspan="3">
 
                 </td>
             </tr>
@@ -400,7 +479,7 @@
                     <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" v-if="typeof show_buy_button[pedido.id] === 'undefined' || show_buy_button[pedido.id]"> Comprar </a>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
                     <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>
-                                        <a href="javascript;" class="btn imprimir"> Imprimir </a>
+                    <a href="javascript;" class="btn imprimir"> Imprimir </a>
                     <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
             </tr>
@@ -429,26 +508,26 @@
         </div>
         <div class="mask" v-show="show_mask" @click.prevent="toogleModal">
         </div>
-            <div class="modal" v-show="show_modal">
-                <a href="javascript;" @click.prevent="toogleModal()" class="close-modal"> &times </a>
-                <h1>Escolha seu método de pagamento</h1>
-                <div class="select">
-                    <a href="">
-                        <img src="https://melhorenvio.com.br/images/payment/moip.png">
-                    </a>
-                    <a href="">
-                        <img src="https://melhorenvio.com.br/images/payment/mpago.png">
-                    </a>
-                    <a href="">
-                        <div class="pgsaldo">
-                            <h4>Pagar com Saldo</h4>
-                            <p>Saldo <strong>R$ 300,00</strong></p>
-                        </div>
-                    </a>
-                </div>
-                <p><strong>Escolha o método de pagamento para finalizar a sua compra</strong></p>
+        <div class="modal" v-show="show_modal">
+            <a href="javascript;" @click.prevent="toogleModal()" class="close-modal"> &times </a>
+            <h1>Escolha seu método de pagamento</h1>
+            <div class="select">
+                <a href="">
+                    <img src="https://melhorenvio.com.br/images/payment/moip.png">
+                </a>
+                <a href="">
+                    <img src="https://melhorenvio.com.br/images/payment/mpago.png">
+                </a>
+                <a href="">
+                    <div class="pgsaldo">
+                        <h4>Pagar com Saldo</h4>
+                        <p>Saldo <strong>R$ 300,00</strong></p>
+                    </div>
+                </a>
             </div>
-            <div class="message"></div>
+            <p><strong>Escolha o método de pagamento para finalizar a sua compra</strong></p>
+        </div>
+        <div class="message"></div>
 
 
     </div>
@@ -470,7 +549,12 @@
                 message:''
             },
             opcionais:{},
-            endereco:{},
+            endereco:{
+                city:{
+                    city:"",
+                    state:"",
+                },
+            },
             pedidos_checked:[],
             selected_shipment: [],
             tracking_codes:[],
@@ -495,16 +579,16 @@
 
         watch: {
             tracking_codes: function(tc){
-                    vm = this;
-                    console.log(this.tracking_codes);
-                    this.tracking_codes.forEach(function (codego) {
-                        console.log(codego);
-                        if(typeof codego === 'undefined'){
-                             vm.show_buy_button[index] = true;
-                        }else{
-                            vm.show_buy_button[index] = false;
-                        }
-                    });
+                vm = this;
+                console.log(this.tracking_codes);
+                this.tracking_codes.forEach(function (codego) {
+                    console.log(codego);
+                    if(typeof codego === 'undefined'){
+                        vm.show_buy_button[index] = true;
+                    }else{
+                        vm.show_buy_button[index] = false;
+                    }
+                });
             }
 
         },
@@ -579,11 +663,12 @@
 
             load: function(){
                 this.getUser();
-                this.getBalance();
                 this.getAddress();
+                this.getBalance();
                 this.getOptionals();
                 this.getOrders();
             },
+
 
             getAddress: function(){
                 data = {
@@ -596,7 +681,13 @@
             },
 
             getOptionals: function(){
-
+                data = {
+                    action: "wpme_ajax_getOptionsAPI"
+                };
+                vm = this;
+                jQuery.post(ajaxurl,data,function(response){
+                    vm.opcionais = JSON.parse(response);
+                });
             },
 
             getTrackings: function(){
@@ -605,7 +696,8 @@
                 this.pedidos.forEach(function (pedido){
                     var data = {
                         action:'wpme_ajax_getTrackingsData',
-                        order_id: pedido.id
+                        order_id: pedido.id,
+                        timeout:30
                     }
                     jQuery.post(ajaxurl, data, function(response) {
                         resposta = JSON.parse(response);
@@ -663,7 +755,8 @@
 
             getOrders: function(){
                 var data = {
-                    action:'wpme_ajax_getJsonOrders'
+                    action:'wpme_ajax_getJsonOrders',
+                    timeout:30
                 };
 
                 vm = this;
@@ -673,7 +766,7 @@
                     var array = [];
                     resposta.forEach(function (pedido,index) {
                         pedido.cotacoes.forEach(function (cotacao) {
-                            if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)){
+                                if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)){
                                 array[index] = cotacao.id;
                             }
                         });
@@ -700,7 +793,9 @@
                 }
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
+                    console.log(response);
                     resposta = JSON.parse(response);
+                    console.log(resposta);
                     vm.user_info.firstname = resposta.firstname;
                     vm.user_info.lastname = resposta.lastname;
                     vm.user_info.thumbnail = resposta.thumbnail;
@@ -714,6 +809,7 @@
                 }
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
+                    console.log(response);
                     resposta = JSON.parse(response);
                     vm.user_info.balance = resposta.balance;
                 });

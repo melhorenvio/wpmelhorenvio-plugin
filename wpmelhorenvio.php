@@ -140,6 +140,12 @@ if( !class_exists('WP_MelhorEnvio')):
                 echo get_option('wpme_address');
                 die();
             }
+
+            add_action('wp_ajax_wpme_ajax_getOptionsAPI','wpme_ajax_getOptionsAPI');
+            function wpme_ajax_getOptionsAPI(){
+                echo get_option('wpme_pluginconfig');
+                die();
+            }
         }
 
         /**

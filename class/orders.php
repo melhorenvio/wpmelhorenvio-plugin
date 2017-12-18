@@ -355,14 +355,11 @@ function wpme_getBalanceAPI(){
 }
 
 function wpme_getCustomerInfoAPI(){
+    $customer = new stdClass();
+    $customer->firstname = get_option("wpme_firstname");
+    $customer->lastname = get_option("wpme_lastname");
+    $customer->thumbnail = get_option("wpme_picture");
 
-    $token = get_option('wpme_token');
-    $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
-    $client = new WP_Http();
-    $response = $client->get('https://melhorenvio.com.br/api/v2/me',$params);
-    if( $response instanceof WP_Error){
-        return false;
-    }else{
-        return $response['body'];
-    }
+    echo json_encode($customer);
+
 }
