@@ -63,7 +63,7 @@
         border: none !important;
         box-shadow: none !important;
         border: solid 1px #ffffff !important;
-        background-color:transparent !important;
+        background-color:rgba(255,255,255,.05) !important;
         margin:30px 0 0;
         color: #DDDDDD !important;
         width:100%;

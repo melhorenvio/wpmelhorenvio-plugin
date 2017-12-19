@@ -415,7 +415,7 @@
         position:absolute;
         text-align: center;
         top:30%;
-        right: 33%;
+        right: 40%;
         border-radius:5px ;
         display: inline-block;
         height: 200px;
@@ -480,7 +480,7 @@
                     <img src="https://www.melhorrastreio.com.br/img/bgpdr.png" v-if="!user_info.thumbnail" width="100px">
                     <div class="about">
                         <h2>{{user_info.firstname}}</h2>
-                        <p>Saldo: R$ {{user_info.balance}}</p>
+                        <p>Saldo: R$  <strong>{{user_info.balance}}</strong></p>
                     </div>
                 </div>
             </div>
@@ -542,7 +542,6 @@
 
                 <td><input type="checkbox" v-model="pedidos_checked[pedido.id]" :value="pedido"></td>
                 <td>{{pedido.id}}
-                    {{ tracking_codes[pedido.id] }}
                 </td>
                 <td>{{pedido.date_created}}23/09/2017 </td>
                 <td>
@@ -561,9 +560,12 @@
                     </select>
                 </td>
                 <td>
-                    <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" v-if="typeof show_buy_button[pedido.id] === 'undefined' || show_buy_button[pedido.id]"> Comprar </a>
+                    <template  v-if="!pedido.tracking_code">
+                    <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Comprar </a>
+                    </template>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
-                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>
+                    <a href="javascript;" class="btn melhorenvio" @click.prevent="paySingle(pedido.id)"> Pagar </a>
+<!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
                     <a href="javascript;" class="btn imprimir"> Imprimir </a>
                     <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
@@ -634,12 +636,13 @@
             show_mask:false,
             show_modal:false,
             message:{
-                type:'error',
-                show_message:true,
+                type:'',
+                show_message:false,
                 title:'Compra efetuada',
                 message:'Sua compra foi efetuada'
             },
             opcionais:{},
+            show_button:[],
             endereco:{
                 city:{
                     city:"",
@@ -649,10 +652,6 @@
             pedidos_checked:[],
             selected_shipment: [],
             tracking_codes:[],
-            show_buy_button: [],
-            show_print_button: [],
-            show_pay_button:[],
-            show_tracking_button:[],
             page:1,
             selectallatt:false,
             perpage:10,
@@ -665,23 +664,7 @@
         },
 
         created: function(){
-            this.load()
-        },
-
-        watch: {
-            tracking_codes: function(tc){
-                vm = this;
-                console.log(this.tracking_codes);
-                tc.forEach(function (codego) {
-                    console.log(codego);
-                    if(typeof codego === 'undefined'){
-                        vm.show_buy_button[index] = true;
-                    }else{
-                        vm.show_buy_button[index] = false;
-                    }
-                });
-            }
-
+            this.load();
         },
 
         computed:{
@@ -706,6 +689,7 @@
 
 
         },
+
         methods: {
             stripcode: function(string) {
                 string = string.replace('wpme_','');
@@ -749,6 +733,14 @@
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
                     vm.addTracking(pedido.id,resposta.id);
+                    if(resposta.id != 'undefined'){
+                        tracking_codes[pedido.id] = resposta.id;
+                    }else{
+                        vm.message.title = 'Não foi possível adicionar item ao carrinho';
+                        vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho, tente novamente mais tarde';
+                        vm.message.type = 'error';
+                        vm.message.show_message = true;
+                    }
                 });
             },
 
@@ -786,7 +778,6 @@
             },
 
             getTrackings: function(){
-                this.tracking_codes = [];
                 vm = this;
                 this.pedidos.forEach(function (pedido){
                     var data = {
@@ -801,18 +792,35 @@
                             trk = tracking.tracking_id
                             vm.tracking_codes[index] = trk;
                         })
-
                     });
                 });
             },
 
-            payTicket: function(tracking_code){
+            getSpecificTracking: function(pedido){
+                var data = {
+                    action:'wpme_ajax_getTrackingsData',
+                    order_id: pedido.id,
+                    timeout:30
+                }
+                console.log(pedido);
+                jQuery.post(ajaxurl, data, function(response) {
+                    resposta = JSON.parse(response);
+                    console.log(pedido);
+                    resposta.forEach(function(tracking){
+                        trk = tracking.tracking_id;
+                        pedido.tracking_code = trk;
+                    })
+                });
+            },
+
+            payTicket: function(pedido){
                 var data = {
                     action:'wpme_ajax_payTicketAPI',
-                    orders: [tracking_code]
+                    orders: pedido.tracking_code
                 }
                 jQuery.post(ajaxurl, data, function(response) {
                     console.log(response);
+                    //TODO:Escrever a mensagem de sucesso e ou de erro
                 });
             },
 
@@ -866,16 +874,15 @@
                                 array[index] = cotacao.id;
                             }
                         });
+                        vm.getSpecificTracking(pedido);
                     });
                     vm.selected_shipment = array;
-                    vm.getTrackings();
                     }
                     catch (err){
                             vm.message.title = 'Erro ao carregar as cotações';
                             vm.message.message = 'Houve um erro ao carregar as cotações, tente novamente mais tarde.';
                             vm.message.type = 'error';
                             vm.message.show_message = true;
-
                     }
                 });
             },

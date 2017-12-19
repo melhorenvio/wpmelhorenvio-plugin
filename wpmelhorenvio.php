@@ -44,12 +44,10 @@ if( !class_exists('WP_MelhorEnvio')):
                 //Registrando a integração
                 add_filter('woocommerce_integrations',array($this, 'me_add_integration'));
                 //Criando os links no Menu
-                add_action("admin_menu", "me_addMenu");
-                function me_addMenu(){
-                    add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpme_melhor-envio","pedidos", plugin_dir_url( __FILE__ )."data/mo.png");
+                add_action("admin_menu", "wpme_addMenu");
+                function wpme_addMenu(){
+                    add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpme_melhor-envio","", plugin_dir_url( __FILE__ )."data/mo.png");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpme_melhor-envio-requests", "wpme_pedidos");
-                    add_submenu_page("wpme_pedidos","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpme_melhor-envio-request", "pedido");
-                    add_submenu_page("wpme_pedidos","Melhor Envio - Relatório", "Relatório", "administrator", "wpme_melhor-envio-relato", "relatorio");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpme_melhor-envio-config", "wpme_config");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações da Conta", "Sua Conta Melhor Envio", "administrator", "wpme_melhor-envio-subscription", "wpme_cadastro");
                 }
@@ -58,10 +56,16 @@ if( !class_exists('WP_MelhorEnvio')):
                     include_once 'views/apikey.php';
                 }
                 function wpme_config(){
+                    if( get_option("wpme_token") == null){
+                        wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpme_melhor-envio-subscription"));
+                    }
                     include_once 'class/config.php';
                     include_once 'views/address.php';
                 }
                 function wpme_pedidos(){
+                    if( get_option("wpme_token") == null){
+                        wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpme_melhor-envio-subscription"));
+                    }
                     include_once 'class/orders.php';
                     include_once 'views/pedidos.php';
                 }
