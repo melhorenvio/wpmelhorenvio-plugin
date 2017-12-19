@@ -1,5 +1,34 @@
 <style>
 
+
+    .loader{
+        position: absolute;
+        right: 44%;
+        top: 40%;
+        z-index: 1;
+        width: 150px;
+        height: 150px;
+        display: block;
+        border: solid 30px rgba(100,100,100,.1);
+        border-top-color:rgba(100,100,200,1) ;
+        border-bottom-color:rgba(100,100,200,1) ;
+        border-radius: 50%;
+        animation:load 2s linear infinite ;
+    }
+    
+    @keyframes load {
+        0%{
+            transform: rotate(0deg);
+
+        }
+
+        100%{
+            transform: rotate(359deg);
+        }
+    }
+
+
+
     .mask{
         width: 100vw;
         height: 100vh;
@@ -382,8 +411,66 @@
         display: inline-block;
     }
 
+    .wpme_message{
+        position:absolute;
+        text-align: center;
+        top:30%;
+        right: 33%;
+        border-radius:5px ;
+        display: inline-block;
+        height: 200px;
+        width: 500px;
+        max-width: 80%;
+        background-color: rgba(244,255,255,.95);
+    }
+
+    .wpme_message_header{
+        font-size:1.65rem;
+        padding: 23px;
+    }
+
+    .wpme_success{
+        color:rgba(80,199,100,1);
+    }
+
+    .wpme_error{
+        color:rgba(199,80,100,1);
+    }
+
+    .wpme_message_body{
+        vertical-align: middle;
+        padding: 10px 15px 30px;
+
+    }
+
+    .wpme_message_action a{
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 1.05rem;
+        display: inline-block;
+        padding: 10px 24px;
+        border: solid 1px rgba(100,110,150,1);
+        color: rgba(100,110,150,1);;
+        bottom: 10px;
+    }
+
+    .wpme_message_action a:hover{
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 1.05rem;
+        display: inline-block;
+        padding: 10px 24px;
+        border: solid 1px rgba(100,110,150,1);
+        background-color: rgba(100,110,150,1);
+        color: rgba(250,250,250,1);;
+        bottom: 10px;
+    }
+
 </style>
 <div id="app">
+<!--    <div class="loader">-->
+<!---->
+<!--    </div>-->
     <div>
         <div class="data_client">
             <div>
@@ -422,12 +509,10 @@
                         <li>  Porcentagem de lucro {{opcionais.PL}}%</li>
                         <li>  Valor Decladado:<span class="circle" :class="{'true' : opcionais.VD}"> </span></li>
                     </ul>
-
-
-
-
                 </div>
             </div>
+            <div><a href="<?= get_admin_url(get_current_blog_id(),"/admin.php?page=melhor-envio-config")?>">Editar configurações</a></div>
+
         </div>
         <table>
             <thead>
@@ -527,7 +612,12 @@
             </div>
             <p><strong>Escolha o método de pagamento para finalizar a sua compra</strong></p>
         </div>
-        <div class="message"></div>
+        <div class="mask" v-if="message.show_message" @click.prevent="toogleMessage"></div>
+        <div class="wpme_message" v-if="message.show_message" >
+            <div class="wpme_message_header" :class="{'wpme_success': message.type == 'success', 'wpme_error': message.type == 'error'}">{{message.title}}</div>
+            <div class="wpme_message_body">{{message.message}}</div>
+            <div class="wpme_message_action"><a href="javascript;" @click.prevent="toogleMessage">Entendi</a></div>
+        </div>
 
 
     </div>
@@ -541,12 +631,13 @@
             message: 'Hello Vue!',
             pedidos: [],
             total:0,
-            show_mask:true,
-            show_modal:true,
+            show_mask:false,
+            show_modal:false,
             message:{
-                show_message:false,
-                title:'',
-                message:''
+                type:'error',
+                show_message:true,
+                title:'Compra efetuada',
+                message:'Sua compra foi efetuada'
             },
             opcionais:{},
             endereco:{
@@ -581,7 +672,7 @@
             tracking_codes: function(tc){
                 vm = this;
                 console.log(this.tracking_codes);
-                this.tracking_codes.forEach(function (codego) {
+                tc.forEach(function (codego) {
                     console.log(codego);
                     if(typeof codego === 'undefined'){
                         vm.show_buy_button[index] = true;
@@ -624,6 +715,10 @@
             toogleModal: function(){
                 this.show_mask = !this.show_mask;
                 this.show_modal = !this.show_modal;
+            },
+
+            toogleMessage: function(){
+                this.message.show_message = !this.message.show_message;
             },
 
             addToCart: function(ind){
@@ -764,6 +859,7 @@
                     resposta = JSON.parse(response);
                     vm.pedidos = resposta;
                     var array = [];
+                  try{
                     resposta.forEach(function (pedido,index) {
                         pedido.cotacoes.forEach(function (cotacao) {
                                 if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)){
@@ -773,6 +869,14 @@
                     });
                     vm.selected_shipment = array;
                     vm.getTrackings();
+                    }
+                    catch (err){
+                            vm.message.title = 'Erro ao carregar as cotações';
+                            vm.message.message = 'Houve um erro ao carregar as cotações, tente novamente mais tarde.';
+                            vm.message.type = 'error';
+                            vm.message.show_message = true;
+
+                    }
                 });
             },
 
@@ -809,8 +913,14 @@
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
                     console.log(response);
-                    resposta = JSON.parse(response);
-                    vm.user_info.balance = resposta.balance;
+                   try{resposta = JSON.parse(response);
+                       vm.user_info.balance = resposta.balance;
+                   }catch (err){
+                       vm.message.title = 'Erro ao carregar seus dados';
+                       vm.message.message = 'Erro ao carregar seus dados, tente novamente mais tarde.';
+                       vm.message.type = 'error';
+                       vm.message.show_message = true;
+                   }
                 });
             }
 

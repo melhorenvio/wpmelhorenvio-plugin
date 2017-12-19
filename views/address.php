@@ -361,6 +361,13 @@ if(isset($_POST['submit'])){
             </div>
         </div>
     </div>
+    <div class="wpme_flex">
+        <ul class="wpme_company">
+            <div class="wpme_company-top">
+<!--                <h2>--><?//= $company->name?><!--</h2>-->
+            </div>
+        </ul>
+    </div>
     <div class="wpme_basepadding">
         <h2>Selecione seus métodos de envio</h2>
         <ul class="wpme_options">
