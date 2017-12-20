@@ -562,19 +562,18 @@
                     </select>
                 </td>
                 <td>
-                    <template  v-if="pedido.status != 'cart'">
+                    <template  v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed'">
                     <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Comprar </a>
                     </template>
                     <template v-if="pedido.status == 'cart'">
                         <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
-                    </template>
-                    <template v-if="pedido.status == 'cart'">
-                    <a href="javascript;" class="btn cancelar" @click.prevent="removeFromCart(i)" > Remover </a>
+                        <a href="javascript;" class="btn cancelar" @click.prevent="removeFromCart(i)" > Remover </a>
                     </template>
                         <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
                         <!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
                     <template v-if="pedido.status == 'paid'">
                     <a href="javascript;" class="btn imprimir"> Imprimir </a>
+                    <a href="javascript;" class="btn cancelar" @click.prevent="cancelTicket(i)" > Cancelar </a>
                     </template>
                         <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
@@ -784,11 +783,9 @@
                 });
             },
 
-            openSinglePaymentSelector: function(order_id,index){
+            openSinglePaymentSelector: function(index){
                 this.payment_tracking_codes = [];
-                this.payment_tracking_codes.push({
-                    "order_id":order_id,
-                    "tracking":index});
+                this.payment_tracking_codes.push(index);
                 this.toogleModal();
             },
 
@@ -814,7 +811,7 @@
                         resposta = JSON.parse(response);
                         resposta.forEach(function(tracking){
                             index = tracking.order_id;
-                            trk = tracking.tracking_id
+                            trk = data.tracking.tracking_id
                             vm.tracking_codes[index] = trk;
                         })
                     });
@@ -847,6 +844,8 @@
                     gateway: payment_method
 
                 }
+
+                console.log(data);
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
                     vm.toogleModal();
@@ -859,7 +858,11 @@
                      vm.message.show_message = true;
                     }else{
                         data.orders.forEach(function(order){
-                            vm.updateTracking(order.tracking,'paid');
+                            vm.updateTracking(order,'paid');
+                            vm.pedidos_page.forEach( function (pedido) {
+                                if(pedido.tracking_codes == order.tracking)
+                                    pedido.status = 'paid';
+                            });
                         });
 
                         vm.user_info.balance = vm.user_info.balance - resposta.purchase.total;
