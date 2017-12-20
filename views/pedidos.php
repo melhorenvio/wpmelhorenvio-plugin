@@ -50,7 +50,7 @@
         width: 800px;
         margin:auto;
         left: 25%;
-        top: 30%;
+        top: 20%;
         height: 290px;
         padding: 20px;
         text-align: center;
@@ -566,7 +566,7 @@
                     <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Comprar </a>
                     </template>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
-                    <a href="javascript;" class="btn melhorenvio" @click.prevent="paySingle(pedido.id)"> Pagar </a>
+                    <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(i)"> Pagar </a>
 <!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
                     <a href="javascript;" class="btn imprimir"> Imprimir </a>
                     <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
@@ -601,13 +601,13 @@
             <a href="javascript;" @click.prevent="toogleModal()" class="close-modal"> &times </a>
             <h1>Escolha seu método de pagamento</h1>
             <div class="select">
-                <a href="">
+                <a href="" @click.prevent="">
                     <img src="https://melhorenvio.com.br/images/payment/moip.png">
                 </a>
-                <a href="">
+                <a href="" @click.prevent="">
                     <img src="https://melhorenvio.com.br/images/payment/mpago.png">
                 </a>
-                <a href="">
+                <a href="" @click.prevent="">
                     <div class="pgsaldo">
                         <h4>Pagar com Saldo</h4>
                         <p>Saldo <strong>R$ 300,00</strong></p>
@@ -632,7 +632,7 @@
     var app = new Vue({
         el: '#app',
         data: {
-            message: 'Hello Vue!',
+            payment_tracking_codes:[],
             pedidos: [],
             total:0,
             show_mask:false,
@@ -774,6 +774,16 @@
                 });
             },
 
+            openSinglePaymentSelector: function(index){
+                this.payment_tracking_codes = [];
+                this.payment_tracking_codes.push(index);
+                this.toogleModal();
+            },
+
+            paySingle: function(modo_pagamento){
+
+            },
+
             getOptionals: function(){
                 data = {
                     action: "wpme_ajax_getOptionsAPI"
@@ -821,10 +831,12 @@
                 });
             },
 
-            payTicket: function(pedido){
+            payTicket: function(payment_method){
                 var data = {
                     action:'wpme_ajax_payTicketAPI',
-                    orders: pedido.tracking_code
+                    orders: this.payment_tracking_codes,
+                    gateway: payment_method
+
                 }
                 jQuery.post(ajaxurl, data, function(response) {
                     console.log(response);

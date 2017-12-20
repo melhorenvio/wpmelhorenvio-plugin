@@ -193,7 +193,7 @@ function wpme_payTicket(){
 
     $object = new stdClass();
     $object->orders     = $_POST['orders'];
-//    $object->gateway    = isset($_POST['gateway'])?$_POST['gateway']:'';
+    $object->gateway    = isset($_POST['gateway'])? $_POST['gateway']: null;
 //    $object->redirect   = $_POST['redirect'];
     $json_object = json_encode($object);
     $params = array(
