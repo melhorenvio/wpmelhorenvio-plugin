@@ -784,9 +784,11 @@
                 });
             },
 
-            openSinglePaymentSelector: function(index){
+            openSinglePaymentSelector: function(order_id,index){
                 this.payment_tracking_codes = [];
-                this.payment_tracking_codes.push(index);
+                this.payment_tracking_codes.push({
+                    "order_id":order_id,
+                    "tracking":index});
                 this.toogleModal();
             },
 
