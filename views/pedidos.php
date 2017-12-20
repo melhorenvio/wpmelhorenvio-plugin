@@ -566,8 +566,10 @@
                     <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Comprar </a>
                     </template>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
+                    <template v-if="pedido.tracking_code">
                     <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(i)"> Pagar </a>
-<!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
+                    </template>
+                        <!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
                     <a href="javascript;" class="btn imprimir"> Imprimir </a>
                     <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
