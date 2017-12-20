@@ -150,6 +150,14 @@ if( !class_exists('WP_MelhorEnvio')):
                 echo get_option('wpme_pluginconfig');
                 die();
             }
+
+            add_action('wp_ajax_wpme_ajax_updateStatusData','wpme_ajax_updateStatusData');
+            function wpme_ajax_updateStatusData(){
+                echo wpme_updateTrackingData();
+                die();
+            }
+
+
         }
 
         /**

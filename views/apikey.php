@@ -76,7 +76,7 @@
         box-shadow: none !important;
         border: solid 1px #bbddff !important;
         transition: 100ms;
-        background-color:transparent !important;
+        background-color:rgba(205,205,255,0.08) !important;
         margin:29px 0 0;
         width:100%;
     }

@@ -25,10 +25,10 @@ function wpme_getCotacao($package){
             'height'    => $pacote->height,
             'length'    => $pacote->length,
             'weight'    => $pacote->weight,
-            'services'  => wpme_getSavedServices(),
             'receipt'   => $opcionais->AR,
             'own_hand'  => $opcionais->MP,
-            'insurance_value' => $seguro
+            'insurance_value' => $seguro,
+            'services'  => wpme_getSavedServices()
         ],
         'timeout'=>10);
 
@@ -73,8 +73,17 @@ function wpme_getTo($package){
 
 function wpme_getOptionals(){
     $optionals = json_decode(get_option('wpme_pluginconfig'));
-    $optionals->PL = $optionals->PL ? 1 : 0;
-    $optionals->DE = $optionals->DE ? 1 : 0;
+    $optionals->AR = $optionals->AR? 'true' : 'false';
+    $optionals->MP = $optionals->MP? 'true' : 'false';
+    $optionals->PL = is_numeric($optionals->PL)? $optionals->PL : 0;
+    $optionals->DE = is_numeric($optionals->DE)? $optionals->DE : 0;
+    return $optionals;
+}
+
+function wpme_getPostOptionals(){
+    $optionals = json_decode(get_option('wpme_pluginconfig'));
+    $optionals->PL = is_numeric($optionals->PL)? $optionals->PL : 0;
+    $optionals->DE = is_numeric($optionals->DE)? $optionals->DE : 0;
     return $optionals;
 }
 

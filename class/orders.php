@@ -116,7 +116,6 @@ function wpme_getCustomerCotacaoAPI($order){
     $client = new WP_Http();
 
     $pacote = wpme_getPackageInternal($order);
-
     $cep_origin = wpme_getFrom();
     $token = get_option('wpme_token');
     $cep_destination = $order['shipping']['postcode'];
@@ -193,8 +192,12 @@ function wpme_payTicket(){
 
     $object = new stdClass();
     $object->orders     = $_POST['orders'];
-    $object->gateway    = isset($_POST['gateway'])? $_POST['gateway']: null;
-//    $object->redirect   = $_POST['redirect'];
+
+    if($_POST['gateway'] != "99"){
+        $object->gateway =  $_POST['gateway'];
+    }
+
+//  $object->redirect   = $_POST['redirect'];
     $json_object = json_encode($object);
     $params = array(
         'headers'           =>  [
@@ -281,7 +284,7 @@ function wpme_getObjectPackage(){
 
 function wpme_getObjectOptions(){
 
-    $options = wpme_getOptionals();
+    $options = wpme_getPostOptionals();
     $return = new stdClass();
     if($options->VD){
         $return->insurance_value = $_POST['valor_declarado'];
@@ -307,6 +310,15 @@ function wpme_addTrackingAPI(){
     $tracking = $_POST['tracking'];
     $service = $_POST['service'];
     echo json_encode(wpme_data_insertTracking($order_id, $tracking,$service));
+}
+
+function wpme_removeFromCart(){
+}
+
+function wpme_updateTrackingData(){
+    $tracking_code = $_POST['tracking_code'];
+    $status = $_POST['status'];
+    echo json_encode(wpme_data_updateTracking($tracking_code,$status));
 }
 
 function wpme_deleteTrackingAPI(){

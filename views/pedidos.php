@@ -164,14 +164,14 @@
         padding: 8px 18px;
         margin: 13px 4px;
         text-decoration: none;
-        border: solid 1px rgba(130,130,190,.6);
+        border: solid 1px rgba(130,130,220,.9);
         border-radius:25px;
-        color: rgba(130,100,190,.9);
+        color: rgba(130,120,220,.9);
         transition: 200ms;
     }
 
     .btn:hover{
-        background-color: rgba(130,130,190,1);
+        background-color: rgba(130,130,220,.9);
         color: rgba(255,255,255,.99);
         transition: 200ms;
     }
@@ -196,12 +196,12 @@
         color: rgba(255,255,255,.9);
     }
 
-    .btn.imprimir{
+    .btn.cancelar{
         border:solid 1px rgba(160,10,50,.6);
         color: rgba(160,10,40,.6);
     }
 
-    .btn.imprimir:hover{
+    .btn.cancelar:hover{
         background-color: rgba(150,10,50,.6);
         border:solid 1px rgba(160,10,50,.1);
         color: rgba(255,255,255,.9);
@@ -439,7 +439,7 @@
 
     .wpme_message_body{
         vertical-align: middle;
-        padding: 10px 15px 30px;
+        padding: 10px 15px 10px;
 
     }
 
@@ -562,28 +562,33 @@
                     </select>
                 </td>
                 <td>
-                    <template  v-if="!pedido.tracking_code">
+                    <template  v-if="pedido.status != 'cart'">
                     <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Comprar </a>
                     </template>
-                    <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
-                    <template v-if="pedido.tracking_code">
-                    <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(i)"> Pagar </a>
+                    <template v-if="pedido.status == 'cart'">
+                        <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
                     </template>
+                    <template v-if="pedido.status == 'cart'">
+                    <a href="javascript;" class="btn cancelar" @click.prevent="removeFromCart(i)" > Remover </a>
+                    </template>
+                        <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
                         <!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
+                    <template v-if="pedido.status == 'paid'">
                     <a href="javascript;" class="btn imprimir"> Imprimir </a>
-                    <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
+                    </template>
+                        <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
             </tr>
             </tbody>
             <tfoot>
             <tr>
-
-                <td colspan="3">
+                <td></td>
+                <td colspan="2">
                     <a href="javascript;" class="btn comprar-hard"> Comprar </a>
 
                     <a href="javascript;" class="btn melhorenvio"> Pagar </a>
 
-                    <a href="javascript;" class="btn imprimir"> Imprimir </a>
+<!--                    <a href="javascript;" class="btn cancelar"> Imprimir </a>-->
                 </td>
                 <td></td>
                 <td colspan="2">
@@ -603,16 +608,16 @@
             <a href="javascript;" @click.prevent="toogleModal()" class="close-modal"> &times </a>
             <h1>Escolha seu método de pagamento</h1>
             <div class="select">
-                <a href="" @click.prevent="">
+                <a href="" @click.prevent="payTicket(1)">
                     <img src="https://melhorenvio.com.br/images/payment/moip.png">
                 </a>
-                <a href="" @click.prevent="">
+                <a href="" @click.prevent="payTicket(2)">
                     <img src="https://melhorenvio.com.br/images/payment/mpago.png">
                 </a>
-                <a href="" @click.prevent="">
+                <a href="" @click.prevent="payTicket(99)">
                     <div class="pgsaldo">
                         <h4>Pagar com Saldo</h4>
-                        <p>Saldo <strong>R$ 300,00</strong></p>
+                        <p>Saldo <strong>{{user_info.balance}}</strong></p>
                     </div>
                 </a>
             </div>
@@ -735,11 +740,14 @@
                     line_items: pedido.line_items
                 }
                 jQuery.post(ajaxurl, data, function(response) {
+                    console.log(response);
                     resposta = JSON.parse(response);
-                    vm.addTracking(pedido.id,resposta.id,data.service_id);
-                    if(resposta.id != 'undefined'){
+                    if(typeof resposta.id != 'undefined'){
+                        vm.addTracking(pedido.id,resposta.id,data.service_id);
                         pedido.tracking_code = resposta.id;
                         pedido.bought_tracking = data.service_id;
+                        pedido.status = 'cart';
+
                         vm.message.title = 'Envio adicionado ao carrinho';
                         vm.message.message = 'Este envio foi adicionado ao seu carrinho, clique em pagar para gerar a sua etiqueta.';
                         vm.message.type = 'success';
@@ -780,10 +788,6 @@
                 this.payment_tracking_codes = [];
                 this.payment_tracking_codes.push(index);
                 this.toogleModal();
-            },
-
-            paySingle: function(modo_pagamento){
-
             },
 
             getOptionals: function(){
@@ -829,6 +833,7 @@
                         trk = tracking.tracking_id;
                         pedido.tracking_code = trk;
                         pedido.bought_tracking = tracking.service_id;
+                        pedido.status = tracking.status;
                     })
                 });
             },
@@ -840,10 +845,42 @@
                     gateway: payment_method
 
                 }
+                vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
+                    vm.toogleModal();
                     console.log(response);
+                    resposta = JSON.parse(response)
+                    if(typeof resposta.error !== 'undefined'){
+                     vm.message.title="Pagamento não efeituado";
+                     vm.message.message=resposta.error;
+                     vm.message.type = 'error';
+                     vm.message.show_message = true;
+                    }else{
+                        data.orders.forEach(function(order){
+                            vm.updateTracking(order.tracking,'paid');
+                        });
+
+                        vm.user_info.balance = vm.user_info.balance - resposta.purchase.total;
+                        vm.message.title="Pagamento feito com sucesso";
+                        vm.message.message="Seu pagamento foi efetuado com sucesso";
+                        vm.message.type = 'success';
+                        vm.message.show_message = true;
+                    }
                     //TODO:Escrever a mensagem de sucesso e ou de erro
                 });
+            },
+
+            updateTracking: function(tracking_code,status){
+                var data = {
+                    action: "wpme_ajax_updateStatusData",
+                    tracking_code:tracking_code,
+                    status:status
+                }
+                jQuery.post(ajaxurl, data, function(response) {
+                    resposta = JSON.parse(response);
+                    console.log(resposta);
+                });
+
             },
 
             getTracking: function(){
@@ -851,17 +888,13 @@
                 this.pedidos.forEach(function (pedido) {
                     tracking_codes.push(pedido.id);
                 });
-
                 var data = {
                     action:'wpme_ajax_getTrackingAPI',
                     tracking_codes: tracking_codes
                 }
-
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
                 });
-
-
             },
 
             addTracking: function(order_id,tracking,service){
