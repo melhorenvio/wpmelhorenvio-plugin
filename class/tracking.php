@@ -13,10 +13,10 @@ function wpme_data_getTracking($id){
     return $wpdb->get_results($sql);
 }
 
-function wpme_data_insertTracking($id,$tracking){
+function wpme_data_insertTracking($id,$tracking,$service){
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     global $wpdb;
-    $sql = "INSERT INTO {$wpdb->prefix}tracking_codes_wpme (order_id,tracking_id) VALUES ('{$id}','{$tracking}')";
+    $sql = "INSERT INTO {$wpdb->prefix}tracking_codes_wpme (order_id,tracking_id,service_id) VALUES ('{$id}','{$tracking}','{$service}')";
     return $wpdb->query($sql);
 }
 

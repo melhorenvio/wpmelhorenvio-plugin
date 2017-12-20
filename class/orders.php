@@ -305,7 +305,8 @@ function wpme_getObjectOptions(){
 function wpme_addTrackingAPI(){
     $order_id = $_POST['order_id'];
     $tracking = $_POST['tracking'];
-    echo json_encode(wpme_data_insertTracking($order_id, $tracking));
+    $service = $_POST['service'];
+    echo json_encode(wpme_data_insertTracking($order_id, $tracking,$service));
 }
 
 function wpme_deleteTrackingAPI(){

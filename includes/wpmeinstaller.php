@@ -20,6 +20,7 @@ function wpme_install_table()
             `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
             `order_id` varchar(255) NOT NULL,
             `tracking_id` varchar(255) DEFAULT NULL,
+            `service_id` VARCHAR (255) DEFAULT NULL,
             PRIMARY KEY (id)
         ) {$charset_collate};";
     $wpdb->query($sql);

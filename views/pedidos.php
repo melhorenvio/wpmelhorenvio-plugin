@@ -552,7 +552,9 @@
                     </ul>
                 </td>
                 <td>
-                    <select class="select" v-model="selected_shipment[i]">
+                    <span v-if="pedido.bought_tracking"  v-for="cotacao in pedido.cotacoes"><template v-if="(cotacao.id == pedido.bought_tracking)">{{cotacao.company.name}} {{cotacao.name}} |  {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</template></span>
+
+                    <select class="select" v-model="selected_shipment[i]" v-if="!pedido.bought_tracking">
                         <option v-for="cotacao in pedido.cotacoes"
                                 v-if="(! cotacao.error )"
                                 :class="{'selected': pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}" :value="cotacao.id"
@@ -732,9 +734,14 @@
                 }
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
-                    vm.addTracking(pedido.id,resposta.id);
+                    vm.addTracking(pedido.id,resposta.id,data.service_id);
                     if(resposta.id != 'undefined'){
-                        tracking_codes[pedido.id] = resposta.id;
+                        pedido.tracking_code = resposta.id;
+                        pedido.bought_tracking = data.service_id;
+                        vm.message.title = 'Envio adicionado ao carrinho';
+                        vm.message.message = 'Este envio foi adicionado ao seu carrinho, clique em pagar para gerar a sua etiqueta.';
+                        vm.message.type = 'success';
+                        vm.message.show_message = true;
                     }else{
                         vm.message.title = 'Não foi possível adicionar item ao carrinho';
                         vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho, tente novamente mais tarde';
@@ -809,6 +816,7 @@
                     resposta.forEach(function(tracking){
                         trk = tracking.tracking_id;
                         pedido.tracking_code = trk;
+                        pedido.bought_tracking = tracking.service_id;
                     })
                 });
             },
@@ -842,11 +850,12 @@
 
             },
 
-            addTracking: function(order_id,tracking){
+            addTracking: function(order_id,tracking,service){
                 var data = {
                     action: "wpme_ajax_addTrackingAPI",
                     order_id:order_id,
-                    tracking:tracking
+                    tracking:tracking,
+                    service: service
                 }
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
