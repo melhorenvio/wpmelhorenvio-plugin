@@ -213,6 +213,30 @@ function wpme_payTicket(){
 
 }
 
+function wpme_cancelTicketAPI(){
+    $trk = $_POST['tracking'];
+    $client = new WP_Http();
+    $token = get_option('wpme_token');
+
+    $object[0] = new stdClass();
+    $object[0]->id = $trk[0];
+    $object[0]->reason_id = 2;
+    $object[0]->description = 'Cancelado via Plugin';
+
+    $json_object = json_encode($object);
+    $params = array(
+        'headers'           =>  [
+            'Content-Type'  => 'application/json',
+            'Accept'        =>  'application/json',
+            'Authorization' =>  'Bearer '.$token
+        ],
+        'body'  => $json_object,
+        'timeout'=>10);
+    $response = $client->post('https://melhorenvio.com.br/api/v2/me/shipment/cancel',$params);
+    return $response['body'];
+}
+
+
 function wpme_getObjectFrom(){
     $from = wpme_getFrom();
     $address = json_decode(get_option('wpme_address'));

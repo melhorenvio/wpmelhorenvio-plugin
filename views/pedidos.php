@@ -59,6 +59,37 @@
         overflow: auto;
     }
 
+    .modal a.btn.cancelar{
+        border-radius: 30px;
+        height: 50px;
+        padding: 15px;
+        color:rgba(159,80,100,1);
+        font-size: 1.2rem;
+        border:solid 2px rgba(159,80,100,1);
+    }
+
+    .modal a.btn.cancelar:hover{
+        background-color: rgba(159,80,100,1);
+        color: rgba(250,250,250,.9);
+        border:solid 2px rgba(100,100,100,0.1);
+    }
+
+    .modal a.btn{
+        margin: 30px 15px;
+        border-radius: 30px;
+        height: 50px;
+        padding: 15px;
+        font-size: 1.2rem;
+        border:solid 2px rgba(100,100,100,0.8);
+        color: rgba(100,100,100,0.8);
+    }
+
+    .modal a.btn:hover{
+        background-color: rgba(100,100,100,0.8);
+        color: rgba(255,255,255,.9);
+        border:solid 2px rgba(100,100,100,0.1);
+    }
+
     .modal .select{
         display: flex;
         flex-wrap: wrap;
@@ -109,6 +140,7 @@
     }
 
     .modal .close-modal ,.modal .close-modal:focus {
+        color:rgba(100,100,100,.8);
         position: absolute;
         font-size: 3.100rem;
         text-decoration: none;
@@ -117,6 +149,7 @@
         height: 10px;
         top: 0px;
         right: 10px;
+        box-shadow: none;
     }
 
     table{
@@ -567,13 +600,13 @@
                     </template>
                     <template v-if="pedido.status == 'cart'">
                         <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
-                        <a href="javascript;" class="btn cancelar" @click.prevent="removeFromCart(i)" > Remover </a>
+                        <a href="javascript;" class="btn cancelar" @click.prevent="showCon" > Remover </a>
                     </template>
                         <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
                         <!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
                     <template v-if="pedido.status == 'paid'">
                     <a href="javascript;" class="btn imprimir"> Imprimir </a>
-                    <a href="javascript;" class="btn cancelar" @click.prevent="cancelTicket(i)" > Cancelar </a>
+                    <a href="javascript;" class="btn cancelar" @click.prevent="openCancelTicketConfirmer(pedido.tracking_code)" > Cancelar </a>
                     </template>
                         <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
@@ -622,6 +655,17 @@
             </div>
             <p><strong>Escolha o método de pagamento para finalizar a sua compra</strong></p>
         </div>
+        <div class="mask" v-show="show_confirm_mask" @click.prevent="toogleConfirmer">
+        </div>
+        <div class="modal" v-show="show_confirm_modal">
+            <a href="javascript;" @click.prevent="toogleConfirmer" class="close-modal"> &times </a>
+            <h1 class="wpme_error">Você tem certeza que deseja cancelar?</h1>
+            <p>Ao clicar em "Quero Cancelar" a etiqueta se torna inutilizavel.</p>
+            <a href="javascript;" class="btn cancelar" @click.prevent="cancelTicket()">Quero cancelar</a>  <a href="javascript;" @click.prevent="toogleConfirmer" class="btn">Fechar</a>
+
+        </div>
+
+
         <div class="mask" v-if="message.show_message" @click.prevent="toogleMessage"></div>
         <div class="wpme_message" v-if="message.show_message" >
             <div class="wpme_message_header" :class="{'wpme_success': message.type == 'success', 'wpme_error': message.type == 'error'}">{{message.title}}</div>
@@ -668,7 +712,11 @@
                 lastname:'',
                 thumbnail:'',
                 balance:''
-            }
+            },
+            cancel_tracking_codes: [],
+            show_confirm_modal:false,
+            show_confirm_mask:false,
+
         },
 
         created: function(){
@@ -707,6 +755,11 @@
             toogleModal: function(){
                 this.show_mask = !this.show_mask;
                 this.show_modal = !this.show_modal;
+            },
+
+            toogleConfirmer: function(){
+                this.show_confirm_mask = !this.show_confirm_mask;
+                this.show_confirm_modal = !this.show_confirm_modal;
             },
 
             toogleMessage: function(){
@@ -787,6 +840,34 @@
                 this.payment_tracking_codes = [];
                 this.payment_tracking_codes.push(index);
                 this.toogleModal();
+            },
+
+            openCancelTicketConfirmer: function(tracking){
+                this.cancel_tracking_codes = []
+                this.cancel_tracking_codes.push(tracking);
+                this.toogleConfirmer();
+            },
+
+            cancelTicket: function(){
+                this.toogleConfirmer();
+                data = {
+                    action: 'wpme_ajax_cancelTicketAPI',
+                    tracking: this.cancel_tracking_codes
+                }
+                vm = this;
+                jQuery.post(ajaxurl,data,function(response){
+                    console.log(response);
+                    reposta = JSON.parse(response);
+
+                    if(resposta.cancelled){
+                        vm.message.title = "Etiqueta cancelada com sucesso";
+                    }else{
+                        vm.message.title = "Não foi possível cancelar esta etiqueta";
+                        vm.message.message = "Infelizmente não é possível cancelar esta etiqueta";
+                        vm.message.type= "error";
+                        vm.message.show_message = true;
+                    }
+                });
             },
 
             getOptionals: function(){

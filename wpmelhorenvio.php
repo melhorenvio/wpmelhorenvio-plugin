@@ -157,6 +157,12 @@ if( !class_exists('WP_MelhorEnvio')):
                 die();
             }
 
+            add_action('wp_ajax_wpme_ajax_cancelTicketAPI','wpme_ajax_cancelTicketAPI');
+            function wpme_ajax_cancelTicketAPI(){
+                echo wpme_cancelTicketAPI();
+                die();
+            }
+
 
         }
 
