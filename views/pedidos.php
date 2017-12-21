@@ -941,7 +941,7 @@
                         data.orders.forEach(function(order){
                             vm.updateTracking(order,'paid');
                             vm.pedidos_page.forEach( function (pedido) {
-                                if(pedido.tracking_codes == order.tracking)
+                                if(pedido.tracking_code == order)
                                     pedido.status = 'paid';
                             });
                         });
