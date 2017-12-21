@@ -111,7 +111,6 @@ function wpme_buyShipment(){
 
 }
 
-
 function wpme_getCustomerCotacaoAPI($order){
     $client = new WP_Http();
 
@@ -143,7 +142,6 @@ function wpme_getCustomerCotacaoAPI($order){
     return is_array($response) ?  $response['body'] : [];
 }
 
-
 function wpme_getPackageInternal($package){
     $volume =0;
     $weight =0;
@@ -167,7 +165,6 @@ function wpme_getPackageInternal($package){
     return $pacote;
 }
 
-
 function wpme_ticketAcquirementAPI(){
     $object = wpme_buyShipment();
     $token = get_option('wpme_token');
@@ -184,7 +181,6 @@ function wpme_ticketAcquirementAPI(){
     $response = $client->post('https://melhorenvio.com.br/api/v2/me/cart',$params);
     return $response['body'];
 }
-
 
 function wpme_payTicket(){
     $client = new WP_Http();
@@ -235,7 +231,6 @@ function wpme_cancelTicketAPI(){
     $response = $client->post('https://melhorenvio.com.br/api/v2/me/shipment/cancel',$params);
     return $response['body'];
 }
-
 
 function wpme_getObjectFrom(){
     $from = wpme_getFrom();
@@ -336,16 +331,13 @@ function wpme_addTrackingAPI(){
     echo json_encode(wpme_data_insertTracking($order_id, $tracking,$service));
 }
 
-function wpme_removeFromCart(){
-}
-
 function wpme_updateTrackingData(){
     $tracking_code = $_POST['tracking_code'];
     $status = $_POST['status'];
     echo json_encode(wpme_data_updateTracking($tracking_code,$status));
 }
 
-function wpme_deleteTrackingAPI(){
+function wpme_removeFromCart(){
 
 }
 
@@ -355,10 +347,25 @@ function wpme_getTrackingsData(){
 //    var_dump(wpme_data_getTracking($order_id));
 }
 
-
-
 function wpme_ticketPrintingAPI(){
+    $trk = $_POST['tracking'];
+    $client = new WP_Http();
+    $token = get_option('wpme_token');
 
+    $object = new stdClass();
+    $object->orders = $trk;
+
+    $json_object = json_encode($object);
+    $params = array(
+        'headers'           =>  [
+            'Content-Type'  => 'application/json',
+            'Accept'        =>  'application/json',
+            'Authorization' =>  'Bearer '.$token
+        ],
+        'body'  => $json_object,
+        'timeout'=>10);
+    $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/preview?pretty',$params);
+    return $response['body'];
 }
 
 function wpme_getTrackingAPI(){
@@ -377,7 +384,6 @@ function wpme_getTrackingAPI(){
     $response = $client->post('https://melhorenvio.com.br/api/v2/me/shipment/tracking',$params);
     echo json_encode($response);
 }
-
 
 function wpme_getBalanceAPI(){
     $token = get_option('wpme_token');

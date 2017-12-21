@@ -92,7 +92,7 @@ if( !class_exists('WP_MelhorEnvio')):
                 die();
 
             }
-            add_action( 'wp_ajax_wpme_ticketPrintingAPI', 'wpme_ajax_ticketPrintingAPI' );
+            add_action( 'wp_ajax_wpme_ajax_ticketPrintingAPI', 'wpme_ajax_ticketPrintingAPI' );
             function wpme_ajax_ticketPrintingAPI(){
                 echo wpme_ticketPrintingAPI();
                 die();
@@ -162,6 +162,8 @@ if( !class_exists('WP_MelhorEnvio')):
                 echo wpme_cancelTicketAPI();
                 die();
             }
+
+
 
 
         }

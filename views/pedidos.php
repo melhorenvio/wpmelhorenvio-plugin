@@ -605,7 +605,7 @@
                         <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
                         <!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
                     <template v-if="pedido.status == 'paid'">
-                    <a href="javascript;" class="btn imprimir"> Imprimir </a>
+                    <a href="javascript;" class="btn imprimir" @click.prevent="printTicket(pedido.tracking_code)"> Imprimir </a>
                     <a href="javascript;" class="btn cancelar" @click.prevent="openCancelTicketConfirmer(pedido.tracking_code)" > Cancelar </a>
                     </template>
                         <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
@@ -736,9 +736,7 @@
                     pedido.cotacoes.forEach(function (cotacao) {
                         if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name))
                             array[index] = cotacao.id;
-                    })
-
-
+                    });
                 });
                 return array;
             }
@@ -870,6 +868,29 @@
                 });
             },
 
+            printTicket: function(tracking){
+                data = {
+                    action: 'wpme_ajax_ticketPrintingAPI',
+                    tracking: [tracking]
+                }
+                vm = this;
+                console.log(tracking);
+                jQuery.post(ajaxurl,data,function(response){
+                    resposta = JSON.parse(response);
+                    console.log(resposta);
+                    if(typeof resposta.url ){
+                        console.log(resposta.url)
+                        window.open(resposta.url,'_blank');
+                    }else{
+                        vm.message.title = "Não foi possível acessar esta etiqueta";
+                        vm.message.message = "Infelizmente não é possível acessar esta etiqueta";
+                        vm.message.type= "error";
+                        vm.message.show_message = true;
+                    }
+                });
+            },
+
+
             getOptionals: function(){
                 data = {
                     action: "wpme_ajax_getOptionsAPI"
@@ -918,6 +939,7 @@
                 });
             },
 
+
             payTicket: function(payment_method){
                 var data = {
                     action:'wpme_ajax_payTicketAPI',
@@ -946,7 +968,7 @@
                             });
                         });
 
-                        vm.user_info.balance = vm.user_info.balance - resposta.purchase.total;
+                        vm.getBalance();
                         vm.message.title="Pagamento feito com sucesso";
                         vm.message.message="Seu pagamento foi efetuado com sucesso";
                         vm.message.type = 'success';
