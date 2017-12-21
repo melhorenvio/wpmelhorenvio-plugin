@@ -20,11 +20,11 @@ function wpme_data_insertTracking($id,$tracking,$service){
     return $wpdb->query($sql);
 }
 
-function wpme_data_deleteTracking($id,$tracking){
+function wpme_data_deleteTracking($tracking){
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     global $wpdb;
-    $sql = "DELETE FROM {$wpdb->prefix}tracking_codes_wpme WHERE order_id ='{$id}' AND tracking_id = '{$tracking}'";
-    return $wpdb->query($sql);
+//    $sql = "DELETE FROM {$wpdb->prefix}tracking_codes_wpme WHERE tracking_id = '{$tracking}'";
+    return $wpdb->delete($wpdb->prefix.'tracking_codes_wpme' , array('tracking_id' => $tracking));
 }
 
 function wpme_data_updateTracking($tracking,$valor){

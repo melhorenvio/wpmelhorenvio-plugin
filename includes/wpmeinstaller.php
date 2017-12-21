@@ -22,7 +22,6 @@ function wpme_install_table()
             `tracking_id` varchar(255) DEFAULT NULL,
             `service_id` VARCHAR (255) DEFAULT NULL,
             `status` VARCHAR (255) DEFAULT NULL,
-            `print_link` VARCHAR (255) DEFAULT NULL,
             PRIMARY KEY (id)
         ) {$charset_collate};";
     $wpdb->query($sql);

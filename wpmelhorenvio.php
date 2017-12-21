@@ -114,6 +114,12 @@ if( !class_exists('WP_MelhorEnvio')):
                 die();
             }
 
+            add_action( 'wp_ajax_wpme_ajax_getLimitsAPI', 'wpme_ajax_getLimitsAPI' );
+            function wpme_ajax_getLimitsAPI(){
+                echo wpme_getLimitsAPI();
+                die();
+            }
+
             add_action('wp_ajax_wpme_ajax_getTrackingAPI','wpme_ajax_getTrackingAPI');
             function wpme_ajax_getTrackingAPI(){
                 echo wpme_getTrackingAPI();
@@ -160,6 +166,12 @@ if( !class_exists('WP_MelhorEnvio')):
             add_action('wp_ajax_wpme_ajax_cancelTicketAPI','wpme_ajax_cancelTicketAPI');
             function wpme_ajax_cancelTicketAPI(){
                 echo wpme_cancelTicketAPI();
+                die();
+            }
+
+            add_action('wp_ajax_wpme_ajax_cancelTicketData','wpme_ajax_cancelTicketData');
+            function wpme_ajax_cancelTicketData(){
+                echo wpme_cancelTicketData();
                 die();
             }
 

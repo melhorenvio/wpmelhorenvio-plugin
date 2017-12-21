@@ -15,7 +15,7 @@
         border-radius: 50%;
         animation:load 2s linear infinite ;
     }
-    
+
     @keyframes load {
         0%{
             transform: rotate(0deg);
@@ -45,7 +45,7 @@
 
     .modal{
         background-color:rgba(250,250,255,.90);
-        max-width: 60%;
+        max-width: 80%;
         display: block;
         width: 800px;
         margin:auto;
@@ -476,6 +476,39 @@
 
     }
 
+    .wpme_message_comprar{
+        float: left;
+        margin:10px;
+
+    }
+
+    .wpme_message_action{
+        float:left;
+        margin:10px;
+    }
+
+    .wpme_message_comprar a{
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 1.05rem;
+        display: inline-block;
+        padding: 10px 24px;
+        border: solid 1px rgba(100,150,250,1);
+        color: rgba(100,150,250,1);;
+        bottom: 10px;
+    }
+
+    .wpme_message_comprar a:hover{
+        text-decoration: none;
+        border-radius: 20px;
+        font-size: 1.05rem;
+        display: inline-block;
+        padding: 10px 24px;
+        border: solid 1px rgba(100,150,250,1);
+        background-color: rgba(100,150,250,1);
+        color: rgba(250,250,250,1);;
+        bottom: 10px;
+    }
     .wpme_message_action a{
         text-decoration: none;
         border-radius: 20px;
@@ -499,11 +532,18 @@
         bottom: 10px;
     }
 
+    .wpme_wrapper_center{
+        display: inline-block;
+        margin: auto;
+        width: fit-content;
+        text-align: center;
+    }
+
 </style>
 <div id="app">
-<!--    <div class="loader">-->
-<!---->
-<!--    </div>-->
+    <!--    <div class="loader">-->
+    <!---->
+    <!--    </div>-->
     <div>
         <div class="data_client">
             <div>
@@ -513,7 +553,11 @@
                     <img src="https://www.melhorrastreio.com.br/img/bgpdr.png" v-if="!user_info.thumbnail" width="100px">
                     <div class="about">
                         <h2>{{user_info.firstname}}</h2>
-                        <p>Saldo: R$  <strong>{{user_info.balance}}</strong></p>
+                        <ul>
+                            <li>Saldo: R$  <strong>{{user_info.balance}}</strong></li>
+                            <li>Limite: <strong>{{user_info.shipments}}</strong></li>
+                            <li>Liberado:  <strong>{{user_info.available_shipments}}</strong></li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -596,19 +640,19 @@
                 </td>
                 <td>
                     <template  v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed'">
-                    <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Comprar </a>
+                        <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Comprar </a>
                     </template>
                     <template v-if="pedido.status == 'cart'">
                         <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
                         <a href="javascript;" class="btn cancelar" @click.prevent="showCon" > Remover </a>
                     </template>
-                        <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
-                        <!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
+                    <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
+                    <!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
                     <template v-if="pedido.status == 'paid'">
-                    <a href="javascript;" class="btn imprimir" @click.prevent="printTicket(pedido.tracking_code)"> Imprimir </a>
-                    <a href="javascript;" class="btn cancelar" @click.prevent="openCancelTicketConfirmer(pedido.tracking_code)" > Cancelar </a>
+                        <a href="javascript;" class="btn imprimir" @click.prevent="printTicket(pedido.tracking_code)"> Imprimir </a>
+                        <a href="javascript;" class="btn cancelar" @click.prevent="openCancelTicketConfirmer(pedido.tracking_code)" > Cancelar </a>
                     </template>
-                        <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
+                    <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
             </tr>
             </tbody>
@@ -620,7 +664,7 @@
 
                     <a href="javascript;" class="btn melhorenvio"> Pagar </a>
 
-<!--                    <a href="javascript;" class="btn cancelar"> Imprimir </a>-->
+                    <!--                    <a href="javascript;" class="btn cancelar"> Imprimir </a>-->
                 </td>
                 <td></td>
                 <td colspan="2">
@@ -670,7 +714,12 @@
         <div class="wpme_message" v-if="message.show_message" >
             <div class="wpme_message_header" :class="{'wpme_success': message.type == 'success', 'wpme_error': message.type == 'error'}">{{message.title}}</div>
             <div class="wpme_message_body">{{message.message}}</div>
-            <div class="wpme_message_action"><a href="javascript;" @click.prevent="toogleMessage">Entendi</a></div>
+            <div class="wpme_wrapper_center">
+                <template v-if="payment_tracking_codes.length > 0">
+                    <div class="wpme_message_comprar"><a href="javascript;" @click.prevent="goDirectPay">Pagar</a></div>
+                </template>
+                <div class="wpme_message_action"><a href="javascript;" @click.prevent="toogleMessage">Fechar</a></div>
+            </div>
         </div>
 
 
@@ -690,8 +739,8 @@
             message:{
                 type:'',
                 show_message:false,
-                title:'Compra efetuada',
-                message:'Sua compra foi efetuada'
+                title:'',
+                message:''
             },
             opcionais:{},
             show_button:[],
@@ -764,6 +813,11 @@
                 this.message.show_message = !this.message.show_message;
             },
 
+            goDirectPay: function(){
+                this.toogleMessage();
+                this.toogleModal();
+            },
+
             addToCart: function(ind){
                 pedido = this.pedidos_page[ind];
                 vm = this;
@@ -793,6 +847,8 @@
                     console.log(response);
                     resposta = JSON.parse(response);
                     if(typeof resposta.id != 'undefined'){
+                        vm.payment_tracking_codes = [];
+                        vm.payment_tracking_codes.push(resposta.id);
                         vm.addTracking(pedido.id,resposta.id,data.service_id);
                         pedido.tracking_code = resposta.id;
                         pedido.bought_tracking = data.service_id;
@@ -817,12 +873,12 @@
 
             load: function(){
                 this.getUser();
+                this.getLimits();
                 this.getAddress();
                 this.getBalance();
                 this.getOptionals();
                 this.getOrders();
             },
-
 
             getAddress: function(){
                 data = {
@@ -855,16 +911,22 @@
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
                     console.log(response);
-                    reposta = JSON.parse(response);
-
-                    if(resposta.cancelled){
+                    resposta = JSON.parse(response);
+                    arr_index = Object.entries(resposta);
+                    console.log(arr_index[0][1]['canceled']);
+                    if(arr_index[0][1]['canceled']){
+                        vm.deleteTracking(data.tracking);
                         vm.message.title = "Etiqueta cancelada com sucesso";
+                        vm.message.message = "Após a verificação o valor deverá ser extornado para a carteira";
+                        vm.message.type= "success";
+                        vm.message.show_message = true;
                     }else{
                         vm.message.title = "Não foi possível cancelar esta etiqueta";
                         vm.message.message = "Infelizmente não é possível cancelar esta etiqueta";
                         vm.message.type= "error";
                         vm.message.show_message = true;
                     }
+
                 });
             },
 
@@ -955,20 +1017,23 @@
                     console.log(response);
                     resposta = JSON.parse(response)
                     if(typeof resposta.error !== 'undefined'){
-                     vm.message.title="Pagamento não efeituado";
-                     vm.message.message=resposta.error;
-                     vm.message.type = 'error';
-                     vm.message.show_message = true;
+                        vm.payment_tracking_codes = [];
+                        vm.message.title="Pagamento não efeituado";
+                        vm.message.message=resposta.error;
+                        vm.message.type = 'error';
+                        vm.message.show_message = true;
                     }else{
                         data.orders.forEach(function(order){
                             vm.updateTracking(order,'paid');
+                            vm.payment_tracking_codes = [];
                             vm.pedidos_page.forEach( function (pedido) {
                                 if(pedido.tracking_code == order)
                                     pedido.status = 'paid';
                             });
                         });
-
+                        vm.payment_tracking_codes = [];
                         vm.getBalance();
+                        vm.getLimits();
                         vm.message.title="Pagamento feito com sucesso";
                         vm.message.message="Seu pagamento foi efetuado com sucesso";
                         vm.message.type = 'success';
@@ -1029,28 +1094,28 @@
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
-                    vm.pedidos = resposta;
                     var array = [];
-                  try{
-                    resposta.forEach(function (pedido,index) {
-                        pedido.cotacoes.forEach(function (cotacao) {
+                    try{
+                        resposta.forEach(function (pedido,index) {
+                            pedido.cotacoes.forEach(function (cotacao) {
                                 if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)){
-                                array[index] = cotacao.id;
-                            }
+                                    array[index] = cotacao.id;
+                                }
+                            });
+                            vm.getSpecificTracking(pedido);
+                            vm.pedidos = resposta;
                         });
-                        vm.getSpecificTracking(pedido);
-                    });
-                    vm.selected_shipment = array;
+                        vm.selected_shipment = array;
                     }
                     catch (err){
-                            vm.message.title = 'Erro ao carregar as cotações';
-                            vm.message.message = 'Houve um erro ao carregar as cotações, tente novamente mais tarde.';
-                            vm.message.type = 'error';
-                            vm.message.show_message = true;
+                        vm.message.title = 'Erro ao carregar as cotações';
+                        vm.message.message = 'Houve um erro ao carregar as cotações, tente novamente mais tarde.';
+                        vm.message.type = 'error';
+                        vm.message.show_message = true;
                     }
                 });
             },
-
+            //TODO: fAZER O VARIOS, ARRUMAR PRA FUNCIONAR COM A JADLOG, REMOVER CARRINHO,
             pagego: function(valor){
                 this.page = valor;
             },
@@ -1084,22 +1149,51 @@
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
                     console.log(response);
-                   try{resposta = JSON.parse(response);
-                       vm.user_info.balance = resposta.balance;
-                   }catch (err){
-                       vm.message.title = 'Erro ao carregar seus dados';
-                       vm.message.message = 'Erro ao carregar seus dados, tente novamente mais tarde.';
-                       vm.message.type = 'error';
-                       vm.message.show_message = true;
-                   }
+                    try{resposta = JSON.parse(response);
+                        vm.user_info.balance = resposta.balance;
+                    }catch (err){
+                        vm.message.title = 'Erro ao carregar seus dados';
+                        vm.message.message = 'Erro ao carregar seus dados, tente novamente mais tarde.';
+                        vm.message.type = 'error';
+                        vm.message.show_message = true;
+                    }
+                });
+            },
+
+            deleteTracking: function(tracking){
+                data = {
+                    action:'wpme_ajax_cancelTicketData',
+                    tracking: tracking
+                }
+                vm = this;
+                jQuery.post(ajaxurl,data,function(response){
+                    console.log(response);
+                    vm.getBalance();
+                    vm.getLimits();
+                    vm.getOrders();
+                });
+            },
+
+            getLimits: function(){
+                var data = {
+                    action:'wpme_ajax_getLimitsAPI'
+                }
+                vm = this;
+                jQuery.post(ajaxurl, data, function(response) {
+                    console.log(response);
+                    try{resposta = JSON.parse(response);
+                        vm.user_info.shipments = resposta.shipments;
+                        vm.user_info.available_shipments = resposta.shipments_available;
+                    }catch (err){
+                        vm.message.title = 'Erro ao carregar seus dados';
+                        vm.message.message = 'Erro ao carregar seus dados, tente novamente mais tarde.';
+                        vm.message.type = 'error';
+                        vm.message.show_message = true;
+                    }
                 });
             }
-
-
-
-
-
         }
+
     })
 </script>
 

@@ -397,6 +397,18 @@ function wpme_getBalanceAPI(){
     }
 }
 
+function wpme_getLimitsAPI(){
+    $token = get_option('wpme_token');
+    $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
+    $client = new WP_Http();
+    $response = $client->get('https://melhorenvio.com.br/api/v2/me/limits',$params);
+    if( $response instanceof WP_Error){
+        return false;
+    }else{
+        return $response['body'];
+    }
+}
+
 function wpme_getCustomerInfoAPI(){
     $customer = new stdClass();
     $customer->firstname = get_option("wpme_firstname");
@@ -405,4 +417,10 @@ function wpme_getCustomerInfoAPI(){
 
     echo json_encode($customer);
 
+}
+
+function wpme_cancelTicketData(){
+    $trk = $_POST['tracking'];
+    echo $trk[0];
+    return wpme_data_deleteTracking($trk[0]);
 }
