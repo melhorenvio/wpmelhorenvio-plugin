@@ -383,7 +383,6 @@ if(isset($_POST['submit'])){
                 <div class="wpme_address-top">
                     <input type="radio">
                     <h2><?= $company->name?></h2>
-                    <h2><?= var_dump($company);?></h2>
                 </div>
                 <div class="wpme_address-body">
                     <ul>
