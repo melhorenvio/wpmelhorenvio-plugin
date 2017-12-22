@@ -181,6 +181,17 @@ if(isset($_POST['submit'])){
         background: #fefeff;
     }
 
+    .wpme_company{
+        text-align: left;
+        border-radius: 5px;
+        border: solid 1px #cccccc;
+        padding: 20px;
+        width: 300px;
+        min-width: 300px;
+        margin:15px 7px;
+        background: #fefeff;
+    }
+
     .wpme_address .wpme_address-top{
         width: 100%;
         border-bottom: solid 1px #ddddef;
@@ -328,6 +339,7 @@ if(isset($_POST['submit'])){
         <div class="wpme_flex">
             <?php
             $addresses = getApiAddresses();
+            $companies = getApiCompanies();
             $saved_address = json_decode(get_option('wpme_address'));
             if(isset($addresses['data'])){
             foreach ($addresses['data'] as $address){
@@ -361,13 +373,31 @@ if(isset($_POST['submit'])){
             </div>
         </div>
     </div>
-    <div class="wpme_flex">
-        <ul class="wpme_company">
-            <div class="wpme_company-top">
-<!--                <h2>--><?//= $company->name?><!--</h2>-->
-            </div>
-        </ul>
-    </div>
+
+    <h2 style="text-align: center; margin: 15px;">Escolha a empresa para a compra de fretes</h2>
+    <label>
+        <div class="wpme_flex">
+            <ul class="wpme_address">
+                <?php foreach ($companies['data'] as $company){?>
+            <li>
+                <div class="wpme_address-top">
+                    <input type="radio">
+                    <h2><?= $company->name?></h2>
+                    <h2><?= var_dump($company);?></h2>
+                </div>
+                <div class="wpme_address-body">
+                    <ul>
+                        <li>CNPJ: <?= $company->document?></li>
+                        <li> ID: <?= $company->state_register?></li>
+                    </ul>
+
+
+                </div>
+            </li>
+                <?php } ?>
+            </ul>
+        </div>
+    </label>
     <div class="wpme_basepadding">
         <h2>Selecione seus métodos de envio</h2>
         <ul class="wpme_options">

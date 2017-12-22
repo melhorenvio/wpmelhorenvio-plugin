@@ -200,7 +200,8 @@
         border: solid 1px rgba(130,130,220,.9);
         border-radius:25px;
         color: rgba(130,120,220,.9);
-        transition: 200ms;
+        transition: 200ms
+        float:left;
     }
 
     .btn:hover{
