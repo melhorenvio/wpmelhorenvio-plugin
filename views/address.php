@@ -24,7 +24,10 @@ if(isset($_POST['submit'])){
     $optionals->PL = isset($_POST['PL'])? $_POST['PL'] : "";
 
     if(defineConfig($address,json_encode($services),json_encode($optionals))){
-        echo "foi";
+        '<div class="notice notice-success is-dismissible\">
+                <h2>Configurações alteradas com sucesso</h2>
+                <p>Configurações alteradas com sucesso</p>
+            </div>';
     }else{
         '<div class="notice notice-error is-dismissible\">
                 <h2>Não foi possível alterar</h2>
@@ -175,8 +178,8 @@ if(isset($_POST['submit'])){
         border-radius: 5px;
         border: solid 1px #cccccc;
         padding: 20px;
-        width: 300px;
         min-width: 300px;
+        max-width: 500px;
         margin:15px 7px;
         background: #fefeff;
     }
@@ -276,6 +279,10 @@ if(isset($_POST['submit'])){
         margin: 30px;
     }
 
+    option,select{
+        font-size: .650rem;
+    }
+
     .wpme_divtext div{
         display: inline-block;
         width: 190px;
@@ -356,6 +363,25 @@ if(isset($_POST['submit'])){
                                     <li><?= $address->district?> - <?= $address->city->city?> / <?= $address->city->state->state_abbr?></li>
                                     <li>CEP: <?=$address->postal_code?></li>
                                 </ul>
+                                <label>Escolha a Agencia Jadlog</label>
+                                <select>
+
+                                <?php
+                                $agencias = getAgencies('Brazil',$address->city->state->state_abbr,$address->city->city);
+                                if(count($agencias) < 1){
+                                    $agencias = getAgencies('Brazil',$address->city->state->state_abbr);
+                                }
+                                var_dump($agencias);
+                                foreach($agencias as $agency){
+                                    var_dump($agency);
+                                    ?>
+
+<!--                                    --><?php //var_dump($agency)?>
+                                    <option value="<?=$agency->id?>"><?=$agency->address->address?>, <?=$agency->address->number?>-<?=$agency->address->district?> </option>
+                                    <?php
+                                } ?>
+
+                                </select>
                             </div>
                         </label>
                     </li>

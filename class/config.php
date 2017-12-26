@@ -94,6 +94,41 @@ function defineConfig($address,$services,$pluginconfig){
     return false;
 }
 
+function getAgencies($country,$state,$city = null){
+    $token = get_option('wpme_token');
+    if($city != null){
+    $params = array(
+        'headers'=>[
+            'Content-Type' => 'application/json',
+            'Accept'=>'application/json',
+            'Authorization' => 'Bearer '.$token
+        ],
+        'body' => [
+            'coutry'    => $country,
+            'state'     => $state,
+            'city'      => $city
+        ]);
+    }else{
+        $params = array(
+            'headers'=>[
+                'Content-Type' => 'application/json',
+                'Accept'=>'application/json',
+                'Authorization' => 'Bearer '.$token
+            ],
+            'body' => [
+                'coutry'    => $country,
+                'state'     => $state,
+            ]);
+    }
+    $client = new WP_Http();
+    $response = $client->get('https://melhorenvio.com.br/api/v2/me/shipment/agencies',$params);
+    if( $response instanceof WP_Error){
+        return false;
+    }else{
+        return (array) json_decode($response['body']);
+    }
+}
+
 function verifyLogin(){
 
 }
