@@ -46,7 +46,7 @@ if( !class_exists('WP_MelhorEnvio')):
                 //Criando os links no Menu
                 add_action("admin_menu", "wpme_addMenu");
                 function wpme_addMenu(){
-                    add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpme_melhor-envio","", plugin_dir_url( __FILE__ )."data/mo.png");
+                    add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpme_melhor-envio","", plugin_dir_url( __FILE__ )."mo.png");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpme_melhor-envio-requests", "wpme_pedidos");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpme_melhor-envio-config", "wpme_config");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações da Conta", "Sua Conta Melhor Envio", "administrator", "wpme_melhor-envio-subscription", "wpme_cadastro");

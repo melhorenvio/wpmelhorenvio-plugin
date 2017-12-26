@@ -1,6 +1,21 @@
+
+<script>
+    jQuery(document).ready(function($) {
+
+        $(window).load(function(){
+            $('.loader').fadeOut('slow',function(){$(this).remove();})
+            $('.content').show();
+        });
+
+    });
+</script>
+
 <style>
 
 
+    .content{
+        display: none;
+    }
     .loader{
         position: absolute;
         right: 44%;
@@ -542,10 +557,10 @@
 
 </style>
 <div id="app">
-    <!--    <div class="loader">-->
-    <!---->
-    <!--    </div>-->
-    <div>
+        <div class="loader">
+
+        </div>
+    <div class="content">
         <div class="data_client">
             <div>
                 <h5>Usuário</h5>
