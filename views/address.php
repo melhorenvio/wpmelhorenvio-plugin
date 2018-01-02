@@ -4,11 +4,11 @@ if(isset($_POST['submit'])){
     $services = array();
     if(isset($_POST['address'])){
         $address = str_replace("\\",'',$_POST['address']);
-        $add_id = json_decode($address);
+        $add_id = json_decode($address,false, 512, JSON_UNESCAPED_UNICODE);
         if (isset($_POST[$add_id->id])){
             $id_agency = $_POST[$add_id->id];
             $add_id->agency = $id_agency;
-            $address = json_encode($add_id);
+            $address = json_encode($add_id , JSON_UNESCAPED_UNICODE);
         }
     }else{
         $address = '';
@@ -17,6 +17,15 @@ if(isset($_POST['submit'])){
         foreach ($_POST['services'] as $service){
             array_push($services,$service);
         }
+    }
+    if(isset($_POST['company'])){
+        $company = $_POST['company'];
+        update_option('wpme_company',json_encode($company));
+    }else{
+        $company = new stdClass();
+        $company->cnpj = '';
+        $company->ie = '';
+        update_option('wpme_company',json_encode($company));
     }
     //Optionals plugin configuration
     $optionals = new stdClass();
@@ -29,7 +38,7 @@ if(isset($_POST['submit'])){
     $optionals->DE = isset($_POST['DE'])? $_POST['DE'] : "";
     $optionals->PL = isset($_POST['PL'])? $_POST['PL'] : "";
 
-    if(defineConfig($address,json_encode($services),json_encode($optionals))){
+    if(defineConfig(utf8_encode($address),json_encode($services),json_encode($optionals))){
         '<div class="notice notice-success is-dismissible\">
                 <h2>Configurações alteradas com sucesso</h2>
                 <p>Configurações alteradas com sucesso</p>
@@ -357,6 +366,7 @@ if(isset($_POST['submit'])){
             $addresses = getApiAddresses();
             $companies = getApiCompanies();
             $saved_address = json_decode(get_option('wpme_address'));
+            $saved_company = json_decode(get_option('wpme_company'));
             if(isset($addresses['data'])){
             foreach ($addresses['data'] as $address){
 
@@ -364,7 +374,7 @@ if(isset($_POST['submit'])){
 
                 <ul class="wpme_address">
                     <li><label for="<?=$address->id?>">
-                            <div class="wpme_address-top"><input type="radio" name="address" value='<?php echo json_encode($address) ?>' id="<?=$address->id?>"      required ><h2><?= $address->label ?></h2>
+                            <div class="wpme_address-top"><input type="radio" name="address" value='<?php echo json_encode($address) ?>' id="<?=$address->id?>"   <?= $address->id == $saved_address->id ? "checked" : ""?>   required ><h2><?= $address->label ?></h2>
                             </div>
                             <div class="wpme_address-body">
                                 <ul>
@@ -380,13 +390,14 @@ if(isset($_POST['submit'])){
                                 if(count($agencias) < 1){
                                     $agencias = getAgencies('Brazil',$address->city->state->state_abbr);
                                 }
-                                var_dump($agencias);
                                 foreach($agencias as $agency){
-                                    var_dump($agency);
                                     ?>
-
-<!--                                    --><?php //var_dump($agency)?>
-                                    <option value="<?=$agency->id?>" <?= $address->agency == $agency->id? "selected" :""?> ><?=$agency->address->address?>, <?=$agency->address->number?>-<?=$agency->address->district?> </option>
+                                    <option value="<?=$agency->id?>"
+                                        <?php
+                                        if(isset($saved_address->agency)){
+                                         echo $saved_address->agency == $agency->id ? "selected" :" ";
+                                        }
+                                    ?> ><?=$agency->address->address?>, <?=$agency->address->number?>-<?=$agency->address->district?> </option>
                                     <?php
                                 } ?>
 
@@ -416,7 +427,10 @@ if(isset($_POST['submit'])){
                 <?php foreach ($companies['data'] as $company){?>
             <li>
                 <div class="wpme_address-top">
-                    <input type="radio" name="company" value="<?php json_encode($company) ?>">
+                    <input type="radio" name="company" value="<?php json_encode($company) ?>" <?php
+
+
+                    ?>>
                     <h2><?= $company->name?></h2>
                 </div>
                 <div class="wpme_address-body">

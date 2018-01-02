@@ -176,6 +176,7 @@
 
     thead td{
         background-color: rgba(50,50,150,0.08) !important;
+        text-align: left;
     }
     tr{
         width: 100%;
@@ -192,6 +193,13 @@
         padding: 0 5px;
         text-align: center;
         margin: 0;
+    }
+
+    td input{
+        border-radius: 3px;
+        border: solid 1px rgba(210,210,210,.9);
+        line-height: 20px;
+        height: 35px;
     }
 
     tr:hover{
@@ -293,6 +301,7 @@
 
     tfoot tr td{
         background-color: rgba(50,50,150,0.05) !important;
+        text-align: left;
     }
 
     table ul{
@@ -558,9 +567,9 @@
 
 </style>
 <div id="app">
-        <div class="loader">
+    <div class="loader">
 
-        </div>
+    </div>
     <div class="content">
         <div class="data_client">
             <div>
@@ -611,23 +620,21 @@
         <table>
             <thead>
             <tr>
-                <td><input type="checkbox" @click="selectall" v-model="selectallatt"></td>
-                <td colspan="2">
+                <td width="10px"><input type="checkbox" @click="selectall" v-model="selectallatt"></td>
+                <td colspan="6">
                     <a href="javascript;" class="btn comprar-hard"> Comprar </a>
 
                     <a href="javascript;" class="btn melhorenvio"> Pagar </a>
 
                     <a href="javascript;" class="btn imprimir"> Imprimir </a>
                 </td>
-                <td colspan="3">
-
-                </td>
             </tr>
             <tr><th></th>
-                <th>Pedido</th>
-                <th>Data</th>
-                <th>Destinatário</th>
-                <th>Transportadora</th>
+                <th width="50px">Pedido</th>
+                <th width="50px">Data</th>
+                <th width="400px">Destinatário</th>
+                <th width="200px">Transportadora</th>
+                <th>Dados adicionais</th>
                 <th>Opções</th>
             </tr>
             </thead>
@@ -656,6 +663,14 @@
                     </select>
                 </td>
                 <td>
+                    <template v-if="!pedido.bought_tracking">
+                        <strong>NF:</strong> <input v-model="pedidos_nf[i]"><br>
+                        <template v-if="company.cnpj = '' "><strong>CNPJ:</strong> <input v-model="pedidos_cnpj[pedido.id]"><br></template>
+                        <template v-if="company.ie   = '' "><strong>IE:</strong> <input v-model="pedidos_ie[pedido.id]"><br></template>
+                    </template>
+                    <template v-if="pedido.bought_tracking" ><p class="wpme_success">Ok!</p></template>
+                </td>
+                <td>
                     <template  v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed'">
                         <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Comprar </a>
                     </template>
@@ -676,16 +691,12 @@
             <tfoot>
             <tr>
                 <td></td>
-                <td colspan="2">
+                <td colspan="6">
                     <a href="javascript;" class="btn comprar-hard"> Comprar </a>
 
                     <a href="javascript;" class="btn melhorenvio"> Pagar </a>
 
                     <!--                    <a href="javascript;" class="btn cancelar"> Imprimir </a>-->
-                </td>
-                <td></td>
-                <td colspan="2">
-
                 </td>
             </tr>
             </tfoot>
@@ -751,6 +762,10 @@
             payment_tracking_codes:[],
             pedidos: [],
             total:0,
+            company:{
+                cnpj:'',
+                ie:''
+            },
             show_mask:false,
             show_modal:false,
             message:{
@@ -768,6 +783,9 @@
                 },
             },
             pedidos_checked:[],
+            pedidos_nf: [],
+            pedidos_cnpj: [],
+            pedidos_ie: [],
             selected_shipment: [],
             tracking_codes:[],
             page:1,
@@ -811,6 +829,18 @@
         },
 
         methods: {
+            utf8_from_str: function(s) {
+                for(var i=0, enc = encodeURIComponent(s), a = []; i < enc.length;) {
+                    if(enc[i] === '%') {
+                        a.push(parseInt(enc.substr(i+1, 2), 16))
+                        i += 3
+                    } else {
+                        a.push(enc.charCodeAt(i++))
+                    }
+                }
+                return a
+            },
+
             stripcode: function(string) {
                 string = string.replace('wpme_','');
                 return string.replace('_','');
@@ -838,50 +868,87 @@
             addToCart: function(ind){
                 pedido = this.pedidos_page[ind];
                 vm = this;
-                var data = {
-                    action: "wpme_ajax_ticketAcquirementAPI",
-                    valor_declarado: pedido.price,
-                    service_id: this.selected_shipment[ind],
-                    from_name: this.user_info.firstname+" "+ this.user_info.lastname,
-                    to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
-                    to_phone: pedido.customer_phone,
-                    to_email: pedido.customer_email,
-                    to_document: pedido.customer_document,
-                    to_company_document: pedido.customer_company_document,
-                    to_state_register: pedido.customer_state_register,
-                    to_address: pedido.shipping.address_1,
-                    to_complement: pedido.shipping.address_2,
-                    to_number:  pedido.shipping.number,
-                    to_district: pedido.shipping.neighborhood,
-                    to_city:    pedido.shipping.city,
-                    to_state_abbr: pedido.shipping.state,
-                    to_country_id: pedido.shipping.country,
-                    to_postal_code: pedido.shipping.postcode,
-                    to_note: pedido.customer_note,
-                    line_items: pedido.line_items
-                }
-                jQuery.post(ajaxurl, data, function(response) {
-                    console.log(response);
-                    resposta = JSON.parse(response);
-                    if(typeof resposta.id != 'undefined'){
-                        vm.payment_tracking_codes = [];
-                        vm.payment_tracking_codes.push(resposta.id);
-                        vm.addTracking(pedido.id,resposta.id,data.service_id);
-                        pedido.tracking_code = resposta.id;
-                        pedido.bought_tracking = data.service_id;
-                        pedido.status = 'cart';
-
-                        vm.message.title = 'Envio adicionado ao carrinho';
-                        vm.message.message = 'Este envio foi adicionado ao seu carrinho, clique em pagar para gerar a sua etiqueta.';
-                        vm.message.type = 'success';
-                        vm.message.show_message = true;
+                console.log(ind);
+                if(this.selected_shipment[ind] > 2 && (typeof this.pedidos_nf[ind] === 'undefined' || typeof this.pedidos_cnpj[ind] === 'undefined' || typeof this.pedidos_ie[ind] === 'undefined') ){
+                    vm.message.title = 'Dados Incompletos';
+                    vm.message.message = 'Para utilizar essa transportadora, informe a nota fiscal (NF)';
+                    vm.message.type = 'error';
+                    vm.message.show_message = true;
+                }else{
+                    if(this.pedidos_nf[ind] === 'undefined' ){
+                        var data = {
+                            action: "wpme_ajax_ticketAcquirementAPI",
+                            valor_declarado: pedido.price,
+                            service_id: this.selected_shipment[ind],
+                            from_name: this.user_info.firstname+" "+ this.user_info.lastname,
+                            to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
+                            to_phone: pedido.customer_phone,
+                            to_email: pedido.customer_email,
+                            to_document: pedido.customer_document,
+                            to_company_document: pedido.customer_company_document,
+                            to_state_register: pedido.customer_state_register,
+                            to_address: pedido.shipping.address_1,
+                            to_complement: pedido.shipping.address_2,
+                            to_number:  pedido.shipping.number,
+                            to_district: pedido.shipping.neighborhood,
+                            to_city:    pedido.shipping.city,
+                            to_state_abbr: pedido.shipping.state,
+                            to_country_id: pedido.shipping.country,
+                            to_postal_code: pedido.shipping.postcode,
+                            to_note: pedido.customer_note,
+                            line_items: pedido.line_items
+                        }
                     }else{
-                        vm.message.title = 'Não foi possível adicionar item ao carrinho';
-                        vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho, tente novamente mais tarde';
-                        vm.message.type = 'error';
-                        vm.message.show_message = true;
+                        var data = {
+                            action: "wpme_ajax_ticketAcquirementAPI",
+                            valor_declarado: pedido.price,
+                            service_id: this.selected_shipment[ind],
+                            from_name: this.user_info.firstname+" "+ this.user_info.lastname,
+                            from_company_document : this.company.cnpj,
+                            from_company_state_register: this.company.ie,
+                            to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
+                            to_phone: pedido.customer_phone,
+                            to_email: pedido.customer_email,
+                            to_document: pedido.customer_document,
+                            to_company_document: pedido.customer_company_document,
+                            to_state_register: pedido.customer_state_register,
+                            to_address: pedido.shipping.address_1,
+                            to_complement: pedido.shipping.address_2,
+                            to_number:  pedido.shipping.number,
+                            to_district: pedido.shipping.neighborhood,
+                            to_city:    pedido.shipping.city,
+                            to_state_abbr: pedido.shipping.state,
+                            to_country_id: pedido.shipping.country,
+                            to_postal_code: pedido.shipping.postcode,
+                            to_note: pedido.customer_note,
+                            line_items: pedido.line_items,
+                            nf: this.pedidos_nf
+                        }
                     }
-                });
+
+                    jQuery.post(ajaxurl, data, function(response) {
+                        console.log(response);
+                        resposta = JSON.parse(response);
+                        if(typeof resposta.id != 'undefined'){
+                            vm.payment_tracking_codes = [];
+                            vm.payment_tracking_codes.push(resposta.id);
+                            vm.addTracking(pedido.id,resposta.id,data.service_id);
+                            pedido.tracking_code = resposta.id;
+                            pedido.bought_tracking = data.service_id;
+                            pedido.status = 'cart';
+
+                            vm.message.title = 'Envio adicionado ao carrinho';
+                            vm.message.message = 'Este envio foi adicionado ao seu carrinho, clique em pagar para gerar a sua etiqueta.';
+                            vm.message.type = 'success';
+                            vm.message.show_message = true;
+                        }else{
+                            vm.message.title = 'Não foi possível adicionar item ao carrinho';
+                            vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho, tente novamente mais tarde';
+                            vm.message.type = 'error';
+                            vm.message.show_message = true;
+                        }
+                    });
+                }
             },
 
             getQuotation: function(){
