@@ -4,6 +4,12 @@ if(isset($_POST['submit'])){
     $services = array();
     if(isset($_POST['address'])){
         $address = str_replace("\\",'',$_POST['address']);
+        $add_id = json_decode($address);
+        if (isset($_POST[$add_id->id])){
+            $id_agency = $_POST[$add_id->id];
+            $add_id->agency = $id_agency;
+            $address = json_encode($add_id);
+        }
     }else{
         $address = '';
     }
@@ -182,6 +188,7 @@ if(isset($_POST['submit'])){
         max-width: 500px;
         margin:15px 7px;
         background: #fefeff;
+        display: block;
     }
 
     .wpme_company{
@@ -281,6 +288,8 @@ if(isset($_POST['submit'])){
 
     option,select{
         font-size: .650rem;
+        min-width: 90%;
+        max-width: 100%;
     }
 
     .wpme_divtext div{
@@ -355,7 +364,7 @@ if(isset($_POST['submit'])){
 
                 <ul class="wpme_address">
                     <li><label for="<?=$address->id?>">
-                            <div class="wpme_address-top"><input type="radio" name="address" value='<?php echo json_encode($address) ?>' id="<?=$address->id?>" <?= $address->id == $saved_address->id? "checked" :""?>     required ><h2><?= $address->label ?></h2>
+                            <div class="wpme_address-top"><input type="radio" name="address" value='<?php echo json_encode($address) ?>' id="<?=$address->id?>"      required ><h2><?= $address->label ?></h2>
                             </div>
                             <div class="wpme_address-body">
                                 <ul>
@@ -364,7 +373,7 @@ if(isset($_POST['submit'])){
                                     <li>CEP: <?=$address->postal_code?></li>
                                 </ul>
                                 <label>Escolha a Agencia Jadlog</label>
-                                <select>
+                                <select name="<?php echo $address->id ?>">
 
                                 <?php
                                 $agencias = getAgencies('Brazil',$address->city->state->state_abbr,$address->city->city);
@@ -377,7 +386,7 @@ if(isset($_POST['submit'])){
                                     ?>
 
 <!--                                    --><?php //var_dump($agency)?>
-                                    <option value="<?=$agency->id?>"><?=$agency->address->address?>, <?=$agency->address->number?>-<?=$agency->address->district?> </option>
+                                    <option value="<?=$agency->id?>" <?= $address->agency == $agency->id? "selected" :""?> ><?=$agency->address->address?>, <?=$agency->address->number?>-<?=$agency->address->district?> </option>
                                     <?php
                                 } ?>
 
@@ -407,7 +416,7 @@ if(isset($_POST['submit'])){
                 <?php foreach ($companies['data'] as $company){?>
             <li>
                 <div class="wpme_address-top">
-                    <input type="radio">
+                    <input type="radio" name="company" value="<?php json_encode($company) ?>">
                     <h2><?= $company->name?></h2>
                 </div>
                 <div class="wpme_address-body">
