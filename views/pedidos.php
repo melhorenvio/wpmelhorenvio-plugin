@@ -933,10 +933,11 @@
                             to_postal_code: pedido.shipping.postcode,
                             to_note: pedido.customer_note,
                             line_items: pedido.line_items,
-                            nf: this.pedidos_nf,
+                            nf: this.pedidos_nf[ind],
                             key_nf: 'nf-e',
                             company_document: pedido_cnpj,
-                            company_state_register: pedido_ie
+                            company_state_register: pedido_ie,
+                            agency: this.endereco.agency
                         }
                     }
 
@@ -956,8 +957,9 @@
                             vm.message.type = 'success';
                             vm.message.show_message = true;
                         }else{
+                            resposta = JSON.parse(response);
                             vm.message.title = 'Não foi possível adicionar item ao carrinho';
-                            vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho, tente novamente mais tarde';
+                            vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho --'+resposta.errors;
                             vm.message.type = 'error';
                             vm.message.show_message = true;
                         }

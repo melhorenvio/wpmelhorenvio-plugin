@@ -16,7 +16,7 @@ function wpme_getJsonOrders(){
     $datas = array();
     foreach($orders as $order){
         $data = array(
-        'id'                             => $order->get_id(),
+            'id'                         => $order->get_id(),
             'number'                     => $order->get_order_number(),
             'currency'                   => $order->get_currency(),
             'price'                      => $order->get_total(),
@@ -101,6 +101,10 @@ function wpme_getJsonOrders(){
 
 function wpme_buyShipment(){
     $shipment = new stdClass();
+
+    if( isset($_POST['agency'])){
+        $shipment->agency = $_POST['agency'];
+    }
     $shipment->service = $_POST['service_id'];
     $shipment->from = wpme_getObjectFrom(); //semi-ok
     $shipment->to = wpme_getObjectTo(); //semi-ok
