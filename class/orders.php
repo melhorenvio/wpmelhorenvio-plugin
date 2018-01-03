@@ -240,8 +240,8 @@ function wpme_getObjectFrom(){
     $return->phone = get_option('wpme_phone');
     $return->email = get_option('wpme_email');
     $return->document = get_option('wpme_document');
-    $return->company_document = '';// Falta aqui
-    $return->state_register = ''; // Falta aqui
+    $return->company_document = $_POST['company_document'];
+    $return->state_register = $_POST['company_state_register'];
     $return->address = $address->address;
     $return->complement = ''; $address->complement;
     $return->number = $address->number;
@@ -316,8 +316,8 @@ function wpme_getObjectOptions(){
     $return->reverse = false;
     $return->non_commercial = true; //rever
     $return->invoice = new stdClass();
-        $return->invoice->number = ''; //rever
-        $return->invoice->key = ''; //rever
+        $return->invoice->number = $_POST['nf']; //rever
+        $return->invoice->key = $_POST['key_nf']; //rever
     $return->reminder = ''; //rever
     $return->plataform= "WooCommerce";
 

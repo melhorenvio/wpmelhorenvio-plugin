@@ -664,9 +664,9 @@
                 </td>
                 <td>
                     <template v-if="!pedido.bought_tracking">
-                        <strong>NF:</strong> <input v-model="pedidos_nf[i]"><br>
-                        <template v-if="company.cnpj = '' "><strong>CNPJ:</strong> <input v-model="pedidos_cnpj[pedido.id]"><br></template>
-                        <template v-if="company.ie   = '' "><strong>IE:</strong> <input v-model="pedidos_ie[pedido.id]"><br></template>
+                        <strong> NF :</strong> <input v-model="pedidos_nf[i]"><br>
+                        <template v-if="company.cnpj == ''"><strong>CNPJ:</strong> <input v-model="pedidos_cnpj[i]"><br></template>
+                        <template v-if="company.ie   == ''"><strong> IE :</strong> <input v-model="pedidos_ie[i]"><br></template>
                     </template>
                     <template v-if="pedido.bought_tracking" ><p class="wpme_success">Ok!</p></template>
                 </td>
@@ -869,13 +869,24 @@
                 pedido = this.pedidos_page[ind];
                 vm = this;
                 console.log(ind);
-                if(this.selected_shipment[ind] > 2 && (typeof this.pedidos_nf[ind] === 'undefined' || typeof this.pedidos_cnpj[ind] === 'undefined' || typeof this.pedidos_ie[ind] === 'undefined') ){
+                if(this.company.cnpj != ''){
+                    pedido_cnpj = this.company.cnpj;
+                }else {
+                    pedido_cnpj = this.pedidos_cnpj[ind];
+                }
+                if(this.company.ie != ''){
+                    pedido_ie = this.company.ie;
+                }else{
+                    pedido_ie = this.pedidos_ie[ind];
+                }
+
+                if(this.selected_shipment[ind] > 2 && (typeof this.pedidos_nf[ind] === 'undefined' || typeof pedido_cnpj === 'undefined' || typeof pedido_ie === 'undefined') ){
                     vm.message.title = 'Dados Incompletos';
-                    vm.message.message = 'Para utilizar essa transportadora, informe a nota fiscal (NF)';
+                    vm.message.message = 'Para utilizar essa transportadora, informe a nota fiscal (NF) e os dados da empresa (CNPJ/IE) ';
                     vm.message.type = 'error';
                     vm.message.show_message = true;
                 }else{
-                    if(this.pedidos_nf[ind] === 'undefined' ){
+                    if(this.selected_shipment < 3){
                         var data = {
                             action: "wpme_ajax_ticketAcquirementAPI",
                             valor_declarado: pedido.price,
@@ -922,7 +933,10 @@
                             to_postal_code: pedido.shipping.postcode,
                             to_note: pedido.customer_note,
                             line_items: pedido.line_items,
-                            nf: this.pedidos_nf
+                            nf: this.pedidos_nf,
+                            key_nf: 'nf-e',
+                            company_document: pedido_cnpj,
+                            company_state_register: pedido_ie
                         }
                     }
 
