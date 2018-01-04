@@ -45,7 +45,7 @@ function wpme_getPackage($package){
         $width = wc_get_product($item['product_id'])->get_width();
         $height = wc_get_product($item['product_id'])->get_height();
         $length = wc_get_product($item['product_id'])->get_length();
-        $weight = wc_get_product($item['product_id'])->get_weight()  * $item['quantity'];
+        $weight = $weight + wc_get_product($item['product_id'])->get_weight()  * $item['quantity'];
         $valor = wc_get_product($item['product_id'])->get_price() * $item['quantity'];
         $volume  = $volume +  (int) ($width * $length * $height) * $item['quantity'];
         $total += $valor ;

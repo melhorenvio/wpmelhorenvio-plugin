@@ -19,8 +19,8 @@ if(isset($_POST['submit'])){
         }
     }
     if(isset($_POST['company'])){
-        $company = $_POST['company'];
-        update_option('wpme_company',json_encode($company));
+        $company = str_replace("\\",'',$_POST['company']);
+        update_option('wpme_company',$company);
     }else{
         $company = new stdClass();
         $company->cnpj = '';
@@ -423,27 +423,31 @@ if(isset($_POST['submit'])){
     <h2 style="text-align: center; margin: 15px;">Escolha a empresa para a compra de fretes</h2>
     <label>
         <div class="wpme_flex">
+
+            <?php foreach ($companies['data'] as $company){?>
             <ul class="wpme_address">
-                <?php foreach ($companies['data'] as $company){?>
             <li>
                 <div class="wpme_address-top">
-                    <input type="radio" name="company" value="<?php json_encode($company) ?>" <?php
+                    <input type="radio" name="company" value='<?php echo json_encode($company) ?>' <?php
 
 
-                    ?>>
+                    ?>  <?= $saved_company->id == $company->id?"checked":""?>>
                     <h2><?= $company->name?></h2>
                 </div>
                 <div class="wpme_address-body">
                     <ul>
                         <li>CNPJ: <?= $company->document?></li>
-                        <li> ID: <?= $company->state_register?></li>
+                        <li> IE: <?= $company->state_register?></li>
                     </ul>
 
 
                 </div>
             </li>
-                <?php } ?>
             </ul>
+            <?php }if(count($companies < 1)){
+                echo "<p style='text-align:center;margin:auto;'> Para cadastrar suas lojas vá em <a href='https://www.melhorenvio.com.br/painel/gerenciar/lojas'>Painel Melhor Envio</a> </p>";
+            } ?>
+
         </div>
     </label>
     <div class="wpme_basepadding">

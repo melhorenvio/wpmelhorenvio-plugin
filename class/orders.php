@@ -312,7 +312,7 @@ function wpme_getObjectOptions(){
     if($options->VD){
         $return->insurance_value = $_POST['valor_declarado'];
     }else{
-        $return->insurance_value = '';
+        $return->insurance_value =$_POST['valor_declarado'];
     }
     $return->receipt = $options->AR;
     $return->own_hand = $options->MP;
@@ -320,8 +320,8 @@ function wpme_getObjectOptions(){
     $return->reverse = false;
     $return->non_commercial = true; //rever
     $return->invoice = new stdClass();
-        $return->invoice->number = $_POST['nf']; //rever
-        $return->invoice->key = $_POST['key_nf']; //rever
+    $return->invoice->number = $_POST['nf']; //rever
+    //$return->invoice->key = $_POST['key_nf']; //rever
     $return->reminder = ''; //rever
     $return->plataform= "WooCommerce";
 
@@ -339,10 +339,6 @@ function wpme_updateTrackingData(){
     $tracking_code = $_POST['tracking_code'];
     $status = $_POST['status'];
     echo json_encode(wpme_data_updateTracking($tracking_code,$status));
-}
-
-function wpme_removeFromCart(){
-
 }
 
 function wpme_getTrackingsData(){
@@ -427,4 +423,37 @@ function wpme_cancelTicketData(){
     $trk = $_POST['tracking'];
     echo $trk[0];
     return wpme_data_deleteTracking($trk[0]);
+}
+
+function wpme_removeFromCart()
+{
+    $curl = curl_init();
+    $token = get_option('wpme_token');
+
+    curl_setopt_array($curl, array(
+        CURLOPT_URL => "https://www.melhorenvio.com.br/api/v2/me/cart/" . $_POST['tracking'],
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 30,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "DELETE",
+        CURLOPT_HTTPHEADER => array(
+            "accept: application/json",
+            "authorization: Bearer " . $token,
+            "cache-control: no-cache",
+            "postman-token: a3c50b4f-eea7-b391-9acb-cf7780a53983"
+        ),
+    ));
+
+    $response = curl_exec($curl);
+    $err = curl_error($curl);
+
+    curl_close($curl);
+
+    if ($err) {
+        echo "cURL Error #:" . $err;
+    } else {
+        wpme_data_deleteTracking($_POST['tracking']);
+    }
 }

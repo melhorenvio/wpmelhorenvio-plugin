@@ -46,7 +46,7 @@ if( !class_exists('WP_MelhorEnvio')):
                 //Criando os links no Menu
                 add_action("admin_menu", "wpme_addMenu");
                 function wpme_addMenu(){
-                    add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpme_melhor-envio","", plugin_dir_url( __FILE__ )."mo.png");
+                   add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpme_melhor-envio","wpme_pedidos", plugin_dir_url( __FILE__ )."mo.png");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpme_melhor-envio-requests", "wpme_pedidos");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpme_melhor-envio-config", "wpme_config");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações da Conta", "Sua Conta Melhor Envio", "administrator", "wpme_melhor-envio-subscription", "wpme_cadastro");
@@ -175,6 +175,17 @@ if( !class_exists('WP_MelhorEnvio')):
                 die();
             }
 
+            add_action( 'wp_ajax_wpme_ajax_getCompanyAPI', 'wpme_ajax_getCompanyAPI' );
+            function wpme_ajax_getCompanyAPI(){
+                echo get_option('wpme_company');
+                die();
+            }
+
+            add_action( 'wp_ajax_wpme_ajax_removeTrackingAPI', 'wpme_ajax_removeTrackingAPI' );
+            function wpme_ajax_removeTrackingAPI(){
+                echo wpme_removeFromCart();
+                die();
+            }
 
 
 

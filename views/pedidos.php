@@ -22,8 +22,8 @@
         right: 44%;
         top: 40%;
         z-index: 1;
-        width: 150px;
-        height: 150px;
+        width: 290px;
+        height: 290px;
         display: block;
         border: solid 30px rgba(100,100,100,.1);
         border-top-color:rgba(100,100,200,1) ;
@@ -124,7 +124,7 @@
         box-sizing: border-box;
         border: solid 2px rgba(50,180,250,0);
         transition: 300ms;
-        margin: 0px 20px;
+        margin: 0 20px;
         width: 200px;
         height: 100px;
     }
@@ -146,9 +146,9 @@
         text-decoration: none;
     }
     .modal a .pgsaldo h4{
-        padding: 0px;
+        padding: 0;
         font-size: 1.1rem;
-        margin: 0px;
+        margin: 0;
     }
 
     .modal a .pgsaldo p{
@@ -163,7 +163,7 @@
         border: none !important;
         width: 20px;
         height: 10px;
-        top: 0px;
+        top: 0;
         right: 10px;
         box-shadow: none;
     }
@@ -180,7 +180,7 @@
     }
     tr{
         width: 100%;
-        padding: 0px;
+        padding: 0;
         transition: 300ms;
     }
     th{
@@ -325,7 +325,7 @@
     .wpme_pagination li{
         display: inline-block;
         text-align: center;
-        padding: 0px 0px 0px -1px;
+        padding: 0 0 0 -1px;
     }
 
     .wpme_pagination_wrapper{
@@ -364,20 +364,6 @@
     .wpme_pagination li a:focus{
         outline: none;
         box-shadow: none;
-    }
-
-
-
-    .wpme_flex{
-        display: flex;
-        float: left;
-        width: 100%;
-        position: relative;
-        padding: 0;
-        flex:1 ;
-        order: 3;
-        overflow-y: hidden;
-        overflow-x: auto;
     }
 
     .wpme_address{
@@ -614,7 +600,7 @@
                     </ul>
                 </div>
             </div>
-            <div><a href="<?= get_admin_url(get_current_blog_id(),"/admin.php?page=melhor-envio-config")?>">Editar configurações</a></div>
+            <div><a href="<?= get_admin_url(get_current_blog_id(),"/admin.php?page=wpme_melhor-envio-config")?>">Editar configurações</a></div>
 
         </div>
         <table>
@@ -622,7 +608,7 @@
             <tr>
                 <td width="10px"><input type="checkbox" @click="selectall" v-model="selectallatt"></td>
                 <td colspan="6">
-                    <a href="javascript;" class="btn comprar-hard"> Comprar </a>
+                    <a href="javascript;" class="btn comprar-hard"> Adicionar ao Carrinho </a>
 
                     <a href="javascript;" class="btn melhorenvio"> Pagar </a>
 
@@ -664,9 +650,9 @@
                 </td>
                 <td>
                     <template v-if="!pedido.bought_tracking">
-                        <strong> NF :</strong> <input v-model="pedidos_nf[i]"><br>
-                        <template v-if="company.cnpj == ''"><strong>CNPJ:</strong> <input v-model="pedidos_cnpj[i]"><br></template>
-                        <template v-if="company.ie   == ''"><strong> IE :</strong> <input v-model="pedidos_ie[i]"><br></template>
+                        <strong> NF :</strong> <br> <input v-model="pedidos_nf[i]"><br>
+                        <template v-if="company.document == '' || company.document == null"><strong>CNPJ:</strong><br> <input v-model="pedidos_cnpj[i]"><br></template>
+                        <template v-if="company.state_register   == '' || company.state_register == null "><strong> IE :</strong><br> <input v-model="pedidos_ie[i]"><br></template>
                     </template>
                     <template v-if="pedido.bought_tracking" ><p class="wpme_success">Ok!</p></template>
                 </td>
@@ -676,7 +662,7 @@
                     </template>
                     <template v-if="pedido.status == 'cart'">
                         <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
-                        <a href="javascript;" class="btn cancelar" @click.prevent="showCon" > Remover </a>
+                        <a href="javascript;" class="btn cancelar" @click.prevent="removeFromCart(pedido.tracking_code)" > Remover </a>
                     </template>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
                     <!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
@@ -703,7 +689,7 @@
         </table>
         <div class="wpme_pagination_wrapper">
             <ul class="wpme_pagination" v-for="i in Math.ceil(total/perpage)" v-show="total > perpage">
-                <li :class="{'active': i == page}"><a href="javascript:;" @click.prevent="pagego(i)">{{i}}</a></li>
+                <li :class="{'active': i == page}"><a href="javascript;" @click.prevent="pagego(i)">{{i}}</a></li>
             </ul>
         </div>
         <div class="mask" v-show="show_mask" @click.prevent="toogleModal">
@@ -753,7 +739,6 @@
 
     </div>
 </div>
-<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script src="https://unpkg.com/vue"></script>
 <script>
     var app = new Vue({
@@ -763,8 +748,8 @@
             pedidos: [],
             total:0,
             company:{
-                cnpj:'',
-                ie:''
+                document:'',
+                state_register:''
             },
             show_mask:false,
             show_modal:false,
@@ -779,8 +764,8 @@
             endereco:{
                 city:{
                     city:"",
-                    state:"",
-                },
+                    state:""
+                }
             },
             pedidos_checked:[],
             pedidos_nf: [],
@@ -799,8 +784,7 @@
             },
             cancel_tracking_codes: [],
             show_confirm_modal:false,
-            show_confirm_mask:false,
-
+            show_confirm_mask:false
         },
 
         created: function(){
@@ -832,7 +816,7 @@
             utf8_from_str: function(s) {
                 for(var i=0, enc = encodeURIComponent(s), a = []; i < enc.length;) {
                     if(enc[i] === '%') {
-                        a.push(parseInt(enc.substr(i+1, 2), 16))
+                        a.push(parseInt(enc.substr(i+1, 2), 16));
                         i += 3
                     } else {
                         a.push(enc.charCodeAt(i++))
@@ -865,17 +849,30 @@
                 this.toogleModal();
             },
 
+            removeFromCart: function(tracking){
+                var data = {
+                    action: 'wpme_ajax_removeTrackingAPI',
+                    tracking:tracking
+                }
+                vm = this;
+                jQuery.post(ajaxurl,data,function (response) {
+                    console.log(response);
+                    vm.getOrders();
+                });
+            },
+
             addToCart: function(ind){
                 pedido = this.pedidos_page[ind];
                 vm = this;
                 console.log(ind);
-                if(this.company.cnpj != ''){
-                    pedido_cnpj = this.company.cnpj;
+                console.log(pedido.price);
+                if(this.company.cnpj != '' && this.company.cnpj != null ){
+                    pedido_cnpj = this.company.document;
                 }else {
                     pedido_cnpj = this.pedidos_cnpj[ind];
                 }
-                if(this.company.ie != ''){
-                    pedido_ie = this.company.ie;
+                if(this.company.ie != '' && this.company.ie != null){
+                    pedido_ie = this.company.state_register;
                 }else{
                     pedido_ie = this.pedidos_ie[ind];
                 }
@@ -915,8 +912,8 @@
                             valor_declarado: pedido.price,
                             service_id: this.selected_shipment[ind],
                             from_name: this.user_info.firstname+" "+ this.user_info.lastname,
-                            from_company_document : this.company.cnpj,
-                            from_company_state_register: this.company.ie,
+                            from_company_document : pedido_cnpj,
+                            from_company_state_register: pedido_ie,
                             to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
                             to_phone: pedido.customer_phone,
                             to_email: pedido.customer_email,
@@ -959,7 +956,7 @@
                         }else{
                             resposta = JSON.parse(response);
                             vm.message.title = 'Não foi possível adicionar item ao carrinho';
-                            vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho --'+resposta.errors;
+                            vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho <br>'+resposta.error;
                             vm.message.type = 'error';
                             vm.message.show_message = true;
                         }
@@ -967,12 +964,9 @@
                 }
             },
 
-            getQuotation: function(){
-
-            },
-
             load: function(){
                 this.getUser();
+                this.getCompany();
                 this.getLimits();
                 this.getAddress();
                 this.getBalance();
@@ -983,7 +977,7 @@
             getAddress: function(){
                 data = {
                     action: "wpme_ajax_getAddressAPI"
-                }
+                };
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
                     vm.endereco = JSON.parse(response);
@@ -997,7 +991,7 @@
             },
 
             openCancelTicketConfirmer: function(tracking){
-                this.cancel_tracking_codes = []
+                this.cancel_tracking_codes = [];
                 this.cancel_tracking_codes.push(tracking);
                 this.toogleConfirmer();
             },
@@ -1007,7 +1001,7 @@
                 data = {
                     action: 'wpme_ajax_cancelTicketAPI',
                     tracking: this.cancel_tracking_codes
-                }
+                };
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
                     console.log(response);
@@ -1034,14 +1028,14 @@
                 data = {
                     action: 'wpme_ajax_ticketPrintingAPI',
                     tracking: [tracking]
-                }
+                };
                 vm = this;
                 console.log(tracking);
                 jQuery.post(ajaxurl,data,function(response){
                     resposta = JSON.parse(response);
                     console.log(resposta);
                     if(typeof resposta.url ){
-                        console.log(resposta.url)
+                        console.log(resposta.url);
                         window.open(resposta.url,'_blank');
                     }else{
                         vm.message.title = "Não foi possível acessar esta etiqueta";
@@ -1070,7 +1064,7 @@
                         action:'wpme_ajax_getTrackingsData',
                         order_id: pedido.id,
                         timeout:30
-                    }
+                    };
                     jQuery.post(ajaxurl, data, function(response) {
                         resposta = JSON.parse(response);
                         resposta.forEach(function(tracking){
@@ -1087,7 +1081,7 @@
                     action:'wpme_ajax_getTrackingsData',
                     order_id: pedido.id,
                     timeout:30
-                }
+                };
                 console.log(pedido);
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
@@ -1108,7 +1102,7 @@
                     orders: this.payment_tracking_codes,
                     gateway: payment_method
 
-                }
+                };
 
                 console.log(data);
                 vm = this;
@@ -1127,7 +1121,7 @@
                             vm.updateTracking(order,'paid');
                             vm.payment_tracking_codes = [];
                             vm.pedidos_page.forEach( function (pedido) {
-                                if(pedido.tracking_code == order)
+                                if(order == pedido.tracking_code)
                                     pedido.status = 'paid';
                             });
                         });
@@ -1148,7 +1142,7 @@
                     action: "wpme_ajax_updateStatusData",
                     tracking_code:tracking_code,
                     status:status
-                }
+                };
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
                     console.log(resposta);
@@ -1164,7 +1158,7 @@
                 var data = {
                     action:'wpme_ajax_getTrackingAPI',
                     tracking_codes: tracking_codes
-                }
+                };
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
                 });
@@ -1176,10 +1170,10 @@
                     order_id:order_id,
                     tracking:tracking,
                     service: service
-                }
+                };
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
-                    if(tracking != null){
+                    if(tracking !== null){
                         vm.tracking_codes[order_id]= tracking;
                     }
                 });
@@ -1230,7 +1224,7 @@
             getUser: function(){
                 var data = {
                     action:'wpme_ajax_getCustomerInfoAPI',
-                }
+                };
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
                     console.log(response);
@@ -1245,7 +1239,7 @@
             getBalance: function(){
                 var data = {
                     action:'wpme_ajax_getBalanceAPI'
-                }
+                };
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
                     console.log(response);
@@ -1264,7 +1258,7 @@
                 data = {
                     action:'wpme_ajax_cancelTicketData',
                     tracking: tracking
-                }
+                };
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
                     console.log(response);
@@ -1277,7 +1271,7 @@
             getLimits: function(){
                 var data = {
                     action:'wpme_ajax_getLimitsAPI'
-                }
+                };
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
                     console.log(response);
@@ -1290,6 +1284,17 @@
                         vm.message.type = 'error';
                         vm.message.show_message = true;
                     }
+                });
+            },
+
+            getCompany: function(){
+                var data = {
+                    action:'wpme_ajax_getCompanyAPI'
+                };
+                vm  = this;
+                jQuery.post(ajaxurl, data, function(response) {
+                    resposta = JSON.parse(response);
+                    vm.company = resposta;
                 });
             }
         }
