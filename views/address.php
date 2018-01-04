@@ -4,11 +4,12 @@ if(isset($_POST['submit'])){
     $services = array();
     if(isset($_POST['address'])){
         $address = str_replace("\\",'',$_POST['address']);
-        $add_id = json_decode($address,false, 512, JSON_UNESCAPED_UNICODE);
+        var_dump($address);
+        $add_id = json_decode($address);
         if (isset($_POST[$add_id->id])){
             $id_agency = $_POST[$add_id->id];
             $add_id->agency = $id_agency;
-            $address = json_encode($add_id , JSON_UNESCAPED_UNICODE);
+            $address = json_encode($add_id);
         }
     }else{
         $address = '';
@@ -318,6 +319,10 @@ if(isset($_POST['submit'])){
         display: inline-block;
     }
 
+    .wpme_divtext input{
+        max-width: 90%;
+    }
+
     .wpme_pluginconf{
         display: block;
         float: left;
@@ -374,7 +379,7 @@ if(isset($_POST['submit'])){
 
                 <ul class="wpme_address">
                     <li><label for="<?=$address->id?>">
-                            <div class="wpme_address-top"><input type="radio" name="address" value='<?php echo json_encode($address) ?>' id="<?=$address->id?>"   <?= $address->id == $saved_address->id ? "checked" : ""?>   required ><h2><?= $address->label ?></h2>
+                            <div class="wpme_address-top"><input type="radio" name="address" value='<?php echo json_encode($address,JSON_UNESCAPED_UNICODE) ?>' id="<?=$address->id?>"   <?= $address->id == $saved_address->id ? "checked" : ""?>   required ><h2><?= $address->label ?></h2>
                             </div>
                             <div class="wpme_address-body">
                                 <ul>
@@ -444,7 +449,7 @@ if(isset($_POST['submit'])){
                 </div>
             </li>
             </ul>
-            <?php }if(count($companies < 1)){
+            <?php }if(count($companies['data']) < 1){
                 echo "<p style='text-align:center;margin:auto;'> Para cadastrar suas lojas vá em <a href='https://www.melhorenvio.com.br/painel/gerenciar/lojas'>Painel Melhor Envio</a> </p>";
             } ?>
 

@@ -251,7 +251,7 @@ function wpme_getObjectFrom(){
     $return->number = $address->number;
     $return->district = $address->district;
     $return->city = $address->city->city;
-    $return->state_abbr = $address->state->state_abbr;
+    $return->state_abbr = $address->city->state->state_abbr;
     $return->country_id = 'BR';
     $return->postal_code = $address->postal_code;
     $return->note = '';

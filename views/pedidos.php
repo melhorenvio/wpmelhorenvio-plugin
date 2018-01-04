@@ -13,23 +13,27 @@
 
 <style>
 
-
+    .wpme_nothing{
+        text-align: center;
+        margin: auto;
+    }
     .content{
         display: none;
     }
     .loader{
-        position: absolute;
-        right: 44%;
-        top: 40%;
-        z-index: 1;
-        width: 290px;
-        height: 290px;
-        display: block;
-        border: solid 30px rgba(100,100,100,.1);
-        border-top-color:rgba(100,100,200,1) ;
-        border-bottom-color:rgba(100,100,200,1) ;
-        border-radius: 50%;
-        animation:load 2s linear infinite ;
+       width: 100%
+       text-align:center;
+       position: absolute;
+    }
+
+    .loader svg{
+        display: inline-block;
+        margin: auto;
+        top: 50%;
+        left: 50%;
+        /*margin-top: -100px;*/
+        /*margin-left: -100px*/
+        position: fixed;
     }
 
     @keyframes load {
@@ -554,7 +558,42 @@
 </style>
 <div id="app">
     <div class="loader">
-
+<!--        <svg class="ico" width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc ">-->
+<!--            <g fill="none" fill-rule="evenodd" stroke-width="2">-->
+<!--                <circle cx="55" cy="55" r="1">-->
+<!--                    <animate attributeName="r"-->
+<!--                             begin="0s" dur="1.8s"-->
+<!--                             values="1; 50"-->
+<!--                             calcMode="spline"-->
+<!--                             keyTimes="0; 1"-->
+<!--                             keySplines="0.165, 0.84, 0.44, 1"-->
+<!--                             repeatCount="indefinite" />-->
+<!--                    <animate attributeName="stroke-opacity"-->
+<!--                             begin="0s" dur="1.8s"-->
+<!--                             values="1; 0"-->
+<!--                             calcMode="spline"-->
+<!--                             keyTimes="0; 1"-->
+<!--                             keySplines="0.3, 0.61, 0.355, 1"-->
+<!--                             repeatCount="indefinite" />-->
+<!--                </circle>-->
+<!--                <circle cx="55" cy="55" r="1">-->
+<!--                    <animate attributeName="r"-->
+<!--                             begin="-0.9s" dur="1.8s"-->
+<!--                             values="1; 20"-->
+<!--                             calcMode="spline"-->
+<!--                             keyTimes="0; 1"-->
+<!--                             keySplines="0.165, 0.84, 0.44, 1"-->
+<!--                             repeatCount="indefinite" />-->
+<!--                    <animate attributeName="stroke-opacity"-->
+<!--                             begin="-0.9s" dur="1.8s"-->
+<!--                             values="1; 0"-->
+<!--                             calcMode="spline"-->
+<!--                             keyTimes="0; 1"-->
+<!--                             keySplines="0.3, 0.61, 0.355, 1"-->
+<!--                             repeatCount="indefinite" />-->
+<!--                </circle>-->
+<!--            </g>-->
+<!--        </svg>-->
     </div>
     <div class="content">
         <div class="data_client">
@@ -603,7 +642,50 @@
             <div><a href="<?= get_admin_url(get_current_blog_id(),"/admin.php?page=wpme_melhor-envio-config")?>">Editar configurações</a></div>
 
         </div>
-        <table>
+
+        <div  v-if="pedidos.length < 1" class="wpme_nothing">
+            <template v-if="!finished"><h3 >
+                    <svg class="ico" width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc ">
+                        <g fill="none" fill-rule="evenodd" stroke-width="2">
+                            <circle cx="55" cy="55" r="1">
+                                <animate attributeName="r"
+                                         begin="0s" dur="1.8s"
+                                         values="1; 50"
+                                         calcMode="spline"
+                                         keyTimes="0; 1"
+                                         keySplines="0.165, 0.84, 0.44, 1"
+                                         repeatCount="indefinite" />
+                                <animate attributeName="stroke-opacity"
+                                         begin="0s" dur="1.8s"
+                                         values="1; 0"
+                                         calcMode="spline"
+                                         keyTimes="0; 1"
+                                         keySplines="0.3, 0.61, 0.355, 1"
+                                         repeatCount="indefinite" />
+                            </circle>
+                            <circle cx="55" cy="55" r="1">
+                                <animate attributeName="r"
+                                         begin="-0.9s" dur="1.8s"
+                                         values="1; 20"
+                                         calcMode="spline"
+                                         keyTimes="0; 1"
+                                         keySplines="0.165, 0.84, 0.44, 1"
+                                         repeatCount="indefinite" />
+                                <animate attributeName="stroke-opacity"
+                                         begin="-0.9s" dur="1.8s"
+                                         values="1; 0"
+                                         calcMode="spline"
+                                         keyTimes="0; 1"
+                                         keySplines="0.3, 0.61, 0.355, 1"
+                                         repeatCount="indefinite" />
+                            </circle>
+                        </g>
+                    </svg>
+                </h3></template>
+            <template v-if="finished"><h3> Ainda não há nenhum pedido por aqui ...</h3></template>
+        </div>
+
+        <table  v-else >
             <thead>
             <tr>
                 <td width="10px"><input type="checkbox" @click="selectall" v-model="selectallatt"></td>
@@ -644,15 +726,15 @@
                     <select class="select" v-model="selected_shipment[i]" v-if="!pedido.bought_tracking">
                         <option v-for="cotacao in pedido.cotacoes"
                                 v-if="(! cotacao.error )"
-                                :class="{'selected': pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}" :value="cotacao.id"
+                                :class="{'selected': Array.isArray(pedido.shipping_lines) && pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}" :value="cotacao.id"
                         >{{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>
                     </select>
                 </td>
                 <td>
                     <template v-if="!pedido.bought_tracking">
-                        <strong> NF :</strong> <br> <input v-model="pedidos_nf[i]"><br>
-                        <template v-if="company.document == '' || company.document == null"><strong>CNPJ:</strong><br> <input v-model="pedidos_cnpj[i]"><br></template>
-                        <template v-if="company.state_register   == '' || company.state_register == null "><strong> IE :</strong><br> <input v-model="pedidos_ie[i]"><br></template>
+                        <strong> NF :</strong> <input v-model="pedidos_nf[i]"><br>
+                        <template v-if="company.document == '' || company.document == null"><strong>CNPJ:</strong> <input v-model="pedidos_cnpj[i]"><br></template>
+                        <template v-if="company.state_register   == '' || company.state_register == null "><strong></strong><br> <input v-model="pedidos_ie[i]"><br></template>
                     </template>
                     <template v-if="pedido.bought_tracking" ><p class="wpme_success">Ok!</p></template>
                 </td>
@@ -678,7 +760,7 @@
             <tr>
                 <td></td>
                 <td colspan="6">
-                    <a href="javascript;" class="btn comprar-hard"> Comprar </a>
+                    <a href="javascript;" class="btn comprar-hard"> Adicionar ao Carrinho </a>
 
                     <a href="javascript;" class="btn melhorenvio"> Pagar </a>
 
@@ -687,6 +769,10 @@
             </tr>
             </tfoot>
         </table>
+
+
+
+
         <div class="wpme_pagination_wrapper">
             <ul class="wpme_pagination" v-for="i in Math.ceil(total/perpage)" v-show="total > perpage">
                 <li :class="{'active': i == page}"><a href="javascript;" @click.prevent="pagego(i)">{{i}}</a></li>
@@ -745,6 +831,7 @@
         el: '#app',
         data: {
             payment_tracking_codes:[],
+            finished:false,
             pedidos: [],
             total:0,
             company:{
@@ -796,19 +883,7 @@
             pedidos_page: function () {
                 this.total = this.pedidos.length;
                 return this.pedidos.slice(((this.page -1) * this.perpage), this.page*this.perpage);
-            },
-
-            selected_shipmeent: function () {
-                var array = [];
-                this.pedidos_page.forEach(function (pedido,index) {
-                    pedido.cotacoes.forEach(function (cotacao) {
-                        if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name))
-                            array[index] = cotacao.id;
-                    });
-                });
-                return array;
             }
-
 
         },
 
@@ -856,7 +931,6 @@
                 }
                 vm = this;
                 jQuery.post(ajaxurl,data,function (response) {
-                    console.log(response);
                     vm.getOrders();
                 });
             },
@@ -864,19 +938,19 @@
             addToCart: function(ind){
                 pedido = this.pedidos_page[ind];
                 vm = this;
-                console.log(ind);
-                console.log(pedido.price);
-                if(this.company.cnpj != '' && this.company.cnpj != null ){
+                if(this.company.document != '' && this.company.document != null ){
                     pedido_cnpj = this.company.document;
                 }else {
                     pedido_cnpj = this.pedidos_cnpj[ind];
                 }
-                if(this.company.ie != '' && this.company.ie != null){
+                if(this.company.state_register != '' && this.company.state_register != null){
                     pedido_ie = this.company.state_register;
                 }else{
                     pedido_ie = this.pedidos_ie[ind];
                 }
 
+                console.log(pedido_cnpj);
+                console.log(pedido_ie);
                 if(this.selected_shipment[ind] > 2 && (typeof this.pedidos_nf[ind] === 'undefined' || typeof pedido_cnpj === 'undefined' || typeof pedido_ie === 'undefined') ){
                     vm.message.title = 'Dados Incompletos';
                     vm.message.message = 'Para utilizar essa transportadora, informe a nota fiscal (NF) e os dados da empresa (CNPJ/IE) ';
@@ -939,7 +1013,6 @@
                     }
 
                     jQuery.post(ajaxurl, data, function(response) {
-                        console.log(response);
                         resposta = JSON.parse(response);
                         if(typeof resposta.id != 'undefined'){
                             vm.payment_tracking_codes = [];
@@ -948,13 +1021,12 @@
                             pedido.tracking_code = resposta.id;
                             pedido.bought_tracking = data.service_id;
                             pedido.status = 'cart';
-
                             vm.message.title = 'Envio adicionado ao carrinho';
                             vm.message.message = 'Este envio foi adicionado ao seu carrinho, clique em pagar para gerar a sua etiqueta.';
                             vm.message.type = 'success';
                             vm.message.show_message = true;
                         }else{
-                            resposta = JSON.parse(response);
+                            console.log(response);
                             vm.message.title = 'Não foi possível adicionar item ao carrinho';
                             vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho <br>'+resposta.error;
                             vm.message.type = 'error';
@@ -1004,7 +1076,6 @@
                 };
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
-                    console.log(response);
                     resposta = JSON.parse(response);
                     arr_index = Object.entries(resposta);
                     console.log(arr_index[0][1]['canceled']);
@@ -1030,12 +1101,9 @@
                     tracking: [tracking]
                 };
                 vm = this;
-                console.log(tracking);
                 jQuery.post(ajaxurl,data,function(response){
                     resposta = JSON.parse(response);
-                    console.log(resposta);
                     if(typeof resposta.url ){
-                        console.log(resposta.url);
                         window.open(resposta.url,'_blank');
                     }else{
                         vm.message.title = "Não foi possível acessar esta etiqueta";
@@ -1082,10 +1150,8 @@
                     order_id: pedido.id,
                     timeout:30
                 };
-                console.log(pedido);
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
-                    console.log(pedido);
                     resposta.forEach(function(tracking){
                         trk = tracking.tracking_id;
                         pedido.tracking_code = trk;
@@ -1104,11 +1170,9 @@
 
                 };
 
-                console.log(data);
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
                     vm.toogleModal();
-                    console.log(response);
                     resposta = JSON.parse(response)
                     if(typeof resposta.error !== 'undefined'){
                         vm.payment_tracking_codes = [];
@@ -1145,7 +1209,6 @@
                 };
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
-                    console.log(resposta);
                 });
 
             },
@@ -1190,16 +1253,19 @@
                     resposta = JSON.parse(response);
                     var array = [];
                     try{
-                        resposta.forEach(function (pedido,index) {
-                            pedido.cotacoes.forEach(function (cotacao) {
+                    resposta.forEach(function (pedido,index) {
+                        pedido.cotacoes.forEach(function (cotacao) {
+                            if(Array.isArray(pedido.shipping_lines > 0)){
                                 if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)){
                                     array[index] = cotacao.id;
                                 }
-                            });
-                            vm.getSpecificTracking(pedido);
-                            vm.pedidos = resposta;
+                            }
                         });
-                        vm.selected_shipment = array;
+
+                        vm.getSpecificTracking(pedido);
+                        vm.pedidos = resposta;
+                    });
+                    vm.selected_shipment = array;
                     }
                     catch (err){
                         vm.message.title = 'Erro ao carregar as cotações';
@@ -1207,6 +1273,7 @@
                         vm.message.type = 'error';
                         vm.message.show_message = true;
                     }
+                    vm.finished= true;
                 });
             },
             //TODO: fAZER O VARIOS, ARRUMAR PRA FUNCIONAR COM A JADLOG, REMOVER CARRINHO,
@@ -1295,6 +1362,7 @@
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
                     vm.company = resposta;
+                    console.log(resposta);
                 });
             }
         }
