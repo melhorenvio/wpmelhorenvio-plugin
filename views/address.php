@@ -4,7 +4,6 @@ if(isset($_POST['submit'])){
     $services = array();
     if(isset($_POST['address'])){
         $address = str_replace("\\",'',$_POST['address']);
-        var_dump($address);
         $add_id = json_decode($address);
         if (isset($_POST[$add_id->id])){
             $id_agency = $_POST[$add_id->id];

@@ -68,8 +68,8 @@
         max-width: 80%;
         display: block;
         width: 800px;
-        margin:auto;
-        left: 15%;
+        margin: 0 -450px;
+        left: 50%;
         top: 20%;
         height: 290px;
         padding: 20px;
@@ -464,11 +464,12 @@
         position:absolute;
         text-align: center;
         top:30%;
-        right: 40%;
+        left: 50%;
         border-radius:5px ;
         display: inline-block;
         height: 200px;
         width: 500px;
+        margin: 0 -250px;
         max-width: 80%;
         background-color: rgba(244,255,255,.95);
     }
