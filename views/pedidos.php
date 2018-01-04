@@ -69,7 +69,7 @@
         display: block;
         width: 800px;
         margin:auto;
-        left: 25%;
+        left: 15%;
         top: 20%;
         height: 290px;
         padding: 20px;
