@@ -686,7 +686,7 @@
             <template v-if="finished"><h3> Ainda não há nenhum pedido por aqui ...</h3></template>
         </div>
 
-        <table  v-else >
+        <table  v-else>
             <thead>
             <tr>
                 <td width="10px"><input type="checkbox" @click="selectall" v-model="selectallatt"></td>
@@ -708,7 +708,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for="(pedido,i) in pedidos_page">
+            <tr v-for="(pedido,i) in pedidos_page" v-if="updated || !updated">
 
                 <td><input type="checkbox" v-model="pedidos_checked[pedido.id]" :value="pedido"></td>
                 <td>{{pedido.id}}
@@ -833,6 +833,7 @@
         data: {
             payment_tracking_codes:[],
             finished:false,
+            updated:true,
             pedidos: [],
             total:0,
             company:{
@@ -877,6 +878,7 @@
 
         created: function(){
             this.load();
+            this.change_updated();
         },
 
         computed:{
@@ -889,6 +891,14 @@
         },
 
         methods: {
+
+            change_updated: function () {
+                vm = this;
+                setInterval(function () {
+                    vm.updated = ! vm.updated;
+                },5000)
+            },
+
             utf8_from_str: function(s) {
                 for(var i=0, enc = encodeURIComponent(s), a = []; i < enc.length;) {
                     if(enc[i] === '%') {
