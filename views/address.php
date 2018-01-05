@@ -39,12 +39,10 @@ if(isset($_POST['submit'])){
     $optionals->PL = isset($_POST['PL'])? $_POST['PL'] : "";
 
     if(defineConfig(utf8_encode($address),json_encode($services),json_encode($optionals))){
-        '<div class="notice notice-success is-dismissible\">
-                <h2>Configurações alteradas com sucesso</h2>
-                <p>Configurações alteradas com sucesso</p>
-            </div>';
+        $url = admin_url('admin.php?page=wpme_melhor-envio-requests');
+        wp_redirect($url);
     }else{
-        '<div class="notice notice-error is-dismissible\">
+      echo  '<div class="notice notice-error is-dismissible\">
                 <h2>Não foi possível alterar</h2>
                 <p>Tente novamente mais tarde</p>
             </div>';

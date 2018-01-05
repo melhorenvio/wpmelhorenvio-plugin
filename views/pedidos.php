@@ -21,9 +21,9 @@
         display: none;
     }
     .loader{
-       width: 100%
-       text-align:center;
-       position: absolute;
+        width: 100%
+        text-align:center;
+        position: absolute;
     }
 
     .loader svg{
@@ -74,7 +74,7 @@
         height: 290px;
         padding: 20px;
         text-align: center;
-        position: absolute;
+        position: fixed;
         border-radius:10px;
         overflow: auto;
     }
@@ -461,7 +461,7 @@
     }
 
     .wpme_message{
-        position:absolute;
+        position:fixed;
         text-align: center;
         top:30%;
         left: 50%;
@@ -559,42 +559,42 @@
 </style>
 <div id="app">
     <div class="loader">
-<!--        <svg class="ico" width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc ">-->
-<!--            <g fill="none" fill-rule="evenodd" stroke-width="2">-->
-<!--                <circle cx="55" cy="55" r="1">-->
-<!--                    <animate attributeName="r"-->
-<!--                             begin="0s" dur="1.8s"-->
-<!--                             values="1; 50"-->
-<!--                             calcMode="spline"-->
-<!--                             keyTimes="0; 1"-->
-<!--                             keySplines="0.165, 0.84, 0.44, 1"-->
-<!--                             repeatCount="indefinite" />-->
-<!--                    <animate attributeName="stroke-opacity"-->
-<!--                             begin="0s" dur="1.8s"-->
-<!--                             values="1; 0"-->
-<!--                             calcMode="spline"-->
-<!--                             keyTimes="0; 1"-->
-<!--                             keySplines="0.3, 0.61, 0.355, 1"-->
-<!--                             repeatCount="indefinite" />-->
-<!--                </circle>-->
-<!--                <circle cx="55" cy="55" r="1">-->
-<!--                    <animate attributeName="r"-->
-<!--                             begin="-0.9s" dur="1.8s"-->
-<!--                             values="1; 20"-->
-<!--                             calcMode="spline"-->
-<!--                             keyTimes="0; 1"-->
-<!--                             keySplines="0.165, 0.84, 0.44, 1"-->
-<!--                             repeatCount="indefinite" />-->
-<!--                    <animate attributeName="stroke-opacity"-->
-<!--                             begin="-0.9s" dur="1.8s"-->
-<!--                             values="1; 0"-->
-<!--                             calcMode="spline"-->
-<!--                             keyTimes="0; 1"-->
-<!--                             keySplines="0.3, 0.61, 0.355, 1"-->
-<!--                             repeatCount="indefinite" />-->
-<!--                </circle>-->
-<!--            </g>-->
-<!--        </svg>-->
+        <!--        <svg class="ico" width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc ">-->
+        <!--            <g fill="none" fill-rule="evenodd" stroke-width="2">-->
+        <!--                <circle cx="55" cy="55" r="1">-->
+        <!--                    <animate attributeName="r"-->
+        <!--                             begin="0s" dur="1.8s"-->
+        <!--                             values="1; 50"-->
+        <!--                             calcMode="spline"-->
+        <!--                             keyTimes="0; 1"-->
+        <!--                             keySplines="0.165, 0.84, 0.44, 1"-->
+        <!--                             repeatCount="indefinite" />-->
+        <!--                    <animate attributeName="stroke-opacity"-->
+        <!--                             begin="0s" dur="1.8s"-->
+        <!--                             values="1; 0"-->
+        <!--                             calcMode="spline"-->
+        <!--                             keyTimes="0; 1"-->
+        <!--                             keySplines="0.3, 0.61, 0.355, 1"-->
+        <!--                             repeatCount="indefinite" />-->
+        <!--                </circle>-->
+        <!--                <circle cx="55" cy="55" r="1">-->
+        <!--                    <animate attributeName="r"-->
+        <!--                             begin="-0.9s" dur="1.8s"-->
+        <!--                             values="1; 20"-->
+        <!--                             calcMode="spline"-->
+        <!--                             keyTimes="0; 1"-->
+        <!--                             keySplines="0.165, 0.84, 0.44, 1"-->
+        <!--                             repeatCount="indefinite" />-->
+        <!--                    <animate attributeName="stroke-opacity"-->
+        <!--                             begin="-0.9s" dur="1.8s"-->
+        <!--                             values="1; 0"-->
+        <!--                             calcMode="spline"-->
+        <!--                             keyTimes="0; 1"-->
+        <!--                             keySplines="0.3, 0.61, 0.355, 1"-->
+        <!--                             repeatCount="indefinite" />-->
+        <!--                </circle>-->
+        <!--            </g>-->
+        <!--        </svg>-->
     </div>
     <div class="content">
         <div class="data_client">
@@ -689,19 +689,19 @@
         <table  v-else>
             <thead>
             <tr>
-                <td width="10px"><input type="checkbox" @click="selectall" v-model="selectallatt"></td>
+                <td width="10px"></td>
                 <td colspan="6">
-                    <a href="javascript;" class="btn comprar-hard"> Adicionar ao Carrinho </a>
+                    <a href="javascript;" class="btn comprar-hard" @click.prevent="addManyToCart()"> Adicionar ao Carrinho </a>
 
-                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>
+                    <a href="javascript;" class="btn melhorenvio" @click.prevent="openMultiplePaymentSelector()"> Pagar </a>
 
-                    <a href="javascript;" class="btn imprimir"> Imprimir </a>
+                    <a href="javascript;" class="btn imprimir" @click.prevent="PrintMultiple()"> Imprimir </a>
                 </td>
             </tr>
-            <tr><th></th>
+            <tr><th width="10px"><input type="checkbox" @click="selectall" v-model="selectallatt"></th>
                 <th width="50px">Pedido</th>
                 <th width="50px">Data</th>
-                <th width="400px">Destinatário</th>
+                <th width="300px">Destinatário</th>
                 <th width="200px">Transportadora</th>
                 <th>Dados adicionais</th>
                 <th>Opções</th>
@@ -710,7 +710,7 @@
             <tbody>
             <tr v-for="(pedido,i) in pedidos_page" v-if="updated || !updated">
 
-                <td><input type="checkbox" v-model="pedidos_checked[pedido.id]" :value="pedido"></td>
+                <td><input type="checkbox" v-model="pedidos_checked[i]" :value="pedido"></td>
                 <td>{{pedido.id}}
                 </td>
                 <td>{{pedido.date_created}}23/09/2017 </td>
@@ -737,7 +737,7 @@
                         <template v-if="company.document == '' || company.document == null"><strong>CNPJ:</strong> <input v-model="pedidos_cnpj[i]"><br></template>
                         <template v-if="company.state_register   == '' || company.state_register == null "><strong></strong><br> <input v-model="pedidos_ie[i]"><br></template>
                     </template>
-                    <template v-if="pedido.bought_tracking" ><p class="wpme_success">Ok!</p></template>
+                    <template v-if="pedido.bought_tracking" ><p>--</p></template>
                 </td>
                 <td>
                     <template  v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed'">
@@ -761,9 +761,9 @@
             <tr>
                 <td></td>
                 <td colspan="6">
-                    <a href="javascript;" class="btn comprar-hard"> Adicionar ao Carrinho </a>
+                    <a href="javascript;" class="btn comprar-hard" @click.prevent="addManyToCart()"> Adicionar ao Carrinho </a>
 
-                    <a href="javascript;" class="btn melhorenvio"> Pagar </a>
+                    <a href="javascript;" class="btn melhorenvio"  @click.prevent="openMultiplePaymentSelector()"> Pagar </a>
 
                     <!--                    <a href="javascript;" class="btn cancelar"> Imprimir </a>-->
                 </td>
@@ -835,6 +835,7 @@
             finished:false,
             updated:true,
             pedidos: [],
+            error_desc: [],
             total:0,
             company:{
                 document:'',
@@ -896,19 +897,7 @@
                 vm = this;
                 setInterval(function () {
                     vm.updated = ! vm.updated;
-                },5000)
-            },
-
-            utf8_from_str: function(s) {
-                for(var i=0, enc = encodeURIComponent(s), a = []; i < enc.length;) {
-                    if(enc[i] === '%') {
-                        a.push(parseInt(enc.substr(i+1, 2), 16));
-                        i += 3
-                    } else {
-                        a.push(enc.charCodeAt(i++))
-                    }
-                }
-                return a
+                },200)
             },
 
             stripcode: function(string) {
@@ -947,6 +936,7 @@
             },
 
             addToCart: function(ind){
+                this.payment_tracking_codes = [];
                 pedido = this.pedidos_page[ind];
                 vm = this;
                 if(this.company.document != '' && this.company.document != null ){
@@ -1037,11 +1027,20 @@
                             vm.message.type = 'success';
                             vm.message.show_message = true;
                         }else{
-                            console.log(response);
-                            vm.message.title = 'Não foi possível adicionar item ao carrinho';
-                            vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho <br>'+resposta.error;
-                            vm.message.type = 'error';
-                            vm.message.show_message = true;
+                            if(typeof resposta.error === 'undefined'){
+                                console.log(response);
+                                vm.message.title = 'Não foi possível adicionar item ao carrinho';
+                                vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho'
+                                vm.message.type = 'error';
+                                vm.message.show_message = true;
+                            }else{
+                                console.log(response);
+                                vm.message.title = 'Não foi possível adicionar item ao carrinho';
+                                vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho'+resposta.error
+                                vm.message.type = 'error';
+                                vm.message.show_message = true;
+                            }
+
                         }
                     });
                 }
@@ -1264,19 +1263,19 @@
                     resposta = JSON.parse(response);
                     var array = [];
                     try{
-                    resposta.forEach(function (pedido,index) {
-                        pedido.cotacoes.forEach(function (cotacao) {
-                            if(Array.isArray(pedido.shipping_lines > 0)){
-                                if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)){
-                                    array[index] = cotacao.id;
+                        resposta.forEach(function (pedido,index) {
+                            pedido.cotacoes.forEach(function (cotacao) {
+                                if(Array.isArray(pedido.shipping_lines)){
+                                    if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)){
+                                        array[index] = cotacao.id;
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        vm.getSpecificTracking(pedido);
-                        vm.pedidos = resposta;
-                    });
-                    vm.selected_shipment = array;
+                            vm.getSpecificTracking(pedido);
+                            vm.pedidos = resposta;
+                        });
+                        vm.selected_shipment = array;
                     }
                     catch (err){
                         vm.message.title = 'Erro ao carregar as cotações';
@@ -1287,16 +1286,160 @@
                     vm.finished= true;
                 });
             },
-            //TODO: fAZER O VARIOS, ARRUMAR PRA FUNCIONAR COM A JADLOG, REMOVER CARRINHO,
+
+            openMultiplePaymentSelector: function(){
+                for(var i = 0 ; i < this.pedidos_checked.length ;i++){
+                    if(this.pedidos_checked[i]) {
+                        if (typeof this.pedidos_page[i].tracking_code != 'undefined')
+                            if(this.pedidos_page[i].status == 'cart'){
+                                this.payment_tracking_codes.push(this.pedidos_page[i].tracking_code);
+                            }
+                    }
+                }
+                this.toogleModal();
+            },
+
             pagego: function(valor){
+                this.payment_tracking_codes = [];
+                this.cancel_tracking_codes = [];
+                this.pedidos_checked = [];
+                pedidos_cnpj = [];
+                pedidos_ie = [];
+                pedidos_nf = [];
                 this.page = valor;
             },
 
             selectall: function (){
                 var vm = this;
-                this.pedidos_page.forEach( function (pedido) {
-                    vm.pedidos_checked[pedido.id] = !vm.selectallatt
+                this.pedidos_page.forEach( function (pedido,index) {
+                    vm.pedidos_checked[index] = !vm.selectallatt
                 });
+            },
+
+            addManyToCart: function(){
+                var success_array = [];
+                var error_array = [];
+                this.error_desc = [];
+                this.payment_tracking_codes = [];
+
+                vm = this;
+                for(var i = 0; i < this.pedidos_checked.length; i++){
+                    if(this.pedidos_checked[i]){
+                        if(typeof this.pedidos_page[i].tracking_code == 'undefined'){
+                            if(this.addToCartOneFromMany(i)){
+                                success_array.push(i);
+                            }else{
+                                error_array.push(i);
+                            }
+                            if(error_array.length > 0){
+                                vm.message.title = error_array.length+" Pedidos não adicionados ao carrinho"
+                                vm.message.message = 'Para utilizar essa transportadora, informe a nota fiscal (NF) e os dados da empresa (CNPJ/IE) ';
+                                vm.message.type = 'error';
+                                vm.message.show_message = true;
+                            }else{
+                                vm.message.title = 'Envios adicionados ao carrinho';
+                                vm.message.message = 'Estes envios foram adicionados ao seu carrinho.';
+                                vm.message.type = 'success';
+                                vm.message.show_message = true;
+                            }
+                        }
+                    }
+                }
+            },
+
+            addToCartOneFromMany: function(ind){
+                var pedido = this.pedidos_page[ind];
+                vm = this;
+                if(this.company.document != '' && this.company.document != null ){
+                    pedido_cnpj = this.company.document;
+                }else {
+                    pedido_cnpj = this.pedidos_cnpj[ind];
+                }
+                if(this.company.state_register != '' && this.company.state_register != null){
+                    pedido_ie = this.company.state_register;
+                }else{
+                    pedido_ie = this.pedidos_ie[ind];
+                }
+
+                console.log(pedido_cnpj);
+                console.log(pedido_ie);
+                if(this.selected_shipment[ind] > 2 && (typeof this.pedidos_nf[ind] === 'undefined' || typeof pedido_cnpj === 'undefined' || typeof pedido_ie === 'undefined') ){
+                    vm.message.title = 'Dados Incompletos';
+                    vm.message.message = 'Transportadoras privadas requerem Nota Fiscal (NF) CNPJ e Inscrição Estadual (IE)';
+                    vm.message.type = 'error';
+                    vm.message.show_message = true;
+                }else{
+                    if(this.selected_shipment < 3){
+                        var data = {
+                            action: "wpme_ajax_ticketAcquirementAPI",
+                            valor_declarado: pedido.price,
+                            service_id: this.selected_shipment[ind],
+                            from_name: this.user_info.firstname+" "+ this.user_info.lastname,
+                            to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
+                            to_phone: pedido.customer_phone,
+                            to_email: pedido.customer_email,
+                            to_document: pedido.customer_document,
+                            to_company_document: pedido.customer_company_document,
+                            to_state_register: pedido.customer_state_register,
+                            to_address: pedido.shipping.address_1,
+                            to_complement: pedido.shipping.address_2,
+                            to_number:  pedido.shipping.number,
+                            to_district: pedido.shipping.neighborhood,
+                            to_city:    pedido.shipping.city,
+                            to_state_abbr: pedido.shipping.state,
+                            to_country_id: pedido.shipping.country,
+                            to_postal_code: pedido.shipping.postcode,
+                            to_note: pedido.customer_note,
+                            line_items: pedido.line_items
+                        }
+                    }else{
+                        var data = {
+                            action: "wpme_ajax_ticketAcquirementAPI",
+                            valor_declarado: pedido.price,
+                            service_id: this.selected_shipment[ind],
+                            from_name: this.user_info.firstname+" "+ this.user_info.lastname,
+                            from_company_document : pedido_cnpj,
+                            from_company_state_register: pedido_ie,
+                            to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
+                            to_phone: pedido.customer_phone,
+                            to_email: pedido.customer_email,
+                            to_document: pedido.customer_document,
+                            to_company_document: pedido.customer_company_document,
+                            to_state_register: pedido.customer_state_register,
+                            to_address: pedido.shipping.address_1,
+                            to_complement: pedido.shipping.address_2,
+                            to_number:  pedido.shipping.number,
+                            to_district: pedido.shipping.neighborhood,
+                            to_city:    pedido.shipping.city,
+                            to_state_abbr: pedido.shipping.state,
+                            to_country_id: pedido.shipping.country,
+                            to_postal_code: pedido.shipping.postcode,
+                            to_note: pedido.customer_note,
+                            line_items: pedido.line_items,
+                            nf: this.pedidos_nf[ind],
+                            key_nf: 'nf-e',
+                            company_document: pedido_cnpj,
+                            company_state_register: pedido_ie,
+                            agency: this.endereco.agency
+                        }
+                    }
+
+                    return jQuery.post(ajaxurl, data, function(response) {
+                        resposta = JSON.parse(response);
+                        console.log(resposta);
+                        if(typeof resposta.id != 'undefined'){
+                            vm.payment_tracking_codes.push(resposta.id);
+                            vm.addTracking(pedido.id,resposta.id,data.service_id);
+                            pedido.tracking_code = resposta.id;
+                            pedido.bought_tracking = data.service_id;
+                            pedido.status = 'cart';
+                            return true;
+                        }else{
+                            vm.error_desc[ind] = resposta.error;
+                            return false;
+                        }
+                    });
+                }
             },
 
             getUser: function(){
@@ -1375,6 +1518,39 @@
                     vm.company = resposta;
                     console.log(resposta);
                 });
+            },
+
+            PrintMultiple: function(){
+                var trackings = [];
+                if(this.pedidos_checked.length < 1){
+                    vm.message.title = "Nenhuma etiqueta foi impressa";
+                    vm.message.message = "Selecione as etiquetas para impressão";
+                    vm.message.type= "error";
+                    vm.message.show_message = true;
+                }else{
+                    for(var i = 0; i < this.pedidos_checked.length; i++){
+                        if(this.pedidos_page[i].status == 'paid'){
+                            trackings.push(this.pedidos_page[i].tracking_code)
+                        }
+                    }
+                    data = {
+                        action: 'wpme_ajax_ticketPrintingAPI',
+                        tracking: trackings
+                    };
+                    vm = this;
+                    jQuery.post(ajaxurl,data,function(response){
+                        resposta = JSON.parse(response);
+                        if(typeof resposta.url ){
+                            window.open(resposta.url,'_blank');
+                        }else{
+                            vm.message.title = "Não foi possível acessar esta etiqueta";
+                            vm.message.message = "Infelizmente não é possível acessar esta etiqueta";
+                            vm.message.type= "error";
+                            vm.message.show_message = true;
+                        }
+                    });
+                }
+
             }
         }
 

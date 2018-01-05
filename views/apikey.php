@@ -132,6 +132,8 @@
                 <p> Token aceito </p>
             </div>
             <?php
+            $url = admin_url('admin.php?page=wpme_melhor-envio-config');
+            wp_redirect($url);
         }else{
             ?>
             <div class="notice notice-error is-dismissible">

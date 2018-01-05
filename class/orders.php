@@ -288,13 +288,13 @@ function wpme_getObjectPackage(){
     $total  =0;
     $pacote = new stdClass();
     foreach ($_POST['line_items'] as $item){
-        $width = $_POST['width'];
-        $height = $_POST['height'];
-        $length = $_POST['length'];
-        $weight = $_POST['weight']  * $_POST['quantity'];
+        $width = $item['width'];
+        $height = $item['height'];
+        $length = $item['length'];
+        $weight = $item['weight']  * $item['quantity'];
         $valor = wc_get_product($item['product_id'])->get_price() * $item['quantity'];
         $volume  = $volume +  (int) ($width * $length * $height) * $item['quantity'];
-        $total += $valor;
+        $total += $valor ;
     }
     $side   =  ceil(pow($volume,1/3));
     $return->width =  $side > 12 ? $side : 12;
