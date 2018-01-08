@@ -76,7 +76,7 @@
         text-align: center;
         position: fixed;
         border-radius:10px;
-        overflow: auto;
+        overflow: hidden;
     }
 
     .modal a.btn.cancelar{
@@ -128,12 +128,26 @@
         box-sizing: border-box;
         border: solid 2px rgba(50,180,250,0);
         transition: 300ms;
-        margin: 0 20px;
+        margin: 0 15px;
         width: 200px;
         height: 100px;
     }
 
-    .modal a img{
+    .modal a.btn.pagar{
+        border-radius: 30px;
+        height: 50px;
+        padding: 15px;
+        color:rgba(100,190,100,1);
+        font-size: 1.2rem;
+        border:solid 2px rgba(100,190,100,1);
+    }
+
+    .modal a.btn.pagar:hover{
+        color:rgba(245,240,255,1);
+        background-color: rgba(100,190,100,1);
+    }
+
+    .modal label img{
         width: 120px;
         margin: auto;
         vertical-align: middle;
@@ -144,19 +158,24 @@
 
     }
 
-    .modal a .pgsaldo{
-        height: 100px;
+    .pgsaldo{
+        height: 60px;
         display: inline-block;
         text-decoration: none;
     }
-    .modal a .pgsaldo h4{
+    .pgsaldo h4{
         padding: 0;
-        font-size: 1.1rem;
+        font-size: 1rem;
         margin: 0;
     }
 
-    .modal a .pgsaldo p{
+    .pgsaldo p strong{
         color:rgba(50,205,50,1);
+    }
+
+    .modal label{
+        text-align: center;
+        margin: auto;
     }
 
     .modal .close-modal ,.modal .close-modal:focus {
@@ -640,7 +659,7 @@
                     </ul>
                 </div>
             </div>
-            <div><a href="<?= get_admin_url(get_current_blog_id(),"/admin.php?page=wpme_melhor-envio-config")?>">Editar configurações</a></div>
+            <div><h5><a href="<?= get_admin_url(get_current_blog_id(),"/admin.php?page=wpme_melhor-envio-config")?>">Editar configurações</a></h5></div>
 
         </div>
 
@@ -704,7 +723,7 @@
                 <th width="300px">Destinatário</th>
                 <th width="200px">Transportadora</th>
                 <th>Dados adicionais</th>
-                <th>Opções</th>
+                <th width="250px">Opções</th>
             </tr>
             </thead>
             <tbody>
@@ -735,13 +754,13 @@
                     <template v-if="!pedido.bought_tracking">
                         <strong> NF :</strong> <input v-model="pedidos_nf[i]"><br>
                         <template v-if="company.document == '' || company.document == null"><strong>CNPJ:</strong> <input v-model="pedidos_cnpj[i]"><br></template>
-                        <template v-if="company.state_register   == '' || company.state_register == null "><strong></strong><br> <input v-model="pedidos_ie[i]"><br></template>
+                        <template v-if="company.state_register   == '' || company.state_register == null "><strong>IE:</strong><br> <input v-model="pedidos_ie[i]"><br></template>
                     </template>
                     <template v-if="pedido.bought_tracking" ><p>--</p></template>
                 </td>
                 <td>
                     <template  v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed'">
-                        <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Comprar </a>
+                        <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Adicionar ao cariinho </a>
                     </template>
                     <template v-if="pedido.status == 'cart'">
                         <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
@@ -765,6 +784,7 @@
 
                     <a href="javascript;" class="btn melhorenvio"  @click.prevent="openMultiplePaymentSelector()"> Pagar </a>
 
+                    <a href="javascript;" class="btn imprimir" @click.prevent="PrintMultiple()"> Imprimir </a>
                     <!--                    <a href="javascript;" class="btn cancelar"> Imprimir </a>-->
                 </td>
             </tr>
@@ -783,22 +803,30 @@
         </div>
         <div class="modal" v-show="show_modal">
             <a href="javascript;" @click.prevent="toogleModal()" class="close-modal"> &times </a>
-            <h1>Escolha seu método de pagamento</h1>
+            <h1 >Escolha seu método de pagamento</h1>
             <div class="select">
-                <a href="" @click.prevent="payTicket(1)">
+                <label>
+                <input type="radio" v-model="selected_payment_method" value="1">
                     <img src="https://melhorenvio.com.br/images/payment/moip.png">
-                </a>
-                <a href="" @click.prevent="payTicket(2)">
+
+                </label>
+                <label>
+                <input type="radio"  v-model="selected_payment_method" value="2">
                     <img src="https://melhorenvio.com.br/images/payment/mpago.png">
-                </a>
-                <a href="" @click.prevent="payTicket(99)">
+                </label>
+
+                <label>
+                <input type="radio"  v-model="selected_payment_method" value="99">
                     <div class="pgsaldo">
                         <h4>Pagar com Saldo</h4>
                         <p>Saldo <strong>{{user_info.balance}}</strong></p>
                     </div>
-                </a>
+
+                </label>
+
+
             </div>
-            <p><strong>Escolha o método de pagamento para finalizar a sua compra</strong></p>
+            <a href="javascript;" class="btn pagar" @click.prevent="payTicket(selected_payment_method)"> Pagar </a>
         </div>
         <div class="mask" v-show="show_confirm_mask" @click.prevent="toogleConfirmer">
         </div>
@@ -816,7 +844,7 @@
             <div class="wpme_message_header" :class="{'wpme_success': message.type == 'success', 'wpme_error': message.type == 'error'}">{{message.title}}</div>
             <div class="wpme_message_body">{{message.message}}</div>
             <div class="wpme_wrapper_center">
-                <template v-if="payment_tracking_codes.length > 0">
+                <template v-if="payment_tracking_codes.length > 0 ">
                     <div class="wpme_message_comprar"><a href="javascript;" @click.prevent="goDirectPay">Pagar</a></div>
                 </template>
                 <div class="wpme_message_action"><a href="javascript;" @click.prevent="toogleMessage">Fechar</a></div>
@@ -833,6 +861,7 @@
         data: {
             payment_tracking_codes:[],
             finished:false,
+            selected_payment_method: 99,
             updated:true,
             pedidos: [],
             error_desc: [],
@@ -1040,7 +1069,7 @@
                                 vm.message.type = 'error';
                                 vm.message.show_message = true;
                             }
-
+                            0
                         }
                     });
                 }
@@ -1191,6 +1220,17 @@
                         vm.message.type = 'error';
                         vm.message.show_message = true;
                     }else{
+                        if(resposta.redirect != null){
+                            data.orders.forEach(function(order) {
+                                vm.payment_tracking_codes = [];
+                                vm.updateTracking(order, 'Waiting');
+                                vm.message.title = "Esperando confirmação do meio de pagamento";
+                                vm.message.message = "Esperando confirmação do meio de pagamento";
+                                vm.message.type = 'success';
+                                vm.message.show_message = true;
+                                window.open(resposta.redirect,'_blank');
+                            });
+                        }else{
                         data.orders.forEach(function(order){
                             vm.updateTracking(order,'paid');
                             vm.payment_tracking_codes = [];
@@ -1199,6 +1239,7 @@
                                     pedido.status = 'paid';
                             });
                         });
+                        console.log(resposta);
                         vm.payment_tracking_codes = [];
                         vm.getBalance();
                         vm.getLimits();
@@ -1206,8 +1247,8 @@
                         vm.message.message="Seu pagamento foi efetuado com sucesso";
                         vm.message.type = 'success';
                         vm.message.show_message = true;
+                        }
                     }
-                    //TODO:Escrever a mensagem de sucesso e ou de erro
                 });
             },
 
@@ -1288,15 +1329,31 @@
             },
 
             openMultiplePaymentSelector: function(){
-                for(var i = 0 ; i < this.pedidos_checked.length ;i++){
-                    if(this.pedidos_checked[i]) {
-                        if (typeof this.pedidos_page[i].tracking_code != 'undefined')
-                            if(this.pedidos_page[i].status == 'cart'){
-                                this.payment_tracking_codes.push(this.pedidos_page[i].tracking_code);
-                            }
+                this.payment_tracking_codes = [];
+                if(this.pedidos_checked.length > 0 && this.pedidos_checked.find(function(){ return true;})){
+                    console.log(this.pedidos_checked.find(function(){ return true;}));
+                    for(var i = 0 ; i < this.pedidos_checked.length ;i++){
+                        if(this.pedidos_checked[i]) {
+                            if (typeof this.pedidos_page[i].tracking_code != 'undefined')
+                                if(this.pedidos_page[i].status == "cart"){
+                                    this.payment_tracking_codes.push(this.pedidos_page[i].tracking_code);
+                                }
+                        }
                     }
+                    if(this.payment_tracking_codes.length > 0){
+                        this.toogleModal();
+                    }else{
+                        this.message.title = "Nenhum dos itens adicionados faz parte do seu carrinho";
+                        this.message.message= "Para adicionar estes itens ao seu carrinho selecione e clique em adicionar ao carrinho";
+                        this.message.type = "error";
+                        this.message.show_message = true;;
+                    }
+                }else{
+                    this.message.title = "Selecione seus pedidos"
+                    this.message.message= "Selecione os pedidos que você deseja pagar"
+                    this.message.type = "error"
+                    this.message.show_message = true;
                 }
-                this.toogleModal();
             },
 
             pagego: function(valor){
@@ -1522,7 +1579,8 @@
 
             PrintMultiple: function(){
                 var trackings = [];
-                if(this.pedidos_checked.length < 1){
+
+                if(this.pedidos_checked.length < 1 || ! this.pedidos_checked.find(function(){ return true;}) ){
                     vm.message.title = "Nenhuma etiqueta foi impressa";
                     vm.message.message = "Selecione as etiquetas para impressão";
                     vm.message.type= "error";
@@ -1533,22 +1591,29 @@
                             trackings.push(this.pedidos_page[i].tracking_code)
                         }
                     }
-                    data = {
-                        action: 'wpme_ajax_ticketPrintingAPI',
-                        tracking: trackings
-                    };
-                    vm = this;
-                    jQuery.post(ajaxurl,data,function(response){
-                        resposta = JSON.parse(response);
-                        if(typeof resposta.url ){
-                            window.open(resposta.url,'_blank');
-                        }else{
-                            vm.message.title = "Não foi possível acessar esta etiqueta";
-                            vm.message.message = "Infelizmente não é possível acessar esta etiqueta";
-                            vm.message.type= "error";
-                            vm.message.show_message = true;
-                        }
-                    });
+                    if(trackings.length > 0){
+                        data = {
+                            action: 'wpme_ajax_ticketPrintingAPI',
+                            tracking: trackings
+                        };
+                        vm = this;
+                        jQuery.post(ajaxurl,data,function(response){
+                            resposta = JSON.parse(response);
+                            if(typeof resposta.url ){
+                                window.open(resposta.url,'_blank');
+                            }else{
+                                vm.message.title = "Não foi possível acessar esta etiqueta";
+                                vm.message.message = "Infelizmente não é possível acessar esta etiqueta";
+                                vm.message.type= "error";
+                                vm.message.show_message = true;
+                            }
+                        });
+                    }else{
+                        vm.message.title = "Nenhuma etiqueta válida foi selecionadas";
+                        vm.message.message = "Selecione as etiquetas, já pagas, para impressão";
+                        vm.message.type= "error";
+                        vm.message.show_message = true;
+                    }
                 }
 
             }

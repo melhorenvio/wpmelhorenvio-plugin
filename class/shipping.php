@@ -11,18 +11,17 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 public function __construct()
                 {
                     $this->id = 'wpme_melhorenvioshipping';
-                    $this->method_title = __("Melhor Envio (new)","wpme_melhorenvioshipping");
+                    $this->method_title = __("Melhor Envio","wpme_melhorenvioshipping");
                     $this->method_description = __("Várias transportadoras, descontos, coletas e rastreamentos","wpme_melhorenvioshipping");
 
                     $this->init();
 
                     $this->enabled = isset( $this->settings['enabled'] ) ? $this->settings['enabled'] : 'yes';
-                    $this->title = isset( $this->settings['title'] ) ? $this->settings['title'] : __( 'Melhor Envio (new)', 'wpme_melhorenvio' );
+                    $this->title = isset( $this->settings['title'] ) ? $this->settings['title'] : __( 'Melhor Envio', 'wpme_melhorenvio' );
                 }
 
                 function init() {
                     // Load the settings API
-                    $this->init_form_fields();
                     $this->init_settings();
 
                     // Save settings in admin if you have any defined

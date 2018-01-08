@@ -24,9 +24,9 @@ class WPME_WPMelhorEnvioIntegration extends WC_Integration
 
         global $woocommerce;
 
-        $this->id = 'wpme_melhorenvio';
+        $this->id = 'woocommercemelhorenviointegration';
         $this->method_title = __('Melhor Envio', 'wpme_melhorenvio');
-        $this->method_description = __('Um modo de integração que mostra para o cliente final o cálculo do seu frete no Melhor Envio 2.');
+        $this->method_description = __('Um modo de integração que mostra para o cliente final o cálculo do seu frete no Melhor Envio.');
         $this->init_settings();
     }
 }

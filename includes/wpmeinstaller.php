@@ -52,19 +52,19 @@ function wpme_install()
     if (!is_plugin_active('woocommerce/woocommerce.php'))
     {
         deactivate_plugins(plugin_basename(__FILE__)); /* Deactivate plugin */
-        wp_die(__('You must run WooCommerce 2.x to install Melhor Envio  plugin', 'wpme_melhorenvio'), __('WC not activated', 'wpme_melhorenvio'), array('back_link' => true));
+        wp_die(__('You must run WooCommerce 2.x to install Melhor Envio  plugin', 'wpme_melhorenvio'), __('WC not activated', 'woocommercemelhorenviointegration'), array('back_link' => true));
         return;
     }
     if (!is_plugin_active('woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php'))
     {
         deactivate_plugins(plugin_basename(__FILE__)); /* Deactivate plugin */
-        wp_die(__('You must run WooCommerce Extra Checkout Fields for Brazil 3.6.x to install Melhor Envio plugin', 'wpme_melhorenvio'), __('WC Extra Checkout Fields not activated', 'wpme_melhorenvio'), array('back_link' => true));
+        wp_die(__('You must run WooCommerce Extra Checkout Fields for Brazil 3.6.x to install Melhor Envio plugin', 'woocommercemelhorenviointegration'), __('WC Extra Checkout Fields not activated', 'woocommercemelhorenviointegration'), array('back_link' => true));
         return;
     }
     if ((float)$wp_version < 3.5)
     {
         deactivate_plugins(plugin_basename(__FILE__)); /* Deactivate plugin */
-        wp_die(__('You must run at least WordPress version 3.5 to install Melhor Envio plugin', 'wpme_melhorenvio'), __('WP not compatible', 'wpme_melhorenvio'), array('back_link' => true));
+        wp_die(__('You must run at least WordPress version 3.5 to install Melhor Envio plugin', 'wpme_melhorenvio'), __('WP not compatible', 'woocommercemelhorenviointegration'), array('back_link' => true));
         return;
     }
 

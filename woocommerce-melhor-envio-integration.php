@@ -20,12 +20,12 @@ Text Domain: wporg
 Domain Path: /languages
 */
 
-if( !class_exists('WP_MelhorEnvio')):
+if( !class_exists('woocommerce-melhor-envio-integration')):
     include_once 'includes/wpmeinstaller.php';
     /* Register plugin status hooks */
     register_activation_hook(__FILE__,'wpme_install');
 
-    class WPMelhorEnvio
+    class woocommercemelhorenviointegration
     {
         public function __construct()
         {
@@ -202,5 +202,5 @@ if( !class_exists('WP_MelhorEnvio')):
 
 
     }
-    $WPMelhorEnvioIntegration = new WPMelhorEnvio(__FILE__);
+    $WPMelhorEnvioIntegration = new woocommercemelhorenviointegration(__FILE__);
 endif;

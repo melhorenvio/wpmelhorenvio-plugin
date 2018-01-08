@@ -510,12 +510,6 @@ if(isset($_POST['submit'])){
                 <input type="checkbox" class="toggle" id="valor_declarado" name="VD" <?= $saved_optionals->VD ? "checked" : "" ?>>
             </div>
             <div>
-                <label title="Adiciona automáticamente a um sistema de rastreio com notificações para os clientes" for="melhor_rastreio">
-                    Adicionar ao Melhor Rastreio
-                </label>
-                <input type="checkbox" class="toggle" id="melhor_rastreio" name="MR" <?= $saved_optionals->MR ? "checked" : "" ?>>
-            </div>
-
         </div>
 
         <div class="wpme_divtext">
