@@ -461,3 +461,7 @@ function wpme_removeFromCart()
         wpme_data_deleteTracking($_POST['tracking']);
     }
 }
+
+function wpme_updateStatusTracking(){
+
+}

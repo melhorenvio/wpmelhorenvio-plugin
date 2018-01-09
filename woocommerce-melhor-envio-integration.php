@@ -39,10 +39,6 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
         public function init()
         {
             if(class_exists('WC_Integration')){
-                //Incluindo a classe de integraçao
-                include_once 'includes/wpmelhorenviointegration.php';
-                //Registrando a integração
-                add_filter('woocommerce_integrations',array($this, 'me_add_integration'));
                 //Criando os links no Menu
                 add_action("admin_menu", "wpme_addMenu");
                 function wpme_addMenu(){
@@ -187,6 +183,12 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
                 die();
             }
 
+            add_action('wp_ajax_wpme_ajax_updateStatusTracking','wpme_ajax_updateStatusTracking');
+            function wpme_ajax_updateStatusTracking(){
+                echo wpme_updateStatusTracking();
+                die();
+            }
+
 
 
         }
@@ -194,11 +196,6 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
         /**
          * Adiciona uma nova integração ao WooCommerce
          */
-        public function me_add_integration(){
-
-            $wpme_integrations[] = 'WPME_WPMelhorEnvioIntegration';
-            return $wpme_integrations;
-        }
 
 
     }

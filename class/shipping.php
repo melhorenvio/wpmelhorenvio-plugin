@@ -14,18 +14,19 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                     $this->method_title = __("Melhor Envio","wpme_melhorenvioshipping");
                     $this->method_description = __("Várias transportadoras, descontos, coletas e rastreamentos","wpme_melhorenvioshipping");
 
-                    $this->init();
+                    $this->wpme_init();
 
                     $this->enabled = isset( $this->settings['enabled'] ) ? $this->settings['enabled'] : 'yes';
                     $this->title = isset( $this->settings['title'] ) ? $this->settings['title'] : __( 'Melhor Envio', 'wpme_melhorenvio' );
                 }
 
-                function init() {
+                function wpme_init() {
+//                    include_once ABSPATH.'/wp-content/plugins/woocommerce-melhor-envio-integration/views/apikey.php';
                     // Load the settings API
-                    $this->init_settings();
-
-                    // Save settings in admin if you have any defined
-                    add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
+//                    $this->init_settings();
+//
+//                    // Save settings in admin if you have any defined
+//                    add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
                 }
 
                 public function calculate_shipping($package = array())
