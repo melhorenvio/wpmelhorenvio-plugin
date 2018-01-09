@@ -1,5 +1,10 @@
 
 <?php
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+
 if(isset($_POST['submit'])){
     $services = array();
     if(isset($_POST['address'])){

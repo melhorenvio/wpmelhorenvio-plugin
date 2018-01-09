@@ -29,6 +29,12 @@ class WPME_WPMelhorEnvioIntegration extends WC_Integration
         $this->method_description = __('Um modo de integração que mostra para o cliente final o cálculo do seu frete no Melhor Envio.');
         $this->init_settings();
     }
+
+    public function init_settings()
+    {
+        //require '../views/apikey.php';
+        echo 'Over';
+    }
 }
 
 

@@ -1,4 +1,8 @@
-
+<?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+?>
 <script>
     jQuery(document).ready(function($) {
 
@@ -759,8 +763,8 @@
                     <template v-if="pedido.bought_tracking" ><p>--</p></template>
                 </td>
                 <td>
-                    <template  v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed'">
-                        <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Adicionar ao cariinho </a>
+                    <template  v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed' && pedido.status != 'waiting'">
+                        <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Adicionar ao carrinho </a>
                     </template>
                     <template v-if="pedido.status == 'cart'">
                         <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
@@ -772,6 +776,11 @@
                         <a href="javascript;" class="btn imprimir" @click.prevent="printTicket(pedido.tracking_code)"> Imprimir </a>
                         <a href="javascript;" class="btn cancelar" @click.prevent="openCancelTicketConfirmer(pedido.tracking_code)" > Cancelar </a>
                     </template>
+
+                    <template v-if="pedido.status == 'waiting'">
+                        <a href="javascript;" class="btn cancelar" @click.prevent="deleteTracking([pedido.tracking_code])" > Cancelar Pagamento </a>
+                    </template>
+
                     <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
                 </td>
             </tr>
@@ -1117,6 +1126,7 @@
                 jQuery.post(ajaxurl,data,function(response){
                     resposta = JSON.parse(response);
                     arr_index = Object.entries(resposta);
+                    console.log(arr_index);
                     console.log(arr_index[0][1]['canceled']);
                     if(arr_index[0][1]['canceled']){
                         vm.deleteTracking(data.tracking);
@@ -1223,11 +1233,15 @@
                         if(resposta.redirect != null){
                             data.orders.forEach(function(order) {
                                 vm.payment_tracking_codes = [];
-                                vm.updateTracking(order, 'Waiting');
+                                vm.updateTracking(order, 'waiting');
                                 vm.message.title = "Esperando confirmação do meio de pagamento";
                                 vm.message.message = "Esperando confirmação do meio de pagamento";
                                 vm.message.type = 'success';
                                 vm.message.show_message = true;
+                                vm.pedidos_page.forEach( function (pedido) {
+                                    if(order == pedido.tracking_code)
+                                        pedido.status = 'waiting';
+                                });
                                 window.open(resposta.redirect,'_blank');
                             });
                         }else{
@@ -1330,8 +1344,7 @@
 
             openMultiplePaymentSelector: function(){
                 this.payment_tracking_codes = [];
-                if(this.pedidos_checked.length > 0 && this.pedidos_checked.find(function(){ return true;})){
-                    console.log(this.pedidos_checked.find(function(){ return true;}));
+                if(this.pedidos_checked.length > 0 && this.pedidos_checked.find(function(data){ return data == true;})){
                     for(var i = 0 ; i < this.pedidos_checked.length ;i++){
                         if(this.pedidos_checked[i]) {
                             if (typeof this.pedidos_page[i].tracking_code != 'undefined')
@@ -1520,7 +1533,6 @@
                 };
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
-                    console.log(response);
                     try{resposta = JSON.parse(response);
                         vm.user_info.balance = resposta.balance;
                     }catch (err){
@@ -1538,6 +1550,7 @@
                     tracking: tracking
                 };
                 vm = this;
+                console.log(tracking);
                 jQuery.post(ajaxurl,data,function(response){
                     console.log(response);
                     vm.getBalance();
@@ -1552,7 +1565,6 @@
                 };
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
-                    console.log(response);
                     try{resposta = JSON.parse(response);
                         vm.user_info.shipments = resposta.shipments;
                         vm.user_info.available_shipments = resposta.shipments_available;
@@ -1580,14 +1592,14 @@
             PrintMultiple: function(){
                 var trackings = [];
 
-                if(this.pedidos_checked.length < 1 || ! this.pedidos_checked.find(function(){ return true;}) ){
+                if(this.pedidos_checked.length < 1 || ! this.pedidos_checked.find(function(data){ return data == true;}) ){
                     vm.message.title = "Nenhuma etiqueta foi impressa";
                     vm.message.message = "Selecione as etiquetas para impressão";
                     vm.message.type= "error";
                     vm.message.show_message = true;
                 }else{
                     for(var i = 0; i < this.pedidos_checked.length; i++){
-                        if(this.pedidos_page[i].status == 'paid'){
+                        if(this.pedidos_page[i].status == 'paid' && (this.pedidos_checked[i] == true)){
                             trackings.push(this.pedidos_page[i].tracking_code)
                         }
                     }

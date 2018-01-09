@@ -123,6 +123,10 @@
 <div class="wpme_body_init">
 <div class="absolute">
     <?php
+    if ( ! defined( 'ABSPATH' ) ) {
+        exit; // Exit if accessed directly
+    }
+
     if(isset($_POST['wpme_token'])){
         $token = trim($_POST['wpme_token']);
         if(updateUserData($token)){
