@@ -463,5 +463,6 @@ function wpme_removeFromCart()
 }
 
 function wpme_updateStatusTracking(){
-
+    $trackings = wpme_data_getAllTrackings();
+    var_dump($trackings);
 }

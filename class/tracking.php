@@ -17,6 +17,13 @@ function wpme_data_getTracking($id){
     return $wpdb->get_results($sql);
 }
 
+function wpme_data_getAllTrackings(){
+    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+    global $wpdb;
+    $sql = "SELECT * FROM {$wpdb->prefix}tracking_codes_wpme limit 1000";
+    return $wpdb->get_results($sql);
+}
+
 function wpme_data_insertTracking($id,$tracking,$service){
     require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     global $wpdb;

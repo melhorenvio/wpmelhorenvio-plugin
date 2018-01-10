@@ -514,7 +514,6 @@ if(isset($_POST['submit'])){
                 </label >
                 <input type="checkbox" class="toggle" id="valor_declarado" name="VD" <?= $saved_optionals->VD ? "checked" : "" ?>>
             </div>
-            <div>
         </div>
 
         <div class="wpme_divtext">
