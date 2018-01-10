@@ -464,5 +464,46 @@ function wpme_removeFromCart()
 
 function wpme_updateStatusTracking(){
     $trackings = wpme_data_getAllTrackings();
-    var_dump($trackings);
+
+    $update_request = array();
+
+    foreach ($trackings as $tracking){
+        array_push($update_request,$tracking->tracking_id);
+    }
+    $object = new stdClass();
+    $object->orders = $update_request;
+
+    $token = get_option('wpme_token');
+    $params = array(
+        'headers'=>
+            [
+                'Content-Type' => 'application/json',
+                'Accept'=>'application/json',
+                'Authorization' => 'Bearer '.$token
+            ],
+        'body' => json_encode($object)
+        );
+    $client = new WP_Http();
+    $response = $client->post('https://melhorenvio.com.br/api/v2/me/shipment/tracking',$params);
+    if( $response instanceof WP_Error){
+        return false;
+    }else{
+
+        $resposta = json_decode($response['body']);
+
+        foreach ($resposta as $index => $rastreio){
+            if($rastreio->status != 'pending'){
+                if($rastreio->status == 'released' || $rastreio->status == 'delivered'){
+                    wpme_data_updateTracking($index,'paid');
+                }else{
+                    if($rastreio->status == 'canceled' ){
+                        wpme_data_deleteTracking($index);
+                    }
+                }
+            }
+        }
+
+
+        return $response['body'];
+    }
 }

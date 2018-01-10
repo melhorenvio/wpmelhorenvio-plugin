@@ -1092,6 +1092,17 @@ if ( ! defined( 'ABSPATH' ) ) {
                 this.getBalance();
                 this.getOptionals();
                 this.getOrders();
+                this.verifyTracking();
+            },
+
+            verifyTracking: function(){
+                data = {
+                    action:'wpme_ajax_updateStatusTracking'
+                }
+
+                jQuery.post(ajaxurl,data,function(response){
+                    console.log(response);
+                })
             },
 
             getAddress: function(){
