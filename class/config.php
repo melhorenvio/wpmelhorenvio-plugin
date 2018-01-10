@@ -75,6 +75,28 @@ function getApiCompanies(){
     }
 }
 
+function getApiCompanyAdresses(){
+    $companies = getApiCompanies();
+    $address = array();
+    $token = get_option('wpme_token');
+    $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
+    $client = new WP_Http();
+    foreach ($companies['data'] as $company){
+        $response = $client->get('https://melhorenvio.com.br/api/v2/me/companies/'.$company->id.'/addresses',$params);
+        if( $response instanceof WP_Error){
+            return false;
+        }else{
+            $resposta = json_decode($response['body']);
+            foreach ($resposta->data as $endereco){
+                $endereco->label = $endereco->label.' ( '.$company->name.' ) ';
+                array_push($address,$endereco);
+            }
+        }
+    }
+    return $address;
+
+}
+
 function getApiShippingServices(){
     $token = get_option('wpme_token');
     $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);

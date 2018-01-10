@@ -227,7 +227,7 @@ if(isset($_POST['submit'])){
         text-align: center;
         color: #777789;
         font-weight: 300;
-        font-size: 1.300rem;
+        font-size: 1.150rem;
     }
 
     input[type=checkbox].toggle{
@@ -372,6 +372,10 @@ if(isset($_POST['submit'])){
             <?php
             $addresses = getApiAddresses();
             $companies = getApiCompanies();
+
+            $company_addresses = getApiCompanyAdresses();
+            $addresses['data'] = array_merge($addresses['data'],$company_addresses);
+
             $saved_address = json_decode(get_option('wpme_address'));
             $saved_company = json_decode(get_option('wpme_company'));
             if(isset($addresses['data'])){
@@ -428,10 +432,10 @@ if(isset($_POST['submit'])){
     </div>
 
     <h2 style="text-align: center; margin: 15px;">Escolha a empresa para a compra de fretes</h2>
-    <label>
         <div class="wpme_flex">
 
             <?php foreach ($companies['data'] as $company){?>
+            <label>
             <ul class="wpme_address">
             <li>
                 <div class="wpme_address-top">
@@ -451,12 +455,12 @@ if(isset($_POST['submit'])){
                 </div>
             </li>
             </ul>
+            </label>
             <?php }if(count($companies['data']) < 1){
                 echo "<p style='text-align:center;margin:auto;'> Para cadastrar suas lojas vá em <a href='https://www.melhorenvio.com.br/painel/gerenciar/lojas'>Painel Melhor Envio</a> </p>";
             } ?>
 
         </div>
-    </label>
     <div class="wpme_basepadding">
         <h2>Selecione seus métodos de envio</h2>
         <ul class="wpme_options">
