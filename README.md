@@ -1,11 +1,18 @@
 # Melhor Envio - Cotação
 Contributors: Vítor Soares
+
 Requires at least: 4.0
+
 Tested up to: 4.8
+
 Stable tag: 1.0.0
+
 License: GPLv2 or later
+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
 Text Domain: MelhorEnvio
+
 Tags: Woocommerce, Shipping, Delivery, Melhor envio, Envios
 
 Integration between the Melhor Envio and WooCommerce
@@ -14,7 +21,8 @@ Integration between the Melhor Envio and WooCommerce
 O plugin da Melhor Envio para o Woocommerce permite que você cote através de diversas transportadoras utilizando a API e os contratos do Melhor Envio.
 
 O que é a Melhor Envio?
-[youtube]https://www.youtube.com/embed/is-RqEIYDRA
+
+https://www.youtube.com/embed/is-RqEIYDRA
 
 O Melhor Envio torna o processo de envio mais simples e barato.
 
