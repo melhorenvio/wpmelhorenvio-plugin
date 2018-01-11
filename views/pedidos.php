@@ -756,6 +756,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 </td>
                 <td>
                     <template v-if="!pedido.bought_tracking">
+
+                        <strong>Chave-NF :</strong> <input v-model="pedidos_chave_nf[i]">
                         <strong> NF :</strong> <input v-model="pedidos_nf[i]"><br>
                         <template v-if="company.document == '' || company.document == null"><strong>CNPJ:</strong> <input v-model="pedidos_cnpj[i]"><br></template>
                         <template v-if="company.state_register   == '' || company.state_register == null "><strong>IE:</strong><br> <input v-model="pedidos_ie[i]"><br></template>
@@ -896,6 +898,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 }
             },
             pedidos_checked:[],
+            pedidos_chave_nf:[],
             pedidos_nf: [],
             pedidos_cnpj: [],
             pedidos_ie: [],
@@ -1013,6 +1016,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                             to_number:  pedido.shipping.number,
                             to_district: pedido.shipping.neighborhood,
                             to_city:    pedido.shipping.city,
+                            nf: this.pedidos_nf[ind],
+                            key_nf: this.pedidos_chave_nf[ind],
                             to_state_abbr: pedido.shipping.state,
                             to_country_id: pedido.shipping.country,
                             to_postal_code: pedido.shipping.postcode,
@@ -1044,7 +1049,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                             to_note: pedido.customer_note,
                             line_items: pedido.line_items,
                             nf: this.pedidos_nf[ind],
-                            key_nf: 'nf-e',
+                            key_nf: this.pedidos_chave_nf[ind],
                             company_document: pedido_cnpj,
                             company_state_register: pedido_ie,
                             agency: this.endereco.agency
@@ -1122,6 +1127,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             },
 
             openCancelTicketConfirmer: function(tracking){
+                this.payment_tracking_codes = [];
                 this.cancel_tracking_codes = [];
                 this.cancel_tracking_codes.push(tracking);
                 this.toogleConfirmer();
@@ -1632,7 +1638,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                             }
                         });
                     }else{
-                        vm.message.title = "Nenhuma etiqueta válida foi selecionadas";
+                        vm.message.title = "Nenhuma etiqueta válida foi selecionada";
                         vm.message.message = "Selecione as etiquetas, já pagas, para impressão";
                         vm.message.type= "error";
                         vm.message.show_message = true;

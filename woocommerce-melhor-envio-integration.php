@@ -12,8 +12,8 @@ Plugin Name: Melhor Envio - Cotação
 Plugin URI:  http://www.melhorenvio.com.br/
 Description: Plugin que permite a cotação de fretes utilizando a API do Melhor Envio. Ainda é possível disponibilizar as informações da cotação de frete diretamente para o consumidor final.
 Version:     2.0.0
-Author:      Vítor Soares
-Author URI:  https://vhsoares.github.io/
+Author:      Melhor Envio
+Author URI:  https://melhorenvio.com.br/
 License:     GPL2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: wporg
@@ -41,12 +41,25 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
             if(class_exists('WC_Integration')){
                 //Criando os links no Menu
                 add_action("admin_menu", "wpme_addMenu");
+
+                function plugin_add_settings_link( $links ) {
+                    $settings_link = '<a href="admin.php?page=wpme_melhor-envio-config">' . __( 'Configurações' ) . '</a>';
+                    array_unshift( $links, $settings_link );
+                    return $links;
+                }
+                $plugin = plugin_basename( __FILE__ );
+                add_filter( "plugin_action_links_$plugin", 'plugin_add_settings_link' );
+
+
+
+
                 function wpme_addMenu(){
                    add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpme_melhor-envio","wpme_pedidos", plugin_dir_url( __FILE__ )."mo.png");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpme_melhor-envio-requests", "wpme_pedidos");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpme_melhor-envio-config", "wpme_config");
                     add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações da Conta", "Sua Conta Melhor Envio", "administrator", "wpme_melhor-envio-subscription", "wpme_cadastro");
                 }
+
                 function wpme_cadastro(){
                     include_once 'class/config.php';
                     include_once 'views/apikey.php';

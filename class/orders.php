@@ -325,7 +325,7 @@ function wpme_getObjectOptions(){
     $return->non_commercial = true; //rever
     $return->invoice = new stdClass();
     $return->invoice->number = $_POST['nf']; //rever
-    //$return->invoice->key = $_POST['key_nf']; //rever
+    $return->invoice->key = $_POST['key_nf']; //rever
     $return->reminder = ''; //rever
     $return->plataform= "WooCommerce";
 
