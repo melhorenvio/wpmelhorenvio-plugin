@@ -127,16 +127,16 @@
         exit; // Exit if accessed directly
     }
 
-    if(isset($_POST['wpme_token'])){
-        $token = trim($_POST['wpme_token']);
-        if(updateUserData($token)){
+    if(isset($_POST['wpmelhorenvio_token'])){
+        $token = trim($_POST['wpmelhorenvio_token']);
+        if(wpmelhorenvio_updateUserData($token)){
             ?>
             <div class="notice notice-success is-dismissible">
                 <h4>Token Válido</h4>
                 <p> Token aceito </p>
             </div>
             <?php
-            $url = admin_url('admin.php?page=wpme_melhor-envio-config');
+            $url = admin_url('admin.php?page=wpmelhorenvio_melhor-envio-config');
             wp_redirect($url);
         }else{
             ?>
@@ -157,7 +157,7 @@
         <form action="<?= $_SERVER['REQUEST_URI'] ?>" method="post">
 
             <label>Cole aqui seu Token de acesso</label>
-            <textarea type="text" class="wpme_inputtext" name="wpme_token" ><?=get_option('wpme_token')?></textarea> <br>
+            <textarea type="text" class="wpme_inputtext" name="wpmelhorenvio_token" ><?=get_option('wpmelhorenvio_token')?></textarea> <br>
             <p>Para utilizar o Plugin é necessário estar cadastrado no <a href="https://melhorenvio.com.br">Melhor Envio</a>.</p>
             <p>Encontre seu <a href="https://www.melhorenvio.com.br/painel/gerenciar/tokens"> Token de Acesso</a></p>
             <button class="wpme_button" type="submit">Salvar</button>

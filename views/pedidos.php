@@ -1053,15 +1053,16 @@ if ( ! defined( 'ABSPATH' ) ) {
                     resposta = JSON.parse(response);
                     console.log(resposta);
                     if(resposta.succcess == true){
-                        vm.pedidos_page[id].status = '';
+                        vm.pedidos_page[id].status = undefined;
                         vm.pedidos_page[id].bought_tracking = 0;
-                        vm.pedidos_page[id].tracking_code = '';
+                        vm.pedidos_page[id].tracking_code = undefined;
                     }
                     vm.toogleLoader()
                 });
             },
 
             addToCart: function(ind){
+                this.toogleLoader();
                 this.payment_tracking_codes = [];
                 pedido = this.pedidos_page[ind];
                 vm = this;
@@ -1168,8 +1169,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                                 vm.message.type = 'error';
                                 vm.message.show_message = true;
                             }
-                            0
+
                         }
+                        vm.toogleLoader();
                     });
                 }
             },
@@ -1239,9 +1241,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                         vm.message.show_message = true;
                         vm.pedidos_page.forEach(function(pedido){
                             if(pedido.tracking_code == data.tracking){
-                                pedido.tracking_code = [];
-                                pedido.status = "";
-                                pedido.bought_tracking = 0;
+                                pedido.tracking_code = undefined;
+                                pedido.status = undefined;
+                                pedido.bought_tracking = undefined;
                             }
                         })
                     }else{
@@ -1498,21 +1500,23 @@ if ( ! defined( 'ABSPATH' ) ) {
             },
 
             addManyToCart: function(){
+                this.toogleLoader();
                 var success_array = [];
                 var error_array = [];
                 this.error_desc = [];
                 this.payment_tracking_codes = [];
-
                 vm = this;
                 for(var i = 0; i < this.pedidos_checked.length; i++){
                     if(this.pedidos_checked[i]){
-                        if(typeof this.pedidos_page[i].tracking_code == 'undefined'){
-                            if(this.addToCartOneFromMany(i)){
+                        if(typeof this.pedidos_page[i].tracking_code == 'undefined' || typeof this.pedidos_page[i].tracking_code.length < 1 ){
+                            retorno = vm.addToCartOneFromMany(i);
+                            console.log(retorno);
+                            if(retorno){
                                 success_array.push(i);
                             }else{
                                 error_array.push(i);
                             }
-                            if(error_array.length > 0){
+                            if(error_array.length > 0 || success_array < 1){
                                 vm.message.title = error_array.length+" Pedidos não adicionados ao carrinho"
                                 vm.message.message = 'Para utilizar essa transportadora, informe a nota fiscal (NF) e os dados da empresa (CNPJ/IE) ';
                                 vm.message.type = 'error';
@@ -1526,10 +1530,13 @@ if ( ! defined( 'ABSPATH' ) ) {
                         }
                     }
                 }
+                console.log(success_array);
+                this.toogleLoader();
             },
 
             addToCartOneFromMany: function(ind){
                 var pedido = this.pedidos_page[ind];
+                var retorno;
                 vm = this;
                 if(this.company.document != '' && this.company.document != null ){
                     pedido_cnpj = this.company.document;
@@ -1607,22 +1614,23 @@ if ( ! defined( 'ABSPATH' ) ) {
                         }
                     }
 
-                    return jQuery.post(ajaxurl, data, function(response) {
+                    jQuery.post(ajaxurl, data, function(response) {
                         resposta = JSON.parse(response);
-                        console.log(resposta);
                         if(typeof resposta.id != 'undefined'){
                             vm.payment_tracking_codes.push(resposta.id);
                             vm.addTracking(pedido.id,resposta.id,data.service_id);
                             pedido.tracking_code = resposta.id;
                             pedido.bought_tracking = data.service_id;
                             pedido.status = 'cart';
-                            return true;
+                            retorno = true;
                         }else{
                             vm.error_desc[ind] = resposta.error;
-                            return false;
+                            retorno = false;
                         }
+                        return retorno;
                     });
                 }
+                return retorno;
             },
 
             getUser: function(){
@@ -1719,7 +1727,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     }
                     if(trackings.length > 0){
                         data = {
-                            action: 'wpmelhorenvioajax_ticketPrintingAPI',
+                            action: 'wpmelhorenvio_ajax_ticketPrintingAPI',
                             tracking: trackings
                         };
                         vm = this;

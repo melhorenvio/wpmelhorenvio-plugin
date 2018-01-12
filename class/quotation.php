@@ -13,18 +13,18 @@ include_once ABSPATH.WPINC.'/option.php';
 include_once ABSPATH.WPINC.'/class-requests.php';
 //include_once ABSPATH . 'wp-content/plugins/woocommerce-extra-checkout-fields-for-brazil/includes/class-extra-checkout-fields-for-brazil-api.php';
 
-function wpme_getCotacao($package){
+function wpmelhorenvio_getCotacao($package){
     $client = new WP_Http();
-    $token = get_option('wpme_token');
-    $pacote =  wpme_getPackage($package);
-    $opcionais = wpme_getOptionals();
-    $seguro = wpme_getValueInsurance($pacote->value,$opcionais->VD);
+    $token = get_option('wpmelhorenvio_token');
+    $pacote =  wpmelhorenvio_getPackage($package);
+    $opcionais = wpmelhorenvio_getOptionals();
+    $seguro = wpmelhorenvio_getValueInsurance($pacote->value,$opcionais->VD);
     $params = array(
         'headers'=>['Content-Type'  => 'application/json',
             'Accept'        =>'application/json',
             'Authorization' => 'Bearer '.$token],
-        'body'  =>['from'   => wpme_getFrom(),
-            'to'        => wpme_getTo($package),
+        'body'  =>['from'   => wpmelhorenvio_getFrom(),
+            'to'        => wpmelhorenvio_getTo($package),
             'width'     => $pacote->width,
             'height'    => $pacote->height,
             'length'    => $pacote->length,
@@ -32,7 +32,7 @@ function wpme_getCotacao($package){
             'receipt'   => $opcionais->AR,
             'own_hand'  => $opcionais->MP,
             'insurance_value' => $seguro,
-            'services'  => wpme_getSavedServices()
+            'services'  => wpmelhorenvio_getSavedServices()
         ],
         'timeout'=>10);
 
@@ -40,7 +40,7 @@ function wpme_getCotacao($package){
     return is_array($response) ?  json_decode($response['body']) : [];
 }
 
-function wpme_getPackage($package){
+function wpmelhorenvio_getPackage($package){
     $volume =0;
     $weight =0;
     $total  =0;
@@ -63,20 +63,20 @@ function wpme_getPackage($package){
     return $pacote;
 }
 
-function wpme_getFrom(){
-    $remetente = json_decode(get_option('wpme_address'));
+function wpmelhorenvio_getFrom(){
+    $remetente = json_decode(get_option('wpmelhorenvio_address'));
     $from = $remetente->postal_code;
 
     return $from;
 }
 
-function wpme_getTo($package){
+function wpmelhorenvio_getTo($package){
     $destinatario = $package['destination']['postcode'];
     return $destinatario;
 }
 
-function wpme_getOptionals(){
-    $optionals = json_decode(get_option('wpme_pluginconfig'));
+function wpmelhorenvio_getOptionals(){
+    $optionals = json_decode(get_option('wpmelhorenvio_pluginconfig'));
     $optionals->AR = $optionals->AR? 'true' : 'false';
     $optionals->MP = $optionals->MP? 'true' : 'false';
     $optionals->PL = is_numeric($optionals->PL)? $optionals->PL : 0;
@@ -84,19 +84,19 @@ function wpme_getOptionals(){
     return $optionals;
 }
 
-function wpme_getPostOptionals(){
-    $optionals = json_decode(get_option('wpme_pluginconfig'));
+function wpmelhorenvio_getPostOptionals(){
+    $optionals = json_decode(get_option('wpmelhorenvio_pluginconfig'));
     $optionals->PL = is_numeric($optionals->PL)? $optionals->PL : 0;
     $optionals->DE = is_numeric($optionals->DE)? $optionals->DE : 0;
     return $optionals;
 }
 
-function wpme_getSavedServices(){
-    $services = join(',',json_decode(get_option('wpme_services')));
+function wpmelhorenvio_getSavedServices(){
+    $services = join(',',json_decode(get_option('wpmelhorenvio_services')));
     return $services;
 }
 
-function wpme_getValueInsurance($valor,$situacao){
+function wpmelhorenvio_getValueInsurance($valor,$situacao){
     return $situacao ? $valor : 0;
 }
 

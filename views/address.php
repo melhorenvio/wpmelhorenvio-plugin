@@ -25,12 +25,12 @@ if(isset($_POST['submit'])){
     }
     if(isset($_POST['company'])){
         $company = str_replace("\\",'',$_POST['company']);
-        update_option('wpme_company',$company);
+        update_option('wpmelhorenvio_company',$company);
     }else{
         $company = new stdClass();
         $company->cnpj = '';
         $company->ie = '';
-        update_option('wpme_company',json_encode($company));
+        update_option('wpmelhorenvio_company',json_encode($company));
     }
     //Optionals plugin configuration
     $optionals = new stdClass();
@@ -43,8 +43,8 @@ if(isset($_POST['submit'])){
     $optionals->DE = isset($_POST['DE'])? $_POST['DE'] : "";
     $optionals->PL = isset($_POST['PL'])? $_POST['PL'] : "";
 
-    if(defineConfig(utf8_encode($address),json_encode($services),json_encode($optionals))){
-        $url = admin_url('admin.php?page=wpme_melhor-envio-requests');
+    if(wpmelhorenvio_defineConfig(utf8_encode($address),json_encode($services),json_encode($optionals))){
+        $url = admin_url('admin.php?page=wpmelhorenvio_melhor-envio-requests');
         wp_redirect($url);
     }else{
       echo  '<div class="notice notice-error is-dismissible\">
@@ -370,17 +370,24 @@ if(isset($_POST['submit'])){
         <h2>Escolha o endereço para cálculo de frete</h2>
         <div class="wpme_flex">
             <?php
-            $addresses = getApiAddresses();
-            $companies = getApiCompanies();
+            $addresses = wpmelhorenvio_getApiAddresses();
+            $companies = wpmelhorenvio_getApiCompanies();
 
-            $company_addresses = getApiCompanyAdresses();
+            $company_addresses = wpmelhorenvio_getApiCompanyAdresses();
             $addresses['data'] = array_merge($addresses['data'],$company_addresses);
 
-            $saved_address = json_decode(get_option('wpme_address'));
-            $saved_company = json_decode(get_option('wpme_company'));
+            $saved_address = json_decode(get_option('wpmelhorenvio_address'));
+            if($saved_address == null){
+                $saved_address = new stdClass();
+                $saved_address->id = '';
+            }
+            $saved_company = json_decode(get_option('wpmelhorenvio_company'));
+            if($saved_company == null){
+                $saved_company = new stdClass();
+                $saved_company->id = '';
+            }
             if(isset($addresses['data'])){
             foreach ($addresses['data'] as $address){
-
                 ?>
 
                 <ul class="wpme_address">
@@ -397,9 +404,9 @@ if(isset($_POST['submit'])){
                                 <select name="<?php echo $address->id ?>">
 
                                 <?php
-                                $agencias = getAgencies('Brazil',$address->city->state->state_abbr,$address->city->city);
+                                $agencias = wpmelhorenvio_getAgencies('Brazil',$address->city->state->state_abbr,$address->city->city);
                                 if(count($agencias) < 1){
-                                    $agencias = getAgencies('Brazil',$address->city->state->state_abbr);
+                                    $agencias = wpmelhorenvio_getAgencies('Brazil',$address->city->state->state_abbr);
                                 }
                                 foreach($agencias as $agency){
                                     ?>
@@ -465,8 +472,8 @@ if(isset($_POST['submit'])){
         <h2>Selecione seus métodos de envio</h2>
         <ul class="wpme_options">
             <?php
-            $services = getApiShippingServices();
-            $active_services = is_array(json_decode(get_option('wpme_services')))? json_decode(get_option('wpme_services')) : array();
+            $services = wpmelhorenvio_getApiShippingServices();
+            $active_services = is_array(json_decode(get_option('wpmelhorenvio_services')))? json_decode(get_option('wpmelhorenvio_services')) : array();
             foreach($services as $i => $service){
                 ?><li>
                 <label>
@@ -488,9 +495,17 @@ if(isset($_POST['submit'])){
 
         <div class="wpme_pluginconf">
             <?php
+            $saved_optionals = json_decode(get_option('wpmelhorenvio_pluginconfig'));
+            if($saved_optionals == null){
+                $saved_optionals = new stdClass();
+                $saved_optionals->CF = true;
+                $saved_optionals->AR = false;
+                $saved_optionals->MP = false;
+                $saved_optionals->VD = true;
+                $saved_optionals->DE = 0;
+                $saved_optionals->PL = 0;
 
-            $saved_optionals = json_decode(get_option('wpme_pluginconfig'));
-
+            }
 
             ?>
             <h2>Funcionamento do Plugin</h2>
@@ -525,13 +540,13 @@ if(isset($_POST['submit'])){
                 <label title="Dias a mais a serem adicionados na exibição do Prazo de Entrega">
                     Dias extras
                 </label>
-                <input type="text" name="DE" value="<?= $saved_optionals->DE?>">
+                <input type="text" name="DE" value="<?= $saved_optionals->DE ?>">
             </div>
             <div>
                 <label title="Porcentagem a ser adicionada sobre o valor do frete pra você lojista">
                     Porcentagem de lucro
                 </label>
-                <input type="text" name="PL" value="<?= $saved_optionals->PL?>">
+                <input type="text" name="PL" value="<?= $saved_optionals->PL ?>">
             </div>
         </div>
         <div>
