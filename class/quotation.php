@@ -36,7 +36,7 @@ function wpme_getCotacao($package){
         ],
         'timeout'=>10);
 
-    $response = $client->get("https://melhorenvio.com.br/api/v2/calculator",$params);
+    $response = $client->get("https://www.melhorenvio.com.br/api/v2/calculator",$params);
     return is_array($response) ?  json_decode($response['body']) : [];
 }
 

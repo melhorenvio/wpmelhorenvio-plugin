@@ -9,7 +9,7 @@
 /*
  *
 Plugin Name: Melhor Envio - Cotação
-Plugin URI:  http://www.melhorenvio.com.br/
+Plugin URI:  http://www.melhorenvio.com.br/integracoes/woocommerce
 Description: Plugin que permite a cotação de fretes utilizando a API do Melhor Envio. Ainda é possível disponibilizar as informações da cotação de frete diretamente para o consumidor final.
 Version:     2.0.0
 Author:      Melhor Envio
@@ -23,7 +23,7 @@ Domain Path: /languages
 if( !class_exists('woocommerce-melhor-envio-integration')):
     include_once 'includes/wpmeinstaller.php';
     /* Register plugin status hooks */
-    register_activation_hook(__FILE__,'wpme_install');
+    register_activation_hook(__FILE__,'wpmelhorenvio_install');
 
     class woocommercemelhorenviointegration
     {
@@ -40,10 +40,10 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
         {
             if(class_exists('WC_Integration')){
                 //Criando os links no Menu
-                add_action("admin_menu", "wpme_addMenu");
+                add_action("admin_menu", "wpmelhorenvio_addMenu");
 
                 function plugin_add_settings_link( $links ) {
-                    $settings_link = '<a href="admin.php?page=wpme_melhor-envio-config">' . __( 'Configurações' ) . '</a>';
+                    $settings_link = '<a href="admin.php?page=wpmelhorenvio_melhor-envio-config">' . __( 'Configurações' ) . '</a>';
                     array_unshift( $links, $settings_link );
                     return $links;
                 }
@@ -53,27 +53,27 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
 
 
 
-                function wpme_addMenu(){
-                   add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpme_melhor-envio","wpme_pedidos", plugin_dir_url( __FILE__ )."mo.png");
-                    add_submenu_page("wpme_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpme_melhor-envio-requests", "wpme_pedidos");
-                    add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpme_melhor-envio-config", "wpme_config");
-                    add_submenu_page("wpme_melhor-envio","Melhor Envio - Configurações da Conta", "Sua Conta Melhor Envio", "administrator", "wpme_melhor-envio-subscription", "wpme_cadastro");
+                function wpmelhorenvio_addMenu(){
+                   add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpmelhorenvio_melhor-envio","wpmelhorenvio_pedidos", plugin_dir_url( __FILE__ )."mo.png");
+                    add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpmelhorenvio_melhor-envio-requests", "wpmelhorenvio_pedidos");
+                    add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpmelhorenvio_melhor-envio-config", "wpmelhorenvio_config");
+                    add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Configurações da Conta", "Sua Conta Melhor Envio", "administrator", "wpmelhorenvio_melhor-envio-subscription", "wpmelhorenvio_cadastro");
                 }
 
-                function wpme_cadastro(){
+                function wpmelhorenvio_cadastro(){
                     include_once 'class/config.php';
                     include_once 'views/apikey.php';
                 }
-                function wpme_config(){
-                    if( get_option("wpme_token") == null){
-                        wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpme_melhor-envio-subscription"));
+                function wpmelhorenvio_config(){
+                    if( get_option("wpmelhorenvio_token") == null){
+                        wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpmelhorenvio_melhor-envio-subscription"));
                     }
                     include_once 'class/config.php';
                     include_once 'views/address.php';
                 }
-                function wpme_pedidos(){
-                    if( get_option("wpme_token") == null){
-                        wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpme_melhor-envio-subscription"));
+                function wpmelhorenvio_pedidos(){
+                    if( get_option("wpmelhorenvio_token") == null){
+                        wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpmelhorenvio_melhor-envio-subscription"));
                     }
                     include_once 'class/orders.php';
                     include_once 'views/pedidos.php';
@@ -83,122 +83,122 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
 
 
             include_once 'class/orders.php';
-            add_action( 'wp_ajax_wpme_ajax_getTracking', 'wpme_ajax_getTracking' );
-                function wpme_ajax_getTracking(){
-                    echo wpme_getCustomerCotacaoAPI();
+            add_action( 'wp_ajax_wpmelhorenvio_ajax_getTracking', 'wpmelhorenvio_ajax_getTracking' );
+                function wpmelhorenvio_ajax_getTracking(){
+                    echo wpmelhorenvio_getCustomerCotacaoAPI();
                     die();
                 }
 
 
-            add_action( 'wp_ajax_wpme_ajax_getJsonOrders', 'wpme_ajax_getJsonOrders' );
-            function wpme_ajax_getJsonOrders(){
-                echo wpme_getJsonOrders();
+            add_action( 'wp_ajax_wpmelhorenvio_ajax_getJsonOrders', 'wpmelhorenvio_ajax_getJsonOrders' );
+            function wpmelhorenvio_ajax_getJsonOrders(){
+                echo wpmelhorenvio_getJsonOrders();
                 die();
             }
-            add_action( 'wp_ajax_wpme_ajax_ticketAcquirementAPI', 'wpme_ajax_ticketAcquirementAPI' );
-            function wpme_ajax_ticketAcquirementAPI(){
-                echo wpme_ticketAcquirementAPI();
+            add_action( 'wp_ajax_wpmelhorenvio_ajax_ticketAcquirementAPI', 'wpmelhorenvio_ajax_ticketAcquirementAPI' );
+            function wpmelhorenvio_ajax_ticketAcquirementAPI(){
+                echo wpmelhorenvio_ticketAcquirementAPI();
                 die();
 
             }
-            add_action( 'wp_ajax_wpme_ajax_ticketPrintingAPI', 'wpme_ajax_ticketPrintingAPI' );
-            function wpme_ajax_ticketPrintingAPI(){
-                echo wpme_ticketPrintingAPI();
+            add_action( 'wp_ajax_wpmelhorenvio_ajax_ticketPrintingAPI', 'wpmelhorenvio_ajax_ticketPrintingAPI' );
+            function wpmelhorenvio_ajax_ticketPrintingAPI(){
+                echo wpmelhorenvio_ticketPrintingAPI();
                 die();
             }
-            add_action( 'wp_ajax_wpme_getCustomerCotacaoAPI', 'wpme_ajax_getCustomerCotacaoAPI' );
-            function wpme_ajax_getCustomerCotacaoAPI(){
-                echo wpme_getCustomerCotacaoAPI();
+            add_action( 'wp_ajax_wpmelhorenvio_getCustomerCotacaoAPI', 'wpmelhorenvio_ajax_getCustomerCotacaoAPI' );
+            function wpmelhorenvio_ajax_getCustomerCotacaoAPI(){
+                echo wpmelhorenvio_getCustomerCotacaoAPI();
                 die();
             }
-            add_action( 'wp_ajax_wpme_ajax_getCustomerInfoAPI', 'wpme_ajax_getCustomerInfoAPI' );
-            function wpme_ajax_getCustomerInfoAPI(){
-                echo wpme_getCustomerInfoAPI();
-                die();
-            }
-
-            add_action( 'wp_ajax_wpme_ajax_getBalanceAPI', 'wpme_ajax_getBalanceAPI' );
-            function wpme_ajax_getBalanceAPI(){
-                echo wpme_getBalanceAPI();
+            add_action( 'wp_ajax_wpmelhorenvio_ajax_getCustomerInfoAPI', 'wpmelhorenvio_ajax_getCustomerInfoAPI' );
+            function wpmelhorenvio_ajax_getCustomerInfoAPI(){
+                echo wpmelhorenvio_getCustomerInfoAPI();
                 die();
             }
 
-            add_action( 'wp_ajax_wpme_ajax_getLimitsAPI', 'wpme_ajax_getLimitsAPI' );
-            function wpme_ajax_getLimitsAPI(){
-                echo wpme_getLimitsAPI();
+            add_action( 'wp_ajax_wpmelhorenvio_ajax_getBalanceAPI', 'wpmelhorenvio_ajax_getBalanceAPI' );
+            function wpmelhorenvio_ajax_getBalanceAPI(){
+                echo wpmelhorenvio_getBalanceAPI();
                 die();
             }
 
-            add_action('wp_ajax_wpme_ajax_getTrackingAPI','wpme_ajax_getTrackingAPI');
-            function wpme_ajax_getTrackingAPI(){
-                echo wpme_getTrackingAPI();
+            add_action( 'wp_ajax_wpmelhorenvio_ajax_getLimitsAPI', 'wpmelhorenvio_ajax_getLimitsAPI' );
+            function wpmelhorenvio_ajax_getLimitsAPI(){
+                echo wpmelhorenvio_getLimitsAPI();
+                die();
+            }
+
+            add_action('wp_ajax_wpmelhorenvio_ajax_getTrackingAPI','wpmelhorenvio_ajax_getTrackingAPI');
+            function wpmelhorenvio_ajax_getTrackingAPI(){
+                echo wpmelhorenvio_getTrackingAPI();
                 die();
             }
 
 
-            add_action('wp_ajax_wpme_ajax_addTrackingAPI','wpme_ajax_addTrackingAPI');
-            function wpme_ajax_addTrackingAPI(){
-                echo wpme_addTrackingAPI();
+            add_action('wp_ajax_wpmelhorenvio_ajax_addTrackingAPI','wpmelhorenvio_ajax_addTrackingAPI');
+            function wpmelhorenvio_ajax_addTrackingAPI(){
+                echo wpmelhorenvio_addTrackingAPI();
                 die();
             }
 
-            add_action('wp_ajax_wpme_ajax_getTrackingsData','wpme_ajax_getTrackingsData');
-            function wpme_ajax_getTrackingsData(){
-                echo wpme_getTrackingsData();
+            add_action('wp_ajax_wpmelhorenvio_ajax_getTrackingsData','wpmelhorenvio_ajax_getTrackingsData');
+            function wpmelhorenvio_ajax_getTrackingsData(){
+                echo wpmelhorenvio_getTrackingsData();
                 die();
             }
 
-            add_action('wp_ajax_wpme_ajax_payTicketAPI','wpme_ajax_payTicketAPI');
-            function wpme_ajax_payTicketAPI(){
-                echo wpme_payTicket();
+            add_action('wp_ajax_wpmelhorenvio_ajax_payTicketAPI','wpmelhorenvio_ajax_payTicketAPI');
+            function wpmelhorenvio_ajax_payTicketAPI(){
+                echo wpmelhorenvio_payTicket();
                 die();
             }
 
-            add_action('wp_ajax_wpme_ajax_getAddressAPI','wpme_ajax_getAddressAPI');
-            function wpme_ajax_getAddressAPI(){
-                echo get_option('wpme_address');
+            add_action('wp_ajax_wpmelhorenvio_ajax_getAddressAPI','wpmelhorenvio_ajax_getAddressAPI');
+            function wpmelhorenvio_ajax_getAddressAPI(){
+                echo get_option('wpmelhorenvio_address');
                 die();
             }
 
-            add_action('wp_ajax_wpme_ajax_getOptionsAPI','wpme_ajax_getOptionsAPI');
-            function wpme_ajax_getOptionsAPI(){
-                echo get_option('wpme_pluginconfig');
+            add_action('wp_ajax_wpmelhorenvio_ajax_getOptionsAPI','wpmelhorenvio_ajax_getOptionsAPI');
+            function wpmelhorenvioajax_getOptionsAPI(){
+                echo get_option('wpmelhorenvio_pluginconfig');
                 die();
             }
 
-            add_action('wp_ajax_wpme_ajax_updateStatusData','wpme_ajax_updateStatusData');
-            function wpme_ajax_updateStatusData(){
-                echo wpme_updateTrackingData();
+            add_action('wp_ajax_wpmelhorenvio_ajax_updateStatusData','wpmelhorenvio_ajax_updateStatusData');
+            function wpmelhorenvio_ajax_updateStatusData(){
+                echo wpmelhorenvio_updateTrackingData();
                 die();
             }
 
-            add_action('wp_ajax_wpme_ajax_cancelTicketAPI','wpme_ajax_cancelTicketAPI');
-            function wpme_ajax_cancelTicketAPI(){
-                echo wpme_cancelTicketAPI();
+            add_action('wp_ajax_wpmelhorenvio_ajax_cancelTicketAPI','wpmelhorenvio_ajax_cancelTicketAPI');
+            function wpmelhorenvio_ajax_cancelTicketAPI(){
+                echo wpmelhorenvio_cancelTicketAPI();
                 die();
             }
 
-            add_action('wp_ajax_wpme_ajax_cancelTicketData','wpme_ajax_cancelTicketData');
-            function wpme_ajax_cancelTicketData(){
-                echo wpme_cancelTicketData();
+            add_action('wp_ajax_wpmelhorenvio_ajax_cancelTicketData','wpmelhorenvio_ajax_cancelTicketData');
+            function wpmelhorenvio_ajax_cancelTicketData(){
+                echo wpmelhorenvio_cancelTicketData();
                 die();
             }
 
-            add_action( 'wp_ajax_wpme_ajax_getCompanyAPI', 'wpme_ajax_getCompanyAPI' );
-            function wpme_ajax_getCompanyAPI(){
-                echo get_option('wpme_company');
+            add_action( 'wp_ajax_wpmelhorenvio_ajax_getCompanyAPI', 'wpmelhorenvio_ajax_getCompanyAPI' );
+            function wpmelhorenvio_ajax_getCompanyAPI(){
+                echo get_option('wpmelhorenvio_company');
                 die();
             }
 
-            add_action( 'wp_ajax_wpme_ajax_removeTrackingAPI', 'wpme_ajax_removeTrackingAPI' );
-            function wpme_ajax_removeTrackingAPI(){
-                echo wpme_removeFromCart();
+            add_action( 'wp_ajax_wpmelhorenvio_ajax_removeTrackingAPI', 'wpmelhorenvio_ajax_removeTrackingAPI' );
+            function wpmelhorenvio_ajax_removeTrackingAPI(){
+                echo wpmelhorenvio_removeFromCart();
                 die();
             }
 
-            add_action('wp_ajax_wpme_ajax_updateStatusTracking','wpme_ajax_updateStatusTracking');
-            function wpme_ajax_updateStatusTracking(){
-                echo wpme_updateStatusTracking();
+            add_action('wp_ajax_wpmelhorenvio_ajax_updateStatusTracking','wpmelhorenvio_ajax_updateStatusTracking');
+            function wpmelhorenvio_ajax_updateStatusTracking(){
+                echo wpmelhorenvio_updateStatusTracking();
                 die();
             }
 

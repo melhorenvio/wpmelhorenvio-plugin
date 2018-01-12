@@ -6,7 +6,8 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: MelhorEnvio
-Tags: Woocommerce, Shipping, Delivery, Melhor envio, Envios
+Tags: Woocommerce, Shipping, Delivery, Melhor envio, Envios, Correios, Transportadoras, Frete
+
 
 Integration between the Melhor Envio and WooCommerce
 

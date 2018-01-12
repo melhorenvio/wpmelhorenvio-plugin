@@ -15,7 +15,7 @@ include_once 'quotation.php';
 include_once 'tracking.php';
 
 function wpme_getJsonOrders(){
-    $orders = wc_get_orders([]);
+    $orders = wc_get_orders(['limit' => '600']);
     $dp    = is_null( null ) ? wc_get_price_decimals() : 2 ;
     $datas = array();
     foreach($orders as $order){
@@ -146,7 +146,7 @@ function wpme_getCustomerCotacaoAPI($order){
         ],
         'timeout'=>10);
 
-    $response = $client->get("https://melhorenvio.com.br/api/v2/calculator",$params);
+    $response = $client->get("https://www.melhorenvio.com.br/api/v2/calculator",$params);
     return is_array($response) ?  $response['body'] : [];
 }
 
@@ -186,7 +186,7 @@ function wpme_ticketAcquirementAPI(){
         ],
         'body'  => $json_object,
         'timeout'=>10);
-    $response = $client->post('https://melhorenvio.com.br/api/v2/me/cart',$params);
+    $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/cart',$params);
     return $response['body'];
 }
 
@@ -212,7 +212,7 @@ function wpme_payTicket(){
         'body'  => $json_object,
         'timeout'=>10);
 
-    $response = $client->post('https://melhorenvio.com.br/api/v2/me/shipment/checkout',$params);
+    $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/checkout',$params);
     echo $response['body'];
 
 }
@@ -236,7 +236,7 @@ function wpme_cancelTicketAPI(){
         ],
         'body'  => $json_object,
         'timeout'=>10);
-    $response = $client->post('https://melhorenvio.com.br/api/v2/me/shipment/cancel',$params);
+    $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/cancel',$params);
     return $response['body'];
 }
 
@@ -310,7 +310,6 @@ function wpme_getObjectPackage(){
 }
 
 function wpme_getObjectOptions(){
-
     $options = wpme_getPostOptionals();
     $return = new stdClass();
     if($options->VD){
@@ -324,8 +323,10 @@ function wpme_getObjectOptions(){
     $return->reverse = false;
     $return->non_commercial = true; //rever
     $return->invoice = new stdClass();
-    $return->invoice->number = $_POST['nf']; //rever
-    $return->invoice->key = $_POST['key_nf']; //rever
+    if($_POST['nf'] != null){
+        $return->invoice->number = $_POST['nf']; //rever
+        $return->invoice->key = $_POST['key_nf']; //rever
+    }
     $return->reminder = ''; //rever
     $return->plataform= "WooCommerce";
 
@@ -385,7 +386,7 @@ function wpme_getTrackingAPI(){
         ],
         'body'  => $body,
         'timeout'=>10);
-    $response = $client->post('https://melhorenvio.com.br/api/v2/me/shipment/tracking',$params);
+    $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/tracking',$params);
     echo json_encode($response);
 }
 
@@ -393,7 +394,7 @@ function wpme_getBalanceAPI(){
     $token = get_option('wpme_token');
     $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
     $client = new WP_Http();
-    $response = $client->get('https://melhorenvio.com.br/api/v2/me/balance',$params);
+    $response = $client->get('https://www.melhorenvio.com.br/api/v2/me/balance',$params);
     if( $response instanceof WP_Error){
         return false;
     }else{
@@ -405,7 +406,7 @@ function wpme_getLimitsAPI(){
     $token = get_option('wpme_token');
     $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
     $client = new WP_Http();
-    $response = $client->get('https://melhorenvio.com.br/api/v2/me/limits',$params);
+    $response = $client->get('https://www.melhorenvio.com.br/api/v2/me/limits',$params);
     if( $response instanceof WP_Error){
         return false;
     }else{
@@ -459,6 +460,7 @@ function wpme_removeFromCart()
         echo "cURL Error #:" . $err;
     } else {
         wpme_data_deleteTracking($_POST['tracking']);
+        return '{"succcess":true}';
     }
 }
 
@@ -484,7 +486,7 @@ function wpme_updateStatusTracking(){
         'body' => json_encode($object)
         );
     $client = new WP_Http();
-    $response = $client->post('https://melhorenvio.com.br/api/v2/me/shipment/tracking',$params);
+    $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/tracking',$params);
     if( $response instanceof WP_Error){
         return false;
     }else{

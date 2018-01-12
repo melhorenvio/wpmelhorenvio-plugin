@@ -63,6 +63,27 @@ if ( ! defined( 'ABSPATH' ) ) {
         display: flex;
     }
 
+
+    .wpme_loader{
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(20,20,20,.75);
+        position: fixed;
+        top:0;
+        left: 0;
+        display: flex;
+    }
+
+    .wpme_loader svg{
+        display: inline-block;
+        margin: auto;
+        top: 50%;
+        left: 50%;
+        /*margin-top: -100px;*/
+        /*margin-left: -100px*/
+        position: fixed;
+    }
+
     .modal h1{
         padding: 15px;
     }
@@ -124,6 +145,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         vert-align: middle;
         width: 750px;
     }
+
 
     .modal a{
         display: inline-block;
@@ -357,7 +379,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
     .wpme_pagination_wrapper{
         display: block;
-        margin: 20px auto;
+        margin: 30px auto;
         text-align: center;
         width: 100%;
     }
@@ -365,7 +387,9 @@ if ( ! defined( 'ABSPATH' ) ) {
     .wpme_pagination li  a{
         border: solid 1px rgba(190,190,190,.8);
         box-sizing: border-box;
-        padding: 7px 12px;
+        display: inline-block;
+        width: 35px;
+        padding:7px 0;
         background-color: #fff;
         text-decoration: none;
         color: rgba(30,120,200,1);
@@ -391,6 +415,12 @@ if ( ! defined( 'ABSPATH' ) ) {
     .wpme_pagination li a:focus{
         outline: none;
         box-shadow: none;
+    }
+
+    .wpme_pagination li .ret{
+        margin: 5px;
+        padding: 3px;
+        display: inline-block;
     }
 
     .wpme_address{
@@ -770,7 +800,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     </template>
                     <template v-if="pedido.status == 'cart'">
                         <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
-                        <a href="javascript;" class="btn cancelar" @click.prevent="removeFromCart(pedido.tracking_code)" > Remover </a>
+                        <a href="javascript;" class="btn cancelar" @click.prevent="removeFromCart(i,pedido.tracking_code)" > Remover </a>
                     </template>
                     <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
                     <!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
@@ -806,8 +836,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
         <div class="wpme_pagination_wrapper">
-            <ul class="wpme_pagination" v-for="i in Math.ceil(total/perpage)" v-show="total > perpage">
-                <li :class="{'active': i == page}"><a href="javascript;" @click.prevent="pagego(i)">{{i}}</a></li>
+            <ul class="wpme_pagination" >
+                <li v-for="i in Math.ceil(total/perpage)" v-show="total > perpage" :class="{'active': i == page}">
+                    <a href="javascript;"  @click.prevent="pagego(i)"  v-if="i < 2 && i != page || i < page+2 && i > page || i > page-2 && i < page  ||  i > (total / perpage)-1 && i != page || i == page" >{{i}}</a>
+                    <span class="ret"  v-show="(i == page-2 | i == page+1) && (Math.ceil(total / perpage) > 4) && Math.ceil(total /perpage) > i+1" > ...  </span>
+                </li>
+
+
             </ul>
         </div>
         <div class="mask" v-show="show_mask" @click.prevent="toogleModal">
@@ -817,17 +852,17 @@ if ( ! defined( 'ABSPATH' ) ) {
             <h1 >Escolha seu método de pagamento</h1>
             <div class="select">
                 <label>
-                <input type="radio" v-model="selected_payment_method" value="1">
+                    <input type="radio" v-model="selected_payment_method" value="1">
                     <img src="https://melhorenvio.com.br/images/payment/moip.png">
 
                 </label>
                 <label>
-                <input type="radio"  v-model="selected_payment_method" value="2">
+                    <input type="radio"  v-model="selected_payment_method" value="2">
                     <img src="https://melhorenvio.com.br/images/payment/mpago.png">
                 </label>
 
                 <label>
-                <input type="radio"  v-model="selected_payment_method" value="99">
+                    <input type="radio"  v-model="selected_payment_method" value="99">
                     <div class="pgsaldo">
                         <h4>Pagar com Saldo</h4>
                         <p>Saldo <strong>{{user_info.balance}}</strong></p>
@@ -862,7 +897,44 @@ if ( ! defined( 'ABSPATH' ) ) {
             </div>
         </div>
 
-
+        <div class="wpme_loader" v-show="loader">
+            <svg class="ico" width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc ">
+                <g fill="none" fill-rule="evenodd" stroke-width="2">
+                    <circle cx="55" cy="55" r="1">
+                        <animate attributeName="r"
+                                 begin="0s" dur="1.8s"
+                                 values="1; 50"
+                                 calcMode="spline"
+                                 keyTimes="0; 1"
+                                 keySplines="0.165, 0.84, 0.44, 1"
+                                 repeatCount="indefinite" />
+                        <animate attributeName="stroke-opacity"
+                                 begin="0s" dur="1.8s"
+                                 values="1; 0"
+                                 calcMode="spline"
+                                 keyTimes="0; 1"
+                                 keySplines="0.3, 0.61, 0.355, 1"
+                                 repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="55" cy="55" r="1">
+                        <animate attributeName="r"
+                                 begin="-0.9s" dur="1.8s"
+                                 values="1; 20"
+                                 calcMode="spline"
+                                 keyTimes="0; 1"
+                                 keySplines="0.165, 0.84, 0.44, 1"
+                                 repeatCount="indefinite" />
+                        <animate attributeName="stroke-opacity"
+                                 begin="-0.9s" dur="1.8s"
+                                 values="1; 0"
+                                 calcMode="spline"
+                                 keyTimes="0; 1"
+                                 keySplines="0.3, 0.61, 0.355, 1"
+                                 repeatCount="indefinite" />
+                    </circle>
+                </g>
+            </svg>
+        </div>
     </div>
 </div>
 <script src="https://unpkg.com/vue"></script>
@@ -875,6 +947,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             selected_payment_method: 99,
             updated:true,
             pedidos: [],
+            loader:false,
             error_desc: [],
             total:0,
             company:{
@@ -938,11 +1011,15 @@ if ( ! defined( 'ABSPATH' ) ) {
                 vm = this;
                 setInterval(function () {
                     vm.updated = ! vm.updated;
-                },200)
+                },100)
+            },
+
+            toogleLoader: function(){
+                this.loader = !this.loader;
             },
 
             stripcode: function(string) {
-                string = string.replace('wpme_','');
+                string = string.replace('wpmelhorenvio_','');
                 return string.replace('_','');
             },
 
@@ -965,14 +1042,22 @@ if ( ! defined( 'ABSPATH' ) ) {
                 this.toogleModal();
             },
 
-            removeFromCart: function(tracking){
+            removeFromCart: function(id,tracking){
+                this.toogleLoader()
                 var data = {
-                    action: 'wpme_ajax_removeTrackingAPI',
+                    action: 'wpmelhorenvio_ajax_removeTrackingAPI',
                     tracking:tracking
                 }
                 vm = this;
                 jQuery.post(ajaxurl,data,function (response) {
-                    vm.getOrders();
+                    resposta = JSON.parse(response);
+                    console.log(resposta);
+                    if(resposta.succcess == true){
+                        vm.pedidos_page[id].status = '';
+                        vm.pedidos_page[id].bought_tracking = 0;
+                        vm.pedidos_page[id].tracking_code = '';
+                    }
+                    vm.toogleLoader()
                 });
             },
 
@@ -1001,7 +1086,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 }else{
                     if(this.selected_shipment < 3){
                         var data = {
-                            action: "wpme_ajax_ticketAcquirementAPI",
+                            action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
                             valor_declarado: pedido.price,
                             service_id: this.selected_shipment[ind],
                             from_name: this.user_info.firstname+" "+ this.user_info.lastname,
@@ -1026,7 +1111,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                         }
                     }else{
                         var data = {
-                            action: "wpme_ajax_ticketAcquirementAPI",
+                            action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
                             valor_declarado: pedido.price,
                             service_id: this.selected_shipment[ind],
                             from_name: this.user_info.firstname+" "+ this.user_info.lastname,
@@ -1102,7 +1187,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             verifyTracking: function(){
                 data = {
-                    action:'wpme_ajax_updateStatusTracking'
+                    action:'wpmelhorenvio_ajax_updateStatusTracking'
                 }
 
                 jQuery.post(ajaxurl,data,function(response){
@@ -1112,7 +1197,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getAddress: function(){
                 data = {
-                    action: "wpme_ajax_getAddressAPI"
+                    action: "wpmelhorenvio_ajax_getAddressAPI"
                 };
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
@@ -1135,8 +1220,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             cancelTicket: function(){
                 this.toogleConfirmer();
+                this.toogleLoader();
                 data = {
-                    action: 'wpme_ajax_cancelTicketAPI',
+                    action: 'wpmelhorenvio_ajax_cancelTicketAPI',
                     tracking: this.cancel_tracking_codes
                 };
                 vm = this;
@@ -1151,19 +1237,27 @@ if ( ! defined( 'ABSPATH' ) ) {
                         vm.message.message = "Após a verificação o valor deverá ser extornado para a carteira";
                         vm.message.type= "success";
                         vm.message.show_message = true;
+                        vm.pedidos_page.forEach(function(pedido){
+                            if(pedido.tracking_code == data.tracking){
+                                pedido.tracking_code = [];
+                                pedido.status = "";
+                                pedido.bought_tracking = 0;
+                            }
+                        })
                     }else{
                         vm.message.title = "Não foi possível cancelar esta etiqueta";
                         vm.message.message = "Infelizmente não é possível cancelar esta etiqueta";
                         vm.message.type= "error";
                         vm.message.show_message = true;
                     }
+                    vm.toogleLoader();
 
                 });
             },
 
             printTicket: function(tracking){
                 data = {
-                    action: 'wpme_ajax_ticketPrintingAPI',
+                    action: 'wpmelhorenvio_ajax_ticketPrintingAPI',
                     tracking: [tracking]
                 };
                 vm = this;
@@ -1183,7 +1277,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getOptionals: function(){
                 data = {
-                    action: "wpme_ajax_getOptionsAPI"
+                    action: "wpmelhorenvio_ajax_getOptionsAPI"
                 };
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
@@ -1195,7 +1289,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 vm = this;
                 this.pedidos.forEach(function (pedido){
                     var data = {
-                        action:'wpme_ajax_getTrackingsData',
+                        action:'wpmelhorenvio_ajax_getTrackingsData',
                         order_id: pedido.id,
                         timeout:30
                     };
@@ -1212,7 +1306,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getSpecificTracking: function(pedido){
                 var data = {
-                    action:'wpme_ajax_getTrackingsData',
+                    action:'wpmelhorenvio_ajax_getTrackingsData',
                     order_id: pedido.id,
                     timeout:30
                 };
@@ -1230,7 +1324,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             payTicket: function(payment_method){
                 var data = {
-                    action:'wpme_ajax_payTicketAPI',
+                    action:'wpmelhorenvio_ajax_payTicketAPI',
                     orders: this.payment_tracking_codes,
                     gateway: payment_method
 
@@ -1262,22 +1356,22 @@ if ( ! defined( 'ABSPATH' ) ) {
                                 window.open(resposta.redirect,'_blank');
                             });
                         }else{
-                        data.orders.forEach(function(order){
-                            vm.updateTracking(order,'paid');
-                            vm.payment_tracking_codes = [];
-                            vm.pedidos_page.forEach( function (pedido) {
-                                if(order == pedido.tracking_code)
-                                    pedido.status = 'paid';
+                            data.orders.forEach(function(order){
+                                vm.updateTracking(order,'paid');
+                                vm.payment_tracking_codes = [];
+                                vm.pedidos_page.forEach( function (pedido) {
+                                    if(order == pedido.tracking_code)
+                                        pedido.status = 'paid';
+                                });
                             });
-                        });
-                        console.log(resposta);
-                        vm.payment_tracking_codes = [];
-                        vm.getBalance();
-                        vm.getLimits();
-                        vm.message.title="Pagamento feito com sucesso";
-                        vm.message.message="Seu pagamento foi efetuado com sucesso";
-                        vm.message.type = 'success';
-                        vm.message.show_message = true;
+                            console.log(resposta);
+                            vm.payment_tracking_codes = [];
+                            vm.getBalance();
+                            vm.getLimits();
+                            vm.message.title="Pagamento feito com sucesso";
+                            vm.message.message="Seu pagamento foi efetuado com sucesso";
+                            vm.message.type = 'success';
+                            vm.message.show_message = true;
                         }
                     }
                 });
@@ -1285,7 +1379,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             updateTracking: function(tracking_code,status){
                 var data = {
-                    action: "wpme_ajax_updateStatusData",
+                    action: "wpmelhorenvio_ajax_updateStatusData",
                     tracking_code:tracking_code,
                     status:status
                 };
@@ -1301,7 +1395,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     tracking_codes.push(pedido.id);
                 });
                 var data = {
-                    action:'wpme_ajax_getTrackingAPI',
+                    action:'wpmelhorenvio_ajax_getTrackingAPI',
                     tracking_codes: tracking_codes
                 };
                 jQuery.post(ajaxurl, data, function(response) {
@@ -1311,7 +1405,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             addTracking: function(order_id,tracking,service){
                 var data = {
-                    action: "wpme_ajax_addTrackingAPI",
+                    action: "wpmelhorenvio_ajax_addTrackingAPI",
                     order_id:order_id,
                     tracking:tracking,
                     service: service
@@ -1326,7 +1420,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getOrders: function(){
                 var data = {
-                    action:'wpme_ajax_getJsonOrders',
+                    action:'wpmelhorenvio_ajax_getJsonOrders',
                     timeout:30
                 };
 
@@ -1338,7 +1432,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                         resposta.forEach(function (pedido,index) {
                             pedido.cotacoes.forEach(function (cotacao) {
                                 if(Array.isArray(pedido.shipping_lines)){
-                                    if( pedido.shipping_lines[0].method_id == 'wpme_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)){
+                                    if( pedido.shipping_lines[0].method_id == 'wpmelhorenvio_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)){
                                         array[index] = cotacao.id;
                                     }
                                 }
@@ -1458,7 +1552,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 }else{
                     if(this.selected_shipment < 3){
                         var data = {
-                            action: "wpme_ajax_ticketAcquirementAPI",
+                            action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
                             valor_declarado: pedido.price,
                             service_id: this.selected_shipment[ind],
                             from_name: this.user_info.firstname+" "+ this.user_info.lastname,
@@ -1477,11 +1571,13 @@ if ( ! defined( 'ABSPATH' ) ) {
                             to_country_id: pedido.shipping.country,
                             to_postal_code: pedido.shipping.postcode,
                             to_note: pedido.customer_note,
-                            line_items: pedido.line_items
+                            line_items: pedido.line_items,
+                            nf: this.pedidos_nf[ind],
+                            key_nf: this.pedidos_chave_nf[ind]
                         }
                     }else{
                         var data = {
-                            action: "wpme_ajax_ticketAcquirementAPI",
+                            action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
                             valor_declarado: pedido.price,
                             service_id: this.selected_shipment[ind],
                             from_name: this.user_info.firstname+" "+ this.user_info.lastname,
@@ -1531,7 +1627,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getUser: function(){
                 var data = {
-                    action:'wpme_ajax_getCustomerInfoAPI',
+                    action:'wpmelhorenvio_ajax_getCustomerInfoAPI',
                 };
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
@@ -1546,7 +1642,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getBalance: function(){
                 var data = {
-                    action:'wpme_ajax_getBalanceAPI'
+                    action:'wpmelhorenvio_ajax_getBalanceAPI'
                 };
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
@@ -1562,23 +1658,24 @@ if ( ! defined( 'ABSPATH' ) ) {
             },
 
             deleteTracking: function(tracking){
+                this.toogleLoader()
                 data = {
-                    action:'wpme_ajax_cancelTicketData',
+                    action:'wpmelhorenvio_ajax_cancelTicketData',
                     tracking: tracking
                 };
                 vm = this;
                 console.log(tracking);
                 jQuery.post(ajaxurl,data,function(response){
                     console.log(response);
+                    vm.toogleLoader();
                     vm.getBalance();
                     vm.getLimits();
-                    vm.getOrders();
                 });
             },
 
             getLimits: function(){
                 var data = {
-                    action:'wpme_ajax_getLimitsAPI'
+                    action:'wpmelhorenvio_ajax_getLimitsAPI'
                 };
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
@@ -1596,7 +1693,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getCompany: function(){
                 var data = {
-                    action:'wpme_ajax_getCompanyAPI'
+                    action:'wpmelhorenvio_ajax_getCompanyAPI'
                 };
                 vm  = this;
                 jQuery.post(ajaxurl, data, function(response) {
@@ -1622,7 +1719,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     }
                     if(trackings.length > 0){
                         data = {
-                            action: 'wpme_ajax_ticketPrintingAPI',
+                            action: 'wpmelhorenvioajax_ticketPrintingAPI',
                             tracking: trackings
                         };
                         vm = this;
