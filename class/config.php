@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 include_once ABSPATH.WPINC.'/option.php';
 
 //Função de update dos dados do usuário
-function wpme_updateUserData($token)
+function wpmelhorenvio_updateUserData($token)
 {
     $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
     $client = new WP_Http();
@@ -29,7 +29,7 @@ function wpme_updateUserData($token)
     return false;
 }
 
-function wpme_updateOptionalData($api_response)
+function wpmelhorenvio_updateOptionalData($api_response)
 {
     update_option('wpme_id',$api_response->id);
     update_option('wpme_firstname',$api_response->firstname);
@@ -40,7 +40,7 @@ function wpme_updateOptionalData($api_response)
     update_option('wpme_phone',$api_response->phone->phone);
 }
 
-function wpme_clearOptionalData(){
+function wpmelhorenvio_clearOptionalData(){
     update_option('wpme_token',"");
     update_option('wpme_id',"");
     update_option('wpme_firstname',"");
@@ -51,7 +51,7 @@ function wpme_clearOptionalData(){
     update_option('wpme_phone',"");
 }
 
-function wpme_getApiAddresses(){
+function wpmelhorenvio_getApiAddresses(){
     $token = get_option('wpme_token');
     $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
     $client = new WP_Http();
@@ -63,7 +63,7 @@ function wpme_getApiAddresses(){
     }
 }
 
-function wpme_getApiCompanies(){
+function wpmelhorenvio_getApiCompanies(){
     $token = get_option('wpme_token');
     $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
     $client = new WP_Http();
@@ -75,7 +75,7 @@ function wpme_getApiCompanies(){
     }
 }
 
-function wpme_getApiCompanyAdresses(){
+function wpmelhorenvio_getApiCompanyAdresses(){
     $companies = getApiCompanies();
     $address = array();
     $token = get_option('wpme_token');
@@ -97,7 +97,7 @@ function wpme_getApiCompanyAdresses(){
 
 }
 
-function wpme_getApiShippingServices(){
+function wpmelhorenvio_getApiShippingServices(){
     $token = get_option('wpme_token');
     $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
     $client = new WP_Http();

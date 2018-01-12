@@ -3,24 +3,24 @@ defined('ABSPATH') or die('No Script Kiddes');
 
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 
-    function wpme_shipping(){
-        if (! class_exists('WPME_Shipping_Method')){
+    function wpmelhorenvio_shipping(){
+        if (! class_exists('Wpmelhorenvio_Shipping_Method')){
 
-            class WPME_Shipping_Method extends WC_Shipping_Method{
+            class Wpmelhorenvio_Shipping_Method extends WC_Shipping_Method{
 
                 public function __construct()
                 {
-                    $this->id = 'wpme_melhorenvioshipping';
-                    $this->method_title = __("Melhor Envio","wpme_melhorenvioshipping");
-                    $this->method_description = __("Várias transportadoras, descontos, coletas e rastreamentos","wpme_melhorenvioshipping");
+                    $this->id = 'wpmelhorenvio_melhorenvioshipping';
+                    $this->method_title = __("Melhor Envio","wpmelhorenvio_melhorenvioshipping");
+                    $this->method_description = __("Várias transportadoras, descontos, coletas e rastreamentos","wpmelhorenvio_melhorenvioshipping");
 
-                    $this->wpme_init();
+                    $this->wpmelhorenvio_init();
 
                     $this->enabled = isset( $this->settings['enabled'] ) ? $this->settings['enabled'] : 'yes';
-                    $this->title = isset( $this->settings['title'] ) ? $this->settings['title'] : __( 'Melhor Envio', 'wpme_melhorenvio' );
+                    $this->title = isset( $this->settings['title'] ) ? $this->settings['title'] : __( 'Melhor Envio', 'wpmelhorenvio_melhorenvio' );
                 }
 
-                function wpme_init() {
+                function wpmelhorenvio_init() {
 //                    include_once ABSPATH.'/wp-content/plugins/woocommerce-melhor-envio-integration/views/apikey.php';
                     // Load the settings API
 //                    $this->init_settings();
@@ -32,8 +32,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 public function calculate_shipping($package = array())
                 {
                     include_once 'quotation.php';
-                    $rates = wpme_getCotacao($package);
-                    $optionals = wpme_getOptionals();
+                    $rates = wpmelhorenvio_getCotacao($package);
+                    $optionals = wpmelhorenvio_getOptionals();
                     if($optionals->CF){
                         foreach($rates as $rating){
                             if(isset($rating->price)){
@@ -42,7 +42,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                                 $label = $rating->delivery_time > 1 ? " (".$rating->delivery_time." Dias)" : " (".$rating->delivery_time." Dia)";
                                 if($rating->price > 0){
                                     $rate = array(
-                                        'id'       => "wpme_".$rating->company->name."_".$rating->name,
+                                        'id'       => "wpmelhorenvio_".$rating->company->name."_".$rating->name,
                                         'label'    => $rating->company->name." ".$rating->name.$label,
                                         'cost'     => $rating->price,
                                         'calc_tax' => 'per_item'
@@ -57,13 +57,13 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
             }
         }
     }
-    add_action( 'woocommerce_shipping_init', 'wpme_shipping');
-    function wpme_add_shipping( $methods ) {
-        $methods['WPME_Shipping_Method'] = 'WPME_Shipping_Method';
+    add_action( 'woocommerce_shipping_init', 'wpmelhorenvio_shipping');
+    function wpmelhorenvio_add_shipping( $methods ) {
+        $methods['Wpmelhorenvio_Shipping_Method'] = 'wpmelhorenvio_Shipping_Method';
         return $methods;
     }
 
-    add_filter('woocommerce_shipping_methods', 'wpme_add_shipping');
+    add_filter('woocommerce_shipping_methods', 'wpmelhorenvio_add_shipping');
 
 
 }

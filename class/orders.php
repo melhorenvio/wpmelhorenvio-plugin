@@ -14,7 +14,7 @@ include_once ABSPATH.'/wp-content/plugins/woocommerce/includes/wc-order-function
 include_once 'quotation.php';
 include_once 'tracking.php';
 
-function wpme_getJsonOrders(){
+function wpmelhorenvio_getJsonOrders(){
     $orders = wc_get_orders(['limit' => '600']);
     $dp    = is_null( null ) ? wc_get_price_decimals() : 2 ;
     $datas = array();
@@ -97,37 +97,37 @@ function wpme_getJsonOrders(){
             );
             $data['shipping_lines'][] = $shipping_line;
         }
-        $data['cotacoes'] = json_decode(wpme_getCustomerCotacaoAPI($data));
+        $data['cotacoes'] = json_decode(wpmelhorenvio_getCustomerCotacaoAPI($data));
         array_push($datas, $data);
     }
     return json_encode($datas);
 }
 
-function wpme_buyShipment(){
+function wpmelhorenvio_buyShipment(){
     $shipment = new stdClass();
 
     if( isset($_POST['agency'])){
         $shipment->agency = $_POST['agency'];
     }
     $shipment->service = $_POST['service_id'];
-    $shipment->from = wpme_getObjectFrom(); //semi-ok
-    $shipment->to = wpme_getObjectTo(); //semi-ok
-    $shipment->package = wpme_getObjectPackage();
-    $shipment->options = wpme_getObjectOptions();
+    $shipment->from = wpmelhorenvio_getObjectFrom(); //semi-ok
+    $shipment->to = wpmelhorenvio_getObjectTo(); //semi-ok
+    $shipment->package = wpmelhorenvio_getObjectPackage();
+    $shipment->options = wpmelhorenvio_getObjectOptions();
 
     return $shipment;
 
 }
 
-function wpme_getCustomerCotacaoAPI($order){
+function wpmelhorenvio_getCustomerCotacaoAPI($order){
     $client = new WP_Http();
 
-    $pacote = wpme_getPackageInternal($order);
-    $cep_origin = wpme_getFrom();
-    $token = get_option('wpme_token');
+    $pacote = wpmelhorenvio_getPackageInternal($order);
+    $cep_origin = wpmelhorenvio_getFrom();
+    $token = get_option('wpmelhorenvio_token');
     $cep_destination = $order['shipping']['postcode'];
-    $opcionais = wpme_getOptionals();
-    $seguro = wpme_getValueInsurance($pacote->value,$opcionais->VD);
+    $opcionais = wpmelhorenvio_getOptionals();
+    $seguro = wpmelhorenvio_getValueInsurance($pacote->value,$opcionais->VD);
     $params = array(
         'headers'           =>  ['Content-Type'  => 'application/json',
             'Accept'        =>  'application/json',
@@ -139,7 +139,7 @@ function wpme_getCustomerCotacaoAPI($order){
             'height'    => $pacote->height,
             'length'    => $pacote->length,
             'weight'    => $pacote->weight,
-            'services'  => wpme_getSavedServices(),
+            'services'  => wpmelhorenvio_getSavedServices(),
             'receipt'   => $opcionais->AR,
             'own_hand'  => $opcionais->MP,
             'insurance_value' => $seguro
@@ -150,7 +150,7 @@ function wpme_getCustomerCotacaoAPI($order){
     return is_array($response) ?  $response['body'] : [];
 }
 
-function wpme_getPackageInternal($package){
+function wpmelhorenvio_getPackageInternal($package){
     $volume =0;
     $weight =0;
     $total  =0;
@@ -173,9 +173,9 @@ function wpme_getPackageInternal($package){
     return $pacote;
 }
 
-function wpme_ticketAcquirementAPI(){
-    $object = wpme_buyShipment();
-    $token = get_option('wpme_token');
+function wpmelhorenvio_ticketAcquirementAPI(){
+    $object = wpmelhorenvio_buyShipment();
+    $token = get_option('wpmelhorenvio_token');
     $client = new WP_Http();
     $json_object = json_encode($object);
     $params = array(
@@ -190,9 +190,9 @@ function wpme_ticketAcquirementAPI(){
     return $response['body'];
 }
 
-function wpme_payTicket(){
+function wpmelhorenvio_payTicket(){
     $client = new WP_Http();
-    $token = get_option('wpme_token');
+    $token = get_option('wpmelhorenvio_token');
 
     $object = new stdClass();
     $object->orders     = $_POST['orders'];
@@ -217,10 +217,10 @@ function wpme_payTicket(){
 
 }
 
-function wpme_cancelTicketAPI(){
+function wpmelhorenvio_cancelTicketAPI(){
     $trk = $_POST['tracking'];
     $client = new WP_Http();
-    $token = get_option('wpme_token');
+    $token = get_option('wpmelhorenvio_token');
 
     $object[0] = new stdClass();
     $object[0]->id = $trk[0];
@@ -240,14 +240,14 @@ function wpme_cancelTicketAPI(){
     return $response['body'];
 }
 
-function wpme_getObjectFrom(){
-    $from = wpme_getFrom();
-    $address = json_decode(get_option('wpme_address'));
+function wpmelhorenvio_getObjectFrom(){
+    $from = wpmelhorenvio_getFrom();
+    $address = json_decode(get_option('wpmelhorenvio_address'));
     $return = new stdClass();
     $return->name = $_POST['from_name'];
-    $return->phone = get_option('wpme_phone');
-    $return->email = get_option('wpme_email');
-    $return->document = get_option('wpme_document');
+    $return->phone = get_option('wpmelhorenvio_phone');
+    $return->email = get_option('wpmelhorenvio_email');
+    $return->document = get_option('wpmelhorenvio_document');
     $return->company_document = $_POST['company_document'];
     $return->state_register = $_POST['company_state_register'];
     $return->address = $address->address;
@@ -263,7 +263,7 @@ function wpme_getObjectFrom(){
     return $return;
 }
 
-function wpme_getObjectTo(){
+function wpmelhorenvio_getObjectTo(){
     $return = new stdClass();
     $return->name = $_POST['to_name'];
     $return->phone = str_replace("-","",str_replace(")","",str_replace("(","",$_POST['to_phone'])));
@@ -284,7 +284,7 @@ function wpme_getObjectTo(){
     return $return;
 }
 
-function wpme_getObjectPackage(){
+function wpmelhorenvio_getObjectPackage(){
     $return = new stdClass();
 
     $volume =0;
@@ -309,8 +309,8 @@ function wpme_getObjectPackage(){
     return $return;
 }
 
-function wpme_getObjectOptions(){
-    $options = wpme_getPostOptionals();
+function wpmelhorenvio_getObjectOptions(){
+    $options = wpmelhorenvio_getPostOptionals();
     $return = new stdClass();
     if($options->VD){
         $return->insurance_value = $_POST['valor_declarado'];
@@ -333,29 +333,29 @@ function wpme_getObjectOptions(){
     return $return;
 }
 
-function wpme_addTrackingAPI(){
+function wpmelhorenvio_addTrackingAPI(){
     $order_id = $_POST['order_id'];
     $tracking = $_POST['tracking'];
     $service = $_POST['service'];
-    echo json_encode(wpme_data_insertTracking($order_id, $tracking,$service));
+    echo json_encode(wpmelhorenvio_data_insertTracking($order_id, $tracking,$service));
 }
 
-function wpme_updateTrackingData(){
+function wpmelhorenvio_updateTrackingData(){
     $tracking_code = $_POST['tracking_code'];
     $status = $_POST['status'];
-    echo json_encode(wpme_data_updateTracking($tracking_code,$status));
+    echo json_encode(wpmelhorenvio_data_updateTracking($tracking_code,$status));
 }
 
-function wpme_getTrackingsData(){
+function wpmelhorenvio_getTrackingsData(){
     $order_id = $_POST['order_id'];
-    echo json_encode(wpme_data_getTracking($order_id));
-//    var_dump(wpme_data_getTracking($order_id));
+    echo json_encode(wpmelhorenvio_data_getTracking($order_id));
+//    var_dump(wpmelhorenvio_data_getTracking($order_id));
 }
 
-function wpme_ticketPrintingAPI(){
+function wpmelhorenvio_ticketPrintingAPI(){
     $trk = $_POST['tracking'];
     $client = new WP_Http();
-    $token = get_option('wpme_token');
+    $token = get_option('wpmelhorenvio_token');
 
     $object = new stdClass();
     $object->orders = $trk;
@@ -373,10 +373,10 @@ function wpme_ticketPrintingAPI(){
     return $response['body'];
 }
 
-function wpme_getTrackingAPI(){
+function wpmelhorenvio_getTrackingAPI(){
     $body = new stdClass();
     $body->orders = json_encode($_POST['tracking_codes']);;
-    $token = get_option('wpme_token');
+    $token = get_option('wpmelhorenvio_token');
     $client = new WP_Http();
     $params = array(
         'headers'           =>  [
@@ -390,8 +390,8 @@ function wpme_getTrackingAPI(){
     echo json_encode($response);
 }
 
-function wpme_getBalanceAPI(){
-    $token = get_option('wpme_token');
+function wpmelhorenvio_getBalanceAPI(){
+    $token = get_option('wpmelhorenvio_token');
     $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
     $client = new WP_Http();
     $response = $client->get('https://www.melhorenvio.com.br/api/v2/me/balance',$params);
@@ -402,8 +402,8 @@ function wpme_getBalanceAPI(){
     }
 }
 
-function wpme_getLimitsAPI(){
-    $token = get_option('wpme_token');
+function wpmelhorenvio_getLimitsAPI(){
+    $token = get_option('wpmelhorenvio_token');
     $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
     $client = new WP_Http();
     $response = $client->get('https://www.melhorenvio.com.br/api/v2/me/limits',$params);
@@ -414,26 +414,26 @@ function wpme_getLimitsAPI(){
     }
 }
 
-function wpme_getCustomerInfoAPI(){
+function wpmelhorenvio_getCustomerInfoAPI(){
     $customer = new stdClass();
-    $customer->firstname = get_option("wpme_firstname");
-    $customer->lastname = get_option("wpme_lastname");
-    $customer->thumbnail = get_option("wpme_picture");
+    $customer->firstname = get_option("wpmelhorenvio_firstname");
+    $customer->lastname = get_option("wpmelhorenvio_lastname");
+    $customer->thumbnail = get_option("wpmelhorenvio_picture");
 
     echo json_encode($customer);
 
 }
 
-function wpme_cancelTicketData(){
+function wpmelhorenvio_cancelTicketData(){
     $trk = $_POST['tracking'];
     echo $trk[0];
-    return wpme_data_deleteTracking($trk[0]);
+    return wpmelhorenvio_data_deleteTracking($trk[0]);
 }
 
-function wpme_removeFromCart()
+function wpmelhorenvio_removeFromCart()
 {
     $curl = curl_init();
-    $token = get_option('wpme_token');
+    $token = get_option('wpmelhorenvio_token');
 
     curl_setopt_array($curl, array(
         CURLOPT_URL => "https://www.melhorenvio.com.br/api/v2/me/cart/" . $_POST['tracking'],
@@ -459,13 +459,13 @@ function wpme_removeFromCart()
     if ($err) {
         echo "cURL Error #:" . $err;
     } else {
-        wpme_data_deleteTracking($_POST['tracking']);
+        wpmelhorenvio_data_deleteTracking($_POST['tracking']);
         return '{"succcess":true}';
     }
 }
 
-function wpme_updateStatusTracking(){
-    $trackings = wpme_data_getAllTrackings();
+function wpmelhorenvio_updateStatusTracking(){
+    $trackings = wpmelhorenvio_data_getAllTrackings();
 
     $update_request = array();
 
@@ -475,7 +475,7 @@ function wpme_updateStatusTracking(){
     $object = new stdClass();
     $object->orders = $update_request;
 
-    $token = get_option('wpme_token');
+    $token = get_option('wpmelhorenvio_token');
     $params = array(
         'headers'=>
             [
@@ -496,10 +496,10 @@ function wpme_updateStatusTracking(){
         foreach ($resposta as $index => $rastreio){
             if($rastreio->status != 'pending'){
                 if($rastreio->status == 'released' || $rastreio->status == 'delivered'){
-                    wpme_data_updateTracking($index,'paid');
+                    wpmelhorenvio_data_updateTracking($index,'paid');
                 }else{
                     if($rastreio->status == 'canceled' ){
-                        wpme_data_deleteTracking($index);
+                        wpmelhorenvio_data_deleteTracking($index);
                     }
                 }
             }
