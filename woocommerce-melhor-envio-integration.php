@@ -21,7 +21,7 @@ Domain Path: /languages
 */
 
 if( !class_exists('woocommerce-melhor-envio-integration')):
-    include_once 'includes/wpmeinstaller.php';
+    include_once plugin_dir_path(__FILE__).'includes/wpmeinstaller.php';
     /* Register plugin status hooks */
     register_activation_hook(__FILE__,'wpmelhorenvio_install');
 
@@ -29,8 +29,7 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
     {
         public function __construct()
         {
-
-            include_once(ABSPATH.'wp-admin/includes/plugin.php');
+            include_once ABSPATH.'wp-admin/includes/plugin.php';
             if( is_plugin_active('woocommerce/woocommerce.php')){
                 add_action('plugins_loaded',array($this,'init'));
             }
@@ -61,28 +60,28 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
                 }
 
                 function wpmelhorenvio_cadastro(){
-                    include_once 'class/config.php';
-                    include_once 'views/apikey.php';
+                    include_once plugin_dir_path(__FILE__).'class/config.php';
+                    include_once plugin_dir_path(__FILE__).'views/apikey.php';
                 }
                 function wpmelhorenvio_config(){
                     if( get_option("wpmelhorenvio_token") == null){
                         wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpmelhorenvio_melhor-envio-subscription"));
                     }
-                    include_once 'class/config.php';
-                    include_once 'views/address.php';
+                    include_once plugin_dir_path(__FILE__).'class/config.php';
+                    include_once plugin_dir_path(__FILE__).'views/address.php';
                 }
                 function wpmelhorenvio_pedidos(){
                     if( get_option("wpmelhorenvio_token") == null){
                         wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpmelhorenvio_melhor-envio-subscription"));
                     }
-                    include_once 'class/orders.php';
-                    include_once 'views/pedidos.php';
+                    include_once plugin_dir_path(__FILE__).'class/orders.php';
+                    include_once plugin_dir_path(__FILE__).'views/pedidos.php';
                 }
-                include_once 'class/shipping.php';
+                include_once plugin_dir_path(__FILE__).'class/shipping.php';
             }
 
 
-            include_once 'class/orders.php';
+            include_once plugin_dir_path(__FILE__).'class/orders.php';
             add_action( 'wp_ajax_wpmelhorenvio_ajax_getTracking', 'wpmelhorenvio_ajax_getTracking' );
                 function wpmelhorenvio_ajax_getTracking(){
                     echo wpmelhorenvio_getCustomerCotacaoAPI();

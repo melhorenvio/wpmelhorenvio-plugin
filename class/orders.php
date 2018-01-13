@@ -11,8 +11,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 
 include_once ABSPATH.'/wp-content/plugins/woocommerce/includes/wc-order-functions.php';
-include_once 'quotation.php';
-include_once 'tracking.php';
+include_once plugin_dir_path(__FILE__).'quotation.php';
+include_once plugin_dir_path(__FILE__).'tracking.php';
 
 function wpmelhorenvio_getJsonOrders(){
     $orders = wc_get_orders(['limit' => '600']);

@@ -31,7 +31,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
                 public function calculate_shipping($package = array())
                 {
-                    include_once 'quotation.php';
+                    include_once plugin_dir_path(__FILE__).'quotation.php';
                     $rates = wpmelhorenvio_getCotacao($package);
                     $optionals = wpmelhorenvio_getOptionals();
                     if($optionals->CF){
