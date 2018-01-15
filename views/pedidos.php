@@ -1088,7 +1088,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     if(this.selected_shipment < 3){
                         var data = {
                             action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
-                            valor_declarado: pedido.price,
+                            // valor_declarado: pedido.price,
                             service_id: this.selected_shipment[ind],
                             from_name: this.user_info.firstname+" "+ this.user_info.lastname,
                             to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
@@ -1113,7 +1113,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     }else{
                         var data = {
                             action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
-                            valor_declarado: pedido.price,
+                            // valor_declarado: pedido.price,
                             service_id: this.selected_shipment[ind],
                             from_name: this.user_info.firstname+" "+ this.user_info.lastname,
                             from_company_document : pedido_cnpj,
@@ -1561,7 +1561,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     if(this.selected_shipment < 3){
                         var data = {
                             action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
-                            valor_declarado: pedido.price,
+                            // valor_declarado: pedido.price,
                             service_id: this.selected_shipment[ind],
                             from_name: this.user_info.firstname+" "+ this.user_info.lastname,
                             to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
@@ -1586,7 +1586,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     }else{
                         var data = {
                             action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
-                            valor_declarado: pedido.price,
+                            // valor_declarado: pedido.price,
                             service_id: this.selected_shipment[ind],
                             from_name: this.user_info.firstname+" "+ this.user_info.lastname,
                             from_company_document : pedido_cnpj,
