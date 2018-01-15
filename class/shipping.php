@@ -21,7 +21,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 }
 
                 function wpmelhorenvio_init() {
-//                    include_once ABSPATH.'/wp-content/plugins/woocommerce-melhor-envio-integration/views/apikey.php';
+//                    include_once .'views/apikey.php';
                     // Load the settings API
 //                    $this->init_settings();
 //

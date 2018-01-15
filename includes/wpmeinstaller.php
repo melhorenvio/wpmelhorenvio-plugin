@@ -9,12 +9,12 @@ if (!defined('ABSPATH'))
  * @access public
  * @return void
  */
+
 function wpmelhorenvio_install_table()
 {
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
 
-    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     $sql = "
         CREATE TABLE IF NOT EXISTS {$wpdb->prefix}tracking_codes_wpme (
             `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -37,7 +37,6 @@ function wpmelhorenvio_install_table()
 function wpmelhorenvio_uninstall_table()
 {
     global $wpdb;
-    require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
     $time = time();
     $sql = "DROP TABLE IF EXISTS ".$wpdb->prefix."tracking_codes";
     $wpdb->query($sql);

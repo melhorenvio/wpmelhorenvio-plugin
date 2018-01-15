@@ -11,7 +11,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 include_once ABSPATH.WPINC.'/option.php';
 include_once ABSPATH.WPINC.'/class-requests.php';
-//include_once ABSPATH . 'wp-content/plugins/woocommerce-extra-checkout-fields-for-brazil/includes/class-extra-checkout-fields-for-brazil-api.php';
 
 function wpmelhorenvio_getCotacao($package){
     $client = new WP_Http();

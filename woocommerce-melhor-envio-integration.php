@@ -21,20 +21,23 @@ Domain Path: /languages
 */
 
 if( !class_exists('woocommerce-melhor-envio-integration')):
-    include_once plugin_dir_path(__FILE__).'includes/wpmeinstaller.php';
     /* Register plugin status hooks */
     register_activation_hook(__FILE__,'wpmelhorenvio_install');
+
+    include_once plugin_dir_path(__FILE__).'includes/wpmeinstaller.php';
+    include_once plugin_dir_path(__DIR__). '/woocommerce-extra-checkout-fields-for-brazil/includes/class-extra-checkout-fields-for-brazil-api.php';
 
     class woocommercemelhorenviointegration
     {
         public function __construct()
         {
-            include_once ABSPATH.'wp-admin/includes/plugin.php';
-            if( is_plugin_active('woocommerce/woocommerce.php')){
+            if(   in_array(
+                'woocommerce/woocommerce.php',
+                apply_filters( 'active_plugins', get_option( 'active_plugins' ) )
+            ) ){
                 add_action('plugins_loaded',array($this,'init'));
             }
         }
-
         public function init()
         {
             if(class_exists('WC_Integration')){
@@ -46,11 +49,9 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
                     array_unshift( $links, $settings_link );
                     return $links;
                 }
+
                 $plugin = plugin_basename( __FILE__ );
                 add_filter( "plugin_action_links_$plugin", 'plugin_add_settings_link' );
-
-
-
 
                 function wpmelhorenvio_addMenu(){
                    add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpmelhorenvio_melhor-envio","wpmelhorenvio_pedidos", plugin_dir_url( __FILE__ )."mo.png");
@@ -63,6 +64,7 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
                     include_once plugin_dir_path(__FILE__).'class/config.php';
                     include_once plugin_dir_path(__FILE__).'views/apikey.php';
                 }
+
                 function wpmelhorenvio_config(){
                     if( get_option("wpmelhorenvio_token") == null){
                         wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpmelhorenvio_melhor-envio-subscription"));
@@ -70,6 +72,7 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
                     include_once plugin_dir_path(__FILE__).'class/config.php';
                     include_once plugin_dir_path(__FILE__).'views/address.php';
                 }
+
                 function wpmelhorenvio_pedidos(){
                     if( get_option("wpmelhorenvio_token") == null){
                         wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpmelhorenvio_melhor-envio-subscription"));
@@ -94,6 +97,7 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
                 echo wpmelhorenvio_getJsonOrders();
                 die();
             }
+
             add_action( 'wp_ajax_wpmelhorenvio_ajax_ticketAcquirementAPI', 'wpmelhorenvio_ajax_ticketAcquirementAPI' );
             function wpmelhorenvio_ajax_ticketAcquirementAPI(){
                 echo wpmelhorenvio_ticketAcquirementAPI();

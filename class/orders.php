@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Time: 15:30
  */
 
-include_once ABSPATH.'/wp-content/plugins/woocommerce/includes/wc-order-functions.php';
+include_once WC_ABSPATH.'/includes/wc-order-functions.php';
 include_once plugin_dir_path(__FILE__).'quotation.php';
 include_once plugin_dir_path(__FILE__).'tracking.php';
 
@@ -109,6 +109,8 @@ function wpmelhorenvio_buyShipment(){
     if( isset($_POST['agency'])){
         $shipment->agency = $_POST['agency'];
     }
+
+
     $shipment->service = $_POST['service_id'];
     $shipment->from = wpmelhorenvio_getObjectFrom(); //semi-ok
     $shipment->to = wpmelhorenvio_getObjectTo(); //semi-ok
@@ -313,9 +315,7 @@ function wpmelhorenvio_getObjectOptions(){
     $options = wpmelhorenvio_getPostOptionals();
     $return = new stdClass();
     if($options->VD){
-        $return->insurance_value = $_POST['valor_declarado'];
-    }else{
-        $return->insurance_value =$_POST['valor_declarado'];
+        $return->insurance_value = wpmelhorenvio_getValueInsurance(wpmelhorenvio_getPackageInternal($_POST)->value,$options->VD);
     }
     $return->receipt = $options->AR;
     $return->own_hand = $options->MP;
@@ -328,8 +328,7 @@ function wpmelhorenvio_getObjectOptions(){
         $return->invoice->key = $_POST['key_nf']; //rever
     }
     $return->reminder = ''; //rever
-    $return->plataform= "WooCommerce";
-
+    $return->platform= "WooCommerce";
     return $return;
 }
 
@@ -504,9 +503,7 @@ function wpmelhorenvio_updateStatusTracking(){
     if( $response instanceof WP_Error){
         return false;
     }else{
-
         $resposta = json_decode($response['body']);
-
         foreach ($resposta as $index => $rastreio){
             if($rastreio->status != 'pending'){
                 if($rastreio->status == 'released' || $rastreio->status == 'delivered'){
@@ -518,8 +515,6 @@ function wpmelhorenvio_updateStatusTracking(){
                 }
             }
         }
-
-
         return $response['body'];
     }
 }

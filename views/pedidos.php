@@ -516,19 +516,21 @@ if ( ! defined( 'ABSPATH' ) ) {
     .wpme_message{
         position:fixed;
         text-align: center;
-        top:30%;
+        top:10%;
         left: 50%;
         border-radius:5px ;
         display: inline-block;
-        height: 200px;
+        min-height: 200px;
         width: 500px;
         margin: 0 -250px;
         max-width: 80%;
         background-color: rgba(244,255,255,.95);
+        line-height: 1.2rem;
     }
 
     .wpme_message_header{
         font-size:1.65rem;
+        line-height: 1.8rem;
         padding: 23px;
     }
 
@@ -888,7 +890,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div class="mask" v-if="message.show_message" @click.prevent="toogleMessage"></div>
         <div class="wpme_message" v-if="message.show_message" >
             <div class="wpme_message_header" :class="{'wpme_success': message.type == 'success', 'wpme_error': message.type == 'error'}">{{message.title}}</div>
-            <div class="wpme_message_body">{{message.message}}</div>
+            <div class="wpme_message_body" v-html="message.message"   ></div>
             <div class="wpme_wrapper_center">
                 <template v-if="payment_tracking_codes.length > 0 ">
                     <div class="wpme_message_comprar"><a href="javascript;" @click.prevent="goDirectPay">Pagar</a></div>
@@ -948,6 +950,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             updated:true,
             pedidos: [],
             loader:false,
+            succes_desc: [],
             error_desc: [],
             total:0,
             company:{
@@ -1062,8 +1065,14 @@ if ( ! defined( 'ABSPATH' ) ) {
             },
 
             addToCart: function(ind){
-                this.toogleLoader();
                 this.payment_tracking_codes = [];
+                if(typeof this.selected_shipment[ind] === 'undefined'){
+                    this.message.title = 'Envio não foi efetuado';
+                    this.message.message = 'Tipo de transporte não selecionado. Selecione o tipo de transporte.';
+                    this.message.type = 'error';
+                    this.message.show_message = true;
+                    return;
+                }
                 pedido = this.pedidos_page[ind];
                 vm = this;
                 if(this.company.document != '' && this.company.document != null ){
@@ -1141,7 +1150,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                             agency: this.endereco.agency
                         }
                     }
-
+                    this.toogleLoader();
                     jQuery.post(ajaxurl, data, function(response) {
                         console.log(response);
                         resposta = JSON.parse(response);
@@ -1241,7 +1250,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                         vm.message.type= "success";
                         vm.message.show_message = true;
                         vm.pedidos_page.forEach(function(pedido){
-                            if(pedido.tracking_code == data.tracking){
+                            if( pedido.tracking_code == data.tracking){
                                 pedido.tracking_code = undefined;
                                 pedido.status = undefined;
                                 pedido.bought_tracking = undefined;
@@ -1502,26 +1511,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             addManyToCart: function(){
                 this.toogleLoader();
-                var success_array = [];
-                var error_array = [];
                 this.error_desc = [];
+                this.success_desc = [];
                 this.payment_tracking_codes = [];
                 vm = this;
                 for(var i = 0; i < this.pedidos_checked.length; i++){
                     if(this.pedidos_checked[i]){
                         if(typeof this.pedidos_page[i].tracking_code == 'undefined' || typeof this.pedidos_page[i].tracking_code.length < 1 ){
                             retorno = vm.addToCartOneFromMany(i);
-                            console.log(retorno);
-                            if(retorno){
-                                success_array.push(i);
-                            }else{
-                                error_array.push(i);
-                            }
-                            if(error_array.length > 0 || success_array < 1){
-                                vm.message.title = error_array.length+" Pedidos não adicionados ao carrinho"
-                                vm.message.message = 'Para utilizar essa transportadora, informe a nota fiscal (NF) e os dados da empresa (CNPJ/IE) ';
+                            if(this.error_desc.length > 0 ){
+                                vm.message.title = "Pedidos não adicionados ao carrinho"
+                                vm.message.message = '<table><tr><td><strong>Pedido </strong></td><td width="70%"><strong>Erro</strong></td></tr>';
+                                this.error_desc.forEach(function(erro,i){
+                                    vm.message.message = vm.message.message+ '<tr><td>'+vm.pedidos_page[i].id+'</td><td>'+erro+"</td></tr>";
+                                });
                                 vm.message.type = 'error';
                                 vm.message.show_message = true;
+                                console.log(vm.error_desc);
                             }else{
                                 vm.message.title = 'Envios adicionados ao carrinho';
                                 vm.message.message = 'Estes envios foram adicionados ao seu carrinho.';
@@ -1531,7 +1537,6 @@ if ( ! defined( 'ABSPATH' ) ) {
                         }
                     }
                 }
-                console.log(success_array);
                 this.toogleLoader();
             },
 
@@ -1539,6 +1544,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                 var pedido = this.pedidos_page[ind];
                 var retorno;
                 vm = this;
+                if(typeof this.selected_shipment[ind] === 'undefined'){
+                    this.error_desc[ind] =  'Transportadora não selecionada.'
+                    return false;
+                }
                 if(this.company.document != '' && this.company.document != null ){
                     pedido_cnpj = this.company.document;
                 }else {
@@ -1549,14 +1558,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 }else{
                     pedido_ie = this.pedidos_ie[ind];
                 }
-
-                console.log(pedido_cnpj);
-                console.log(pedido_ie);
                 if(this.selected_shipment[ind] > 2 && (typeof this.pedidos_nf[ind] === 'undefined' || typeof pedido_cnpj === 'undefined' || typeof pedido_ie === 'undefined') ){
-                    vm.message.title = 'Dados Incompletos';
-                    vm.message.message = 'Transportadoras privadas requerem Nota Fiscal (NF) CNPJ e Inscrição Estadual (IE)';
-                    vm.message.type = 'error';
-                    vm.message.show_message = true;
+                    this.error_desc[ind] =  'Nota Fiscal não informada para transportadora privada.'
                 }else{
                     if(this.selected_shipment < 3){
                         var data = {
@@ -1624,9 +1627,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                             pedido.bought_tracking = data.service_id;
                             pedido.status = 'cart';
                             retorno = true;
+                            vm.succes_desc[ind] = 'Adicionado com Sucesso';
                         }else{
                             vm.error_desc[ind] = resposta.error;
-                            retorno = false;
                         }
                         return retorno;
                     });
