@@ -114,7 +114,7 @@ function wpmelhorenvio_buyShipment(){
     $shipment->to = wpmelhorenvio_getObjectTo(); //semi-ok
     $shipment->package = wpmelhorenvio_getObjectPackage();
     $shipment->options = wpmelhorenvio_getObjectOptions();
-
+    $shipment->products = wpmelhorenvio_makeItemDeclaration();
     return $shipment;
 
 }
@@ -464,6 +464,20 @@ function wpmelhorenvio_removeFromCart()
     }
 }
 
+function wpmelhorenvio_makeItemDeclaration(){
+    $line_items = $_POST['line_items'];
+    $items = array();
+    foreach ($line_items as $line_item){
+        $item = new stdClass();
+        $item->name = $line_item['name'];
+        $item->quantity = $line_item['quantity'];
+        $item->unitary_value = $line_item['price'];
+        $item->weight = $line_item['weight'];
+        array_push($items, $item);
+    }
+    return $items;
+}
+
 function wpmelhorenvio_updateStatusTracking(){
     $trackings = wpmelhorenvio_data_getAllTrackings();
 
@@ -484,7 +498,7 @@ function wpmelhorenvio_updateStatusTracking(){
                 'Authorization' => 'Bearer '.$token
             ],
         'body' => json_encode($object)
-        );
+    );
     $client = new WP_Http();
     $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/tracking',$params);
     if( $response instanceof WP_Error){

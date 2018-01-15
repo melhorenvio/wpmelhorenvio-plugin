@@ -689,7 +689,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                         <li>  Dias extras: {{opcionais.DE}}</li>
                         <li>  Mão Própria :<span class="circle" :class="{'true' : opcionais.MP}"> </span></li>
                         <li>  Porcentagem de lucro {{opcionais.PL}}%</li>
-                        <li>  Valor Decladado:<span class="circle" :class="{'true' : opcionais.VD}"> </span></li>
+                        <li>  Valor Declarado:<span class="circle" :class="{'true' : opcionais.VD}"> </span></li>
                     </ul>
                 </div>
             </div>
@@ -1143,6 +1143,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     }
 
                     jQuery.post(ajaxurl, data, function(response) {
+                        console.log(response);
                         resposta = JSON.parse(response);
                         if(typeof resposta.id != 'undefined'){
                             vm.payment_tracking_codes = [];

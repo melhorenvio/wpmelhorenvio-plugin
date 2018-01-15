@@ -160,7 +160,7 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
             }
 
             add_action('wp_ajax_wpmelhorenvio_ajax_getOptionsAPI','wpmelhorenvio_ajax_getOptionsAPI');
-            function wpmelhorenvioajax_getOptionsAPI(){
+            function wpmelhorenvio_ajax_getOptionsAPI(){
                 echo get_option('wpmelhorenvio_pluginconfig');
                 die();
             }
