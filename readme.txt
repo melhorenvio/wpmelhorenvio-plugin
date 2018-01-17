@@ -14,6 +14,14 @@ Integration between the Melhor Envio and WooCommerce
 == Description ==
 O plugin da Melhor Envio para o Woocommerce permite que você cote através de diversas transportadoras utilizando a API e os contratos do Melhor Envio.
 
+O Plugin Woocommerce-melhor-envio-plugin depende de uma API externa (https://www.melhorenvio.com.br/api/v2/) a qual usa os dados enviados para calcular e lhe enviar as melhores opções de frete.
+Nossos metodos necessitam que o usuário esteja cadastrado em nossa plataforma e necessitam do uso desta API.Nós lhe asseguramos que os dados enviados para o nosso plugin só serão usados para calculo de frete e , caso você deseje,
+para utilizar os nosso serviço de intermediação.
+
+The Woocommerce-melhor-envio-plugin relies on a 3rd Party API (https://www.melhorenvio.com.br/api/v2/) which uses the data sent to calculate and show you the best freight options.
+Our methods require subscription on our platform and the use of this API. We ensure you that the data sent to our plugins will only be used to calculate the shipping costs and, if
+you wish, to use our intermediation service.
+
 O que é a Melhor Envio?
 [youtube]https://www.youtube.com/embed/is-RqEIYDRA
 

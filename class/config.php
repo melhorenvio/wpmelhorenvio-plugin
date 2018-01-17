@@ -25,7 +25,7 @@ function wpmelhorenvio_updateUserData($token)
             return true;
         }
     }
-    clearOptionalData();
+    wpmelhorenvio_clearOptionalData();
     return false;
 }
 
@@ -153,8 +153,4 @@ function wpmelhorenvio_getAgencies($country,$state,$city = null){
     }else{
         return (array) json_decode($response['body']);
     }
-}
-
-function verifyLogin(){
-
 }

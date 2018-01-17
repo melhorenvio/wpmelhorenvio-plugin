@@ -1103,7 +1103,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     vm.message.type = 'error';
                     vm.message.show_message = true;
                 }else{
-                    if(this.selected_shipment < 3){
+                    if(this.selected_shipment[ind] < 3){
                         var data = {
                             action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
                             // valor_declarado: pedido.price,
@@ -1244,7 +1244,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 this.toogleLoader();
                 data = {
                     action: 'wpmelhorenvio_ajax_cancelTicketAPI',
-                    tracking: this.cancel_tracking_codes
+                    tracking: this.cancel_tracking_codes[0]
                 };
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
@@ -1573,7 +1573,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     if(pedido.customer_document == ''){
                         this.error_desc[ind] =  'Documentos do cliente não informados. Verifique junto ao painel de pedidos do WordPress'
                     }else{
-                        if(this.selected_shipment < 3){
+                        if(this.selected_shipment[ind] < 3){
                             var data = {
                                 action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
                                 // valor_declarado: pedido.price,

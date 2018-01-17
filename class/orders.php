@@ -107,11 +107,11 @@ function wpmelhorenvio_buyShipment(){
     $shipment = new stdClass();
 
     if( isset($_POST['agency'])){
-        $shipment->agency = $_POST['agency'];
+        $shipment->agency = (int) sanitize_text_field($_POST['agency']);
     }
 
 
-    $shipment->service = $_POST['service_id'];
+    $shipment->service = (int) sanitize_text_field($_POST['service_id']);
     $shipment->from = wpmelhorenvio_getObjectFrom(); //semi-ok
     $shipment->to = wpmelhorenvio_getObjectTo(); //semi-ok
     $shipment->package = wpmelhorenvio_getObjectPackage();
@@ -200,7 +200,7 @@ function wpmelhorenvio_payTicket(){
     $object->orders     = $_POST['orders'];
 
     if($_POST['gateway'] != "99"){
-        $object->gateway =  $_POST['gateway'];
+        $object->gateway =  sanitize_key($_POST['gateway']);
     }
 
 //  $object->redirect   = $_POST['redirect'];
@@ -220,12 +220,12 @@ function wpmelhorenvio_payTicket(){
 }
 
 function wpmelhorenvio_cancelTicketAPI(){
-    $trk = $_POST['tracking'];
+    $trk = wp_filter_nohtml_kses(sanitize_text_field($_POST['tracking']));
     $client = new WP_Http();
     $token = get_option('wpmelhorenvio_token');
 
     $object[0] = new stdClass();
-    $object[0]->id = $trk[0];
+    $object[0]->id = $trk;
     $object[0]->reason_id = 2;
     $object[0]->description = 'Cancelado via Plugin';
 
@@ -244,14 +244,14 @@ function wpmelhorenvio_cancelTicketAPI(){
 
 function wpmelhorenvio_getObjectFrom(){
     $from = wpmelhorenvio_getFrom();
-    $address = json_decode(get_option('wpmelhorenvio_address'));
+    $address = json_decode(str_replace("\\" ,"", get_option('wpmelhorenvio_address')));
     $return = new stdClass();
-    $return->name = $_POST['from_name'];
+    $return->name = sanitize_text_field($_POST['from_name']);
     $return->phone = get_option('wpmelhorenvio_phone');
-    $return->email = get_option('wpmelhorenvio_email');
+    $return->email = sanitize_email(get_option('wpmelhorenvio_email'));
     $return->document = get_option('wpmelhorenvio_document');
-    $return->company_document = $_POST['company_document'];
-    $return->state_register = $_POST['company_state_register'];
+    $return->company_document = sanitize_key($_POST['company_document']);
+    $return->state_register = sanitize_key($_POST['company_state_register']);
     $return->address = $address->address;
     $return->complement = ''; $address->complement;
     $return->number = $address->number;
@@ -267,20 +267,20 @@ function wpmelhorenvio_getObjectFrom(){
 
 function wpmelhorenvio_getObjectTo(){
     $return = new stdClass();
-    $return->name = $_POST['to_name'];
+    $return->name = sanitize_text_field($_POST['to_name']);
     $return->phone = str_replace("-","",str_replace(")","",str_replace("(","",$_POST['to_phone'])));
-    $return->email = $_POST['to_email'];
-    $return->document = $_POST['to_document'];
-    $return->company_document = $_POST['to_company_document'];
-    $return->state_register = $_POST['to_state_register'];
-    $return->address = $_POST['to_address'];
-    $return->complement = $_POST['to_complement'];
-    $return->number = $_POST['to_number'];
-    $return->district = $_POST['to_district'];
-    $return->city = $_POST['to_city'];
-    $return->state_abbr = $_POST['to_state_abbr'];
-    $return->country_id = $_POST['to_country_id'];
-    $return->postal_code = $_POST['to_postal_code'];
+    $return->email = sanitize_email($_POST['to_email']);
+    $return->document = sanitize_key($_POST['to_document']);
+    $return->company_document = sanitize_key($_POST['to_company_document']);
+    $return->state_register = sanitize_key($_POST['to_state_register']);
+    $return->address = sanitize_text_field($_POST['to_address']);
+    $return->complement =  sanitize_text_field($_POST['to_complement']);
+    $return->number = sanitize_key($_POST['to_number']);
+    $return->district = sanitize_text_field($_POST['to_district']);
+    $return->city = sanitize_text_field($_POST['to_city']);
+    $return->state_abbr = sanitize_text_field($_POST['to_state_abbr']);
+    $return->country_id = sanitize_key($_POST['to_country_id']);
+    $return->postal_code = sanitize_key($_POST['to_postal_code']);
     $return->note = '';
 
     return $return;
@@ -288,19 +288,20 @@ function wpmelhorenvio_getObjectTo(){
 
 function wpmelhorenvio_getObjectPackage(){
     $return = new stdClass();
-
     $volume =0;
     $weight =0;
     $total  =0;
     $pacote = new stdClass();
-    foreach ($_POST['line_items'] as $item){
-        $width = $item['width'];
-        $height = $item['height'];
-        $length = $item['length'];
-        $weight = $item['weight']  * $item['quantity'];
-        $valor = wc_get_product($item['product_id'])->get_price() * $item['quantity'];
-        $volume  = $volume +  (int) ($width * $length * $height) * $item['quantity'];
-        $total += $valor ;
+    if(is_array($_POST['line_items'])){
+        foreach ( $_POST['line_items'] as $item){
+            $width =  sanitize_text_field($item['width']);
+            $height = sanitize_text_field($item['height']);
+            $length = sanitize_text_field($item['length']);
+            $weight = sanitize_text_field($item['weight'])  * sanitize_text_field($item['quantity']);
+            $valor = wc_get_product($item['product_id'])->get_price() * sanitize_text_field($item['quantity']);
+            $volume  = $volume +  (int) ($width * $length * $height)  * sanitize_text_field($item['quantity']);
+            $total += $valor ;
+        }
     }
     $side   =  ceil(pow($volume,1/3));
     $return->width =  $side > 12 ? $side : 12;
@@ -324,8 +325,8 @@ function wpmelhorenvio_getObjectOptions(){
     $return->non_commercial = true; //rever
     $return->invoice = new stdClass();
     if($_POST['nf'] != null){
-        $return->invoice->number = $_POST['nf']; //rever
-        $return->invoice->key = $_POST['key_nf']; //rever
+        $return->invoice->number = sanitize_key($_POST['nf']); //rever
+        $return->invoice->key = sanitize_key($_POST['key_nf']); //rever
     }
     $return->reminder = ''; //rever
     $return->platform= "WooCommerce";
@@ -333,43 +334,49 @@ function wpmelhorenvio_getObjectOptions(){
 }
 
 function wpmelhorenvio_addTrackingAPI(){
-    $order_id = $_POST['order_id'];
-    $tracking = $_POST['tracking'];
-    $service = $_POST['service'];
+    $order_id = sanitize_key($_POST['order_id']);
+    $tracking = sanitize_key($_POST['tracking']);
+    $service  = sanitize_key($_POST['service']);
     echo json_encode(wpmelhorenvio_data_insertTracking($order_id, $tracking,$service));
 }
 
 function wpmelhorenvio_updateTrackingData(){
-    $tracking_code = $_POST['tracking_code'];
-    $status = $_POST['status'];
+    $tracking_code = sanitize_key($_POST['tracking_code']);
+    $status = sanitize_text_field($_POST['status']);
     echo json_encode(wpmelhorenvio_data_updateTracking($tracking_code,$status));
 }
 
 function wpmelhorenvio_getTrackingsData(){
-    $order_id = $_POST['order_id'];
+    $order_id = sanitize_key($_POST['order_id']);
     echo json_encode(wpmelhorenvio_data_getTracking($order_id));
 //    var_dump(wpmelhorenvio_data_getTracking($order_id));
 }
 
 function wpmelhorenvio_ticketPrintingAPI(){
-    $trk = $_POST['tracking'];
-    $client = new WP_Http();
-    $token = get_option('wpmelhorenvio_token');
+    $trk = array();
+    if(is_array($_POST['tracking']) && count($_POST['tracking']) < 11) {
+        foreach ($_POST['tracking'] as $tracking_code){
+            $tracking_code = sanitize_key($tracking_code);
+            array_push($trk,$tracking_code);
+        }
+    }
+        $client = new WP_Http();
+        $token = get_option('wpmelhorenvio_token');
+        $object = new stdClass();
+        $object->orders = $trk;
 
-    $object = new stdClass();
-    $object->orders = $trk;
+        $json_object = json_encode($object);
+        $params = array(
+            'headers'           =>  [
+                'Content-Type'  => 'application/json',
+                'Accept'        =>  'application/json',
+                'Authorization' =>  'Bearer '.$token
+            ],
+            'body'  => $json_object,
+            'timeout'=>10);
+        $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/preview?pretty',$params);
+        return $response['body'];
 
-    $json_object = json_encode($object);
-    $params = array(
-        'headers'           =>  [
-            'Content-Type'  => 'application/json',
-            'Accept'        =>  'application/json',
-            'Authorization' =>  'Bearer '.$token
-        ],
-        'body'  => $json_object,
-        'timeout'=>10);
-    $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/preview?pretty',$params);
-    return $response['body'];
 }
 
 function wpmelhorenvio_getTrackingAPI(){
@@ -464,14 +471,13 @@ function wpmelhorenvio_removeFromCart()
 }
 
 function wpmelhorenvio_makeItemDeclaration(){
-    $line_items = $_POST['line_items'];
     $items = array();
-    foreach ($line_items as $line_item){
+    foreach ($_POST['line_items'] as $line_item){
         $item = new stdClass();
-        $item->name = $line_item['name'];
-        $item->quantity = $line_item['quantity'];
-        $item->unitary_value = $line_item['price'];
-        $item->weight = $line_item['weight'];
+        $item->name = sanitize_text_field($line_item['name']);
+        $item->quantity = (int) sanitize_text_field($line_item['quantity']);
+        $item->unitary_value =  (float) sanitize_text_field($line_item['price']);
+        $item->weight = (float) sanitize_text_field($line_item['weight']);
         array_push($items, $item);
     }
     return $items;

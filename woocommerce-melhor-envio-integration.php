@@ -157,7 +157,7 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
 
             add_action('wp_ajax_wpmelhorenvio_ajax_getAddressAPI','wpmelhorenvio_ajax_getAddressAPI');
             function wpmelhorenvio_ajax_getAddressAPI(){
-                echo get_option('wpmelhorenvio_address');
+                echo str_replace("\\" ,"", get_option('wpmelhorenvio_address'));
                 die();
             }
 
@@ -187,7 +187,7 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
 
             add_action( 'wp_ajax_wpmelhorenvio_ajax_getCompanyAPI', 'wpmelhorenvio_ajax_getCompanyAPI' );
             function wpmelhorenvio_ajax_getCompanyAPI(){
-                echo get_option('wpmelhorenvio_company');
+                echo str_replace("\\" ,"", get_option('wpmelhorenvio_company'));
                 die();
             }
 

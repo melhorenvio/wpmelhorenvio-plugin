@@ -63,7 +63,7 @@ function wpmelhorenvio_getPackage($package){
 }
 
 function wpmelhorenvio_getFrom(){
-    $remetente = json_decode(get_option('wpmelhorenvio_address'));
+    $remetente = json_decode(str_replace("\\" ,"", get_option('wpmelhorenvio_address')));
     $from = $remetente->postal_code;
 
     return $from;
@@ -99,14 +99,3 @@ function wpmelhorenvio_getValueInsurance($valor,$situacao){
     return $situacao ? $valor : 0;
 }
 
-function addExtraValues(){
-
-}
-
-function addExtraVolume(){
-
-}
-
-function addRates(){
-
-}

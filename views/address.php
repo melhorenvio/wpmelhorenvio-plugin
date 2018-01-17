@@ -4,53 +4,57 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
-
 if(isset($_POST['submit'])){
-    $services = array();
-    if(isset($_POST['address'])){
-        $address = str_replace("\\",'',$_POST['address']);
-        $add_id = json_decode($address);
-        if (isset($_POST[$add_id->id])){
-            $id_agency = $_POST[$add_id->id];
-            $add_id->agency = $id_agency;
-            $address = json_encode($add_id);
-        }
-    }else{
-        $address = '';
-    }
-    if(isset($_POST['services'])){
-        foreach ($_POST['services'] as $service){
-            array_push($services,$service);
-        }
-    }
-    if(isset($_POST['company'])){
-        $company = str_replace("\\",'',$_POST['company']);
-        update_option('wpmelhorenvio_company',$company);
-    }else{
-        $company = new stdClass();
-        $company->cnpj = '';
-        $company->ie = '';
-        update_option('wpmelhorenvio_company',json_encode($company));
-    }
-    //Optionals plugin configuration
-    $optionals = new stdClass();
-    $optionals->CF = isset($_POST['CF'])? true : false;
-    $optionals->AR = isset($_POST['AR'])? true : false;
-    $optionals->MP = isset($_POST['MP'])? true : false;
-    $optionals->VD = isset($_POST['VD'])? true : false;
-    $optionals->MR = isset($_POST['MR'])? true : false;
+    if(check_admin_referer('wpmelhorenvio_save_address')){
+        $services = array();
+        if(isset($_POST['address'])){
+            $address = wp_filter_nohtml_kses(sanitize_text_field($_POST['address']));
 
-    $optionals->DE = isset($_POST['DE'])? $_POST['DE'] : "";
-    $optionals->PL = isset($_POST['PL'])? $_POST['PL'] : "";
+            $add_id = json_decode(str_replace("\\",'',$address));
+            if (isset($_POST[$add_id->id])){
+                $id_agency = sanitize_key($_POST[$add_id->id]);
+                $add_id->agency = $id_agency;
+                $address = wp_filter_nohtml_kses(sanitize_text_field(json_encode($add_id)));
+            }
+        }else{
+            $address = '';
+        }
+        if(isset($_POST['services'])){
+            foreach ($_POST['services'] as $service){
+                array_push($services,wp_filter_nohtml_kses(sanitize_key($service)));
+            }
+        }
+        if(isset($_POST['company'])){
+            $company = wp_filter_nohtml_kses(sanitize_text_field($_POST['company']));
+            update_option('wpmelhorenvio_company',$company);
+        }else{
+            $company = new stdClass();
+            $company->cnpj = '';
+            $company->ie = '';
+            update_option('wpmelhorenvio_company',json_encode($company));
+        }
+        //Optionals plugin configuration
+        //As it isn't saved nor accessed just verified the existance of the variable I didn't filter.
+        $optionals = new stdClass();
+        $optionals->CF = isset($_POST['CF'])? true : false;
+        $optionals->AR = isset($_POST['AR'])? true : false;
+        $optionals->MP = isset($_POST['MP'])? true : false;
+        $optionals->VD = isset($_POST['VD'])? true : false;
+        $optionals->MR = isset($_POST['MR'])? true : false;
 
-    if(wpmelhorenvio_defineConfig(utf8_encode($address),json_encode($services),json_encode($optionals))){
-        $url = admin_url('admin.php?page=wpmelhorenvio_melhor-envio-requests');
-        wp_redirect($url);
-    }else{
-      echo  '<div class="notice notice-error is-dismissible\">
+        $optionals->DE = isset($_POST['DE'])? wp_filter_nohtml_kses(sanitize_text_field($_POST['DE'])) : "";
+        $optionals->PL = isset($_POST['PL'])? wp_filter_nohtml_kses(sanitize_text_field($_POST['PL'])) : "";
+
+        if(wpmelhorenvio_defineConfig(utf8_encode($address),json_encode($services),json_encode($optionals))){
+            $url = admin_url('admin.php?page=wpmelhorenvio_melhor-envio-requests');
+
+            wp_redirect($url);
+        }else{
+            echo  '<div class="notice notice-error is-dismissible\">
                 <h2>Não foi possível alterar</h2>
                 <p>Tente novamente mais tarde</p>
             </div>';
+        }
     }
 
 }
@@ -376,16 +380,18 @@ if(isset($_POST['submit'])){
             $company_addresses = wpmelhorenvio_getApiCompanyAdresses();
             $addresses['data'] = array_merge($addresses['data'],$company_addresses);
 
-            $saved_address = json_decode(get_option('wpmelhorenvio_address'));
+            $saved_address = json_decode(str_replace("\\" ,"", get_option('wpmelhorenvio_address')));
+
             if($saved_address == null){
                 $saved_address = new stdClass();
                 $saved_address->id = '';
             }
-            $saved_company = json_decode(get_option('wpmelhorenvio_company'));
+            $saved_company =  json_decode(str_replace("\\",'',get_option('wpmelhorenvio_company')));
             if($saved_company == null){
                 $saved_company = new stdClass();
                 $saved_company->id = '';
             }
+            wp_nonce_field('wpmelhorenvio_save_address');
             if(isset($addresses['data'])){
             foreach ($addresses['data'] as $address){
                 ?>
@@ -403,21 +409,21 @@ if(isset($_POST['submit'])){
                                 <label>Escolha a Agencia Jadlog</label>
                                 <select name="<?php echo $address->id ?>">
 
-                                <?php
-                                $agencias = wpmelhorenvio_getAgencies('Brazil',$address->city->state->state_abbr,$address->city->city);
-                                if(count($agencias) < 1){
-                                    $agencias = wpmelhorenvio_getAgencies('Brazil',$address->city->state->state_abbr);
-                                }
-                                foreach($agencias as $agency){
-                                    ?>
-                                    <option value="<?=$agency->id?>"
-                                        <?php
-                                        if(isset($saved_address->agency)){
-                                         echo $saved_address->agency == $agency->id ? "selected" :" ";
-                                        }
-                                    ?> ><?=$agency->address->address?>, <?=$agency->address->number?>-<?=$agency->address->district?> </option>
                                     <?php
-                                } ?>
+                                    $agencias = wpmelhorenvio_getAgencies('Brazil',$address->city->state->state_abbr,$address->city->city);
+                                    if(count($agencias) < 1){
+                                        $agencias = wpmelhorenvio_getAgencies('Brazil',$address->city->state->state_abbr);
+                                    }
+                                    foreach($agencias as $agency){
+                                        ?>
+                                        <option value="<?=$agency->id?>"
+                                            <?php
+                                            if(isset($saved_address->agency)){
+                                                echo $saved_address->agency == $agency->id ? "selected" :" ";
+                                            }
+                                            ?> ><?=$agency->address->address?>, <?=$agency->address->number?>-<?=$agency->address->district?> </option>
+                                        <?php
+                                    } ?>
 
                                 </select>
                             </div>
@@ -439,35 +445,35 @@ if(isset($_POST['submit'])){
     </div>
 
     <h2 style="text-align: center; margin: 15px;">Escolha a empresa para a compra de fretes</h2>
-        <div class="wpme_flex">
+    <div class="wpme_flex">
 
-            <?php foreach ($companies['data'] as $company){?>
+        <?php foreach ($companies['data'] as $company){?>
             <label>
-            <ul class="wpme_address">
-            <li>
-                <div class="wpme_address-top">
-                    <input type="radio" name="company" value='<?php echo json_encode($company) ?>' <?php
+                <ul class="wpme_address">
+                    <li>
+                        <div class="wpme_address-top">
+                            <input type="radio" name="company" value='<?php echo json_encode($company) ?>' <?php
 
 
-                    ?>  <?= $saved_company->id == $company->id?"checked":""?>>
-                    <h2><?= $company->name?></h2>
-                </div>
-                <div class="wpme_address-body">
-                    <ul>
-                        <li>CNPJ: <?= $company->document?></li>
-                        <li> IE: <?= $company->state_register?></li>
-                    </ul>
+                            ?>  <?= $saved_company->id == $company->id?"checked":""?>>
+                            <h2><?= $company->name?></h2>
+                        </div>
+                        <div class="wpme_address-body">
+                            <ul>
+                                <li>CNPJ: <?= $company->document?></li>
+                                <li> IE: <?= $company->state_register?></li>
+                            </ul>
 
 
-                </div>
-            </li>
-            </ul>
+                        </div>
+                    </li>
+                </ul>
             </label>
-            <?php }if(count($companies['data']) < 1){
-                echo "<p style='text-align:center;margin:auto;'> Para cadastrar suas lojas vá em <a href='https://www.melhorenvio.com.br/painel/gerenciar/lojas'>Painel Melhor Envio</a> </p>";
-            } ?>
+        <?php }if(count($companies['data']) < 1){
+            echo "<p style='text-align:center;margin:auto;'> Para cadastrar suas lojas vá em <a href='https://www.melhorenvio.com.br/painel/gerenciar/lojas'>Painel Melhor Envio</a> </p>";
+        } ?>
 
-        </div>
+    </div>
     <div class="wpme_basepadding">
         <h2>Selecione seus métodos de envio</h2>
         <ul class="wpme_options">
