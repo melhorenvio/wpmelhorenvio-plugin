@@ -855,12 +855,12 @@ if ( ! defined( 'ABSPATH' ) ) {
             <div class="select">
                 <label>
                     <input type="radio" v-model="selected_payment_method" value="1">
-                    <img src="https://melhorenvio.com.br/images/payment/moip.png">
+                    <img src="<?=plugins_url("img/moip.png",__DIR__ )?>">
 
                 </label>
                 <label>
                     <input type="radio"  v-model="selected_payment_method" value="2">
-                    <img src="https://melhorenvio.com.br/images/payment/mpago.png">
+                    <img src="<?=plugins_url("img/mpago.png",__DIR__ )?>">
                 </label>
 
                 <label>
