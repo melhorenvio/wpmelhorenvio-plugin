@@ -31,10 +31,8 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
     {
         public function __construct()
         {
-            if(   in_array(
-                'woocommerce/woocommerce.php',
-                apply_filters( 'active_plugins', get_option( 'active_plugins' ) )
-            ) ){
+            if( in_array('woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' )))
+                &&  in_array('woocommerce-extra-checkout-fields-for-brazil/woocommerce-extra-checkout-fields-for-brazil.php', apply_filters( 'active_plugins', get_option( 'active_plugins' )))){
                 add_action('plugins_loaded',array($this,'init'));
             }
         }
