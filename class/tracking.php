@@ -18,7 +18,7 @@ function wpmelhorenvio_data_getTracking($id){
 
 function wpmelhorenvio_data_getAllTrackings(){
     global $wpdb;
-    $sql = "SELECT * FROM {$wpdb->prefix}tracking_codes_wpme where status = 'waiting' limit 1000";
+    $sql = "SELECT * FROM {$wpdb->prefix}tracking_codes_wpme limit 3000";
     return $wpdb->get_results($sql);
 }
 

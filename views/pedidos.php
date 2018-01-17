@@ -1073,6 +1073,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                     this.message.show_message = true;
                     return;
                 }
+
+
                 pedido = this.pedidos_page[ind];
                 vm = this;
                 if(this.company.document != '' && this.company.document != null ){
@@ -1088,6 +1090,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
                 console.log(pedido_cnpj);
                 console.log(pedido_ie);
+                if(pedido.customer_document == ''){
+                    this.message.title = 'Dados incompletos';
+                    this.message.message = 'Documento do cliente não informado. Adicione junto ao painel de pedidos do WooCommerce';
+                    this.message.type = 'error';
+                    this.message.show_message = true;
+                    return;
+                }
                 if(this.selected_shipment[ind] > 2 && (typeof this.pedidos_nf[ind] === 'undefined' || typeof pedido_cnpj === 'undefined' || typeof pedido_ie === 'undefined') ){
                     vm.message.title = 'Dados Incompletos';
                     vm.message.message = 'Para utilizar essa transportadora, informe a nota fiscal (NF) e os dados da empresa (CNPJ/IE) ';
@@ -1187,6 +1196,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             },
 
             load: function(){
+                this.verifyTracking();
                 this.getUser();
                 this.getCompany();
                 this.getLimits();
@@ -1194,7 +1204,6 @@ if ( ! defined( 'ABSPATH' ) ) {
                 this.getBalance();
                 this.getOptionals();
                 this.getOrders();
-                this.verifyTracking();
             },
 
             verifyTracking: function(){
@@ -1561,62 +1570,67 @@ if ( ! defined( 'ABSPATH' ) ) {
                 if(this.selected_shipment[ind] > 2 && (typeof this.pedidos_nf[ind] === 'undefined' || typeof pedido_cnpj === 'undefined' || typeof pedido_ie === 'undefined') ){
                     this.error_desc[ind] =  'Nota Fiscal não informada para transportadora privada.'
                 }else{
-                    if(this.selected_shipment < 3){
-                        var data = {
-                            action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
-                            // valor_declarado: pedido.price,
-                            service_id: this.selected_shipment[ind],
-                            from_name: this.user_info.firstname+" "+ this.user_info.lastname,
-                            to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
-                            to_phone: pedido.customer_phone,
-                            to_email: pedido.customer_email,
-                            to_document: pedido.customer_document,
-                            to_company_document: pedido.customer_company_document,
-                            to_state_register: pedido.customer_state_register,
-                            to_address: pedido.shipping.address_1,
-                            to_complement: pedido.shipping.address_2,
-                            to_number:  pedido.shipping.number,
-                            to_district: pedido.shipping.neighborhood,
-                            to_city:    pedido.shipping.city,
-                            to_state_abbr: pedido.shipping.state,
-                            to_country_id: pedido.shipping.country,
-                            to_postal_code: pedido.shipping.postcode,
-                            to_note: pedido.customer_note,
-                            line_items: pedido.line_items,
-                            nf: this.pedidos_nf[ind],
-                            key_nf: this.pedidos_chave_nf[ind]
-                        }
+                    if(pedido.customer_document == ''){
+                        this.error_desc[ind] =  'Documentos do cliente não informados. Verifique junto ao painel de pedidos do WordPress'
                     }else{
-                        var data = {
-                            action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
-                            // valor_declarado: pedido.price,
-                            service_id: this.selected_shipment[ind],
-                            from_name: this.user_info.firstname+" "+ this.user_info.lastname,
-                            from_company_document : pedido_cnpj,
-                            from_company_state_register: pedido_ie,
-                            to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
-                            to_phone: pedido.customer_phone,
-                            to_email: pedido.customer_email,
-                            to_document: pedido.customer_document,
-                            to_company_document: pedido.customer_company_document,
-                            to_state_register: pedido.customer_state_register,
-                            to_address: pedido.shipping.address_1,
-                            to_complement: pedido.shipping.address_2,
-                            to_number:  pedido.shipping.number,
-                            to_district: pedido.shipping.neighborhood,
-                            to_city:    pedido.shipping.city,
-                            to_state_abbr: pedido.shipping.state,
-                            to_country_id: pedido.shipping.country,
-                            to_postal_code: pedido.shipping.postcode,
-                            to_note: pedido.customer_note,
-                            line_items: pedido.line_items,
-                            nf: this.pedidos_nf[ind],
-                            key_nf: 'nf-e',
-                            company_document: pedido_cnpj,
-                            company_state_register: pedido_ie,
-                            agency: this.endereco.agency
+                        if(this.selected_shipment < 3){
+                            var data = {
+                                action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
+                                // valor_declarado: pedido.price,
+                                service_id: this.selected_shipment[ind],
+                                from_name: this.user_info.firstname+" "+ this.user_info.lastname,
+                                to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
+                                to_phone: pedido.customer_phone,
+                                to_email: pedido.customer_email,
+                                to_document: pedido.customer_document,
+                                to_company_document: pedido.customer_company_document,
+                                to_state_register: pedido.customer_state_register,
+                                to_address: pedido.shipping.address_1,
+                                to_complement: pedido.shipping.address_2,
+                                to_number:  pedido.shipping.number,
+                                to_district: pedido.shipping.neighborhood,
+                                to_city:    pedido.shipping.city,
+                                to_state_abbr: pedido.shipping.state,
+                                to_country_id: pedido.shipping.country,
+                                to_postal_code: pedido.shipping.postcode,
+                                to_note: pedido.customer_note,
+                                line_items: pedido.line_items,
+                                nf: this.pedidos_nf[ind],
+                                key_nf: this.pedidos_chave_nf[ind]
+                            }
+                        }else{
+                            var data = {
+                                action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
+                                // valor_declarado: pedido.price,
+                                service_id: this.selected_shipment[ind],
+                                from_name: this.user_info.firstname+" "+ this.user_info.lastname,
+                                from_company_document : pedido_cnpj,
+                                from_company_state_register: pedido_ie,
+                                to_name: pedido.shipping.first_name+" "+pedido.shipping.last_name,
+                                to_phone: pedido.customer_phone,
+                                to_email: pedido.customer_email,
+                                to_document: pedido.customer_document,
+                                to_company_document: pedido.customer_company_document,
+                                to_state_register: pedido.customer_state_register,
+                                to_address: pedido.shipping.address_1,
+                                to_complement: pedido.shipping.address_2,
+                                to_number:  pedido.shipping.number,
+                                to_district: pedido.shipping.neighborhood,
+                                to_city:    pedido.shipping.city,
+                                to_state_abbr: pedido.shipping.state,
+                                to_country_id: pedido.shipping.country,
+                                to_postal_code: pedido.shipping.postcode,
+                                to_note: pedido.customer_note,
+                                line_items: pedido.line_items,
+                                nf: this.pedidos_nf[ind],
+                                key_nf: 'nf-e',
+                                company_document: pedido_cnpj,
+                                company_state_register: pedido_ie,
+                                agency: this.endereco.agency
+                            }
                         }
                     }
+
 
                     jQuery.post(ajaxurl, data, function(response) {
                         resposta = JSON.parse(response);
@@ -1629,7 +1643,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                             retorno = true;
                             vm.succes_desc[ind] = 'Adicionado com Sucesso';
                         }else{
-                            vm.error_desc[ind] = resposta.error;
+                            vm.error_desc[ind] = "Erro nos dados de envio, Verifique os dados painel de Pedidos do Woocommerce";
                         }
                         return retorno;
                     });

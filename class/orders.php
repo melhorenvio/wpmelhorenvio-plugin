@@ -487,7 +487,6 @@ function wpmelhorenvio_updateStatusTracking(){
     }
     $object = new stdClass();
     $object->orders = $update_request;
-
     $token = get_option('wpmelhorenvio_token');
     $params = array(
         'headers'=>
@@ -515,6 +514,6 @@ function wpmelhorenvio_updateStatusTracking(){
                 }
             }
         }
-        return $response['body'];
+        echo $response['body'];
     }
 }
