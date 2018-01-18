@@ -9,12 +9,11 @@ if(isset($_POST['submit'])){
         $services = array();
         if(isset($_POST['address'])){
             $address = wp_filter_nohtml_kses(sanitize_text_field($_POST['address']));
-
             $add_id = json_decode(str_replace("\\",'',$address));
+
             if (isset($_POST[$add_id->id])){
-                $id_agency = sanitize_key($_POST[$add_id->id]);
-                $add_id->agency = $id_agency;
-                $address = wp_filter_nohtml_kses(sanitize_text_field(json_encode($add_id)));
+                $add_id->agency =  sanitize_key($_POST[$add_id->id]);
+                $address = wp_filter_nohtml_kses(sanitize_text_field(json_encode($add_id,JSON_UNESCAPED_UNICODE)));
             }
         }else{
             $address = '';
@@ -45,9 +44,8 @@ if(isset($_POST['submit'])){
         $optionals->DE = isset($_POST['DE'])? wp_filter_nohtml_kses(sanitize_text_field($_POST['DE'])) : "";
         $optionals->PL = isset($_POST['PL'])? wp_filter_nohtml_kses(sanitize_text_field($_POST['PL'])) : "";
 
-        if(wpmelhorenvio_defineConfig(utf8_encode($address),json_encode($services),json_encode($optionals))){
+        if(wpmelhorenvio_defineConfig($address,json_encode($services),json_encode($optionals))){
             $url = admin_url('admin.php?page=wpmelhorenvio_melhor-envio-requests');
-
             wp_redirect($url);
         }else{
             echo  '<div class="notice notice-error is-dismissible\">

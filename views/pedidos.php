@@ -1054,7 +1054,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 vm = this;
                 jQuery.post(ajaxurl,data,function (response) {
                     resposta = JSON.parse(response);
-                    console.log(resposta);
+
                     if(resposta.succcess == true){
                         vm.pedidos_page[id].status = undefined;
                         vm.pedidos_page[id].bought_tracking = 0;
@@ -1088,8 +1088,6 @@ if ( ! defined( 'ABSPATH' ) ) {
                     pedido_ie = this.pedidos_ie[ind];
                 }
 
-                console.log(pedido_cnpj);
-                console.log(pedido_ie);
                 if(pedido.customer_document == ''){
                     this.message.title = 'Dados incompletos';
                     this.message.message = 'Documento do cliente não informado. Adicione junto ao painel de pedidos do WooCommerce';
@@ -1161,7 +1159,6 @@ if ( ! defined( 'ABSPATH' ) ) {
                     }
                     this.toogleLoader();
                     jQuery.post(ajaxurl, data, function(response) {
-                        console.log(response);
                         resposta = JSON.parse(response);
                         if(typeof resposta.id != 'undefined'){
                             vm.payment_tracking_codes = [];
@@ -1176,13 +1173,11 @@ if ( ! defined( 'ABSPATH' ) ) {
                             vm.message.show_message = true;
                         }else{
                             if(typeof resposta.error === 'undefined'){
-                                console.log(response);
                                 vm.message.title = 'Não foi possível adicionar item ao carrinho';
                                 vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho'
                                 vm.message.type = 'error';
                                 vm.message.show_message = true;
                             }else{
-                                console.log(response);
                                 vm.message.title = 'Não foi possível adicionar item ao carrinho';
                                 vm.message.message = 'Infelizmente não foi possível adicionar este item ao seu carrinho'+resposta.error
                                 vm.message.type = 'error';
@@ -1212,7 +1207,6 @@ if ( ! defined( 'ABSPATH' ) ) {
                 }
 
                 jQuery.post(ajaxurl,data,function(response){
-                    console.log(response);
                 })
             },
 
@@ -1249,9 +1243,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
                     resposta = JSON.parse(response);
+
                     arr_index = Object.entries(resposta);
-                    console.log(arr_index);
-                    console.log(arr_index[0][1]['canceled']);
                     if(arr_index[0][1]['canceled']){
                         vm.deleteTracking(data.tracking);
                         vm.message.title = "Etiqueta cancelada com sucesso";
@@ -1385,7 +1378,6 @@ if ( ! defined( 'ABSPATH' ) ) {
                                         pedido.status = 'paid';
                                 });
                             });
-                            console.log(resposta);
                             vm.payment_tracking_codes = [];
                             vm.getBalance();
                             vm.getLimits();
@@ -1684,7 +1676,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             },
 
             deleteTracking: function(tracking){
-                this.toogleLoader()
+                this.toogleLoader();
                 data = {
                     action:'wpmelhorenvio_ajax_cancelTicketData',
                     tracking: tracking
@@ -1725,7 +1717,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
                     vm.company = resposta;
-                    console.log(resposta);
+
                 });
             },
 

@@ -360,28 +360,35 @@ function wpmelhorenvio_ticketPrintingAPI(){
             array_push($trk,$tracking_code);
         }
     }
-        $client = new WP_Http();
-        $token = get_option('wpmelhorenvio_token');
-        $object = new stdClass();
-        $object->orders = $trk;
+    $client = new WP_Http();
+    $token = get_option('wpmelhorenvio_token');
+    $object = new stdClass();
+    $object->orders = $trk;
 
-        $json_object = json_encode($object);
-        $params = array(
-            'headers'           =>  [
-                'Content-Type'  => 'application/json',
-                'Accept'        =>  'application/json',
-                'Authorization' =>  'Bearer '.$token
-            ],
-            'body'  => $json_object,
-            'timeout'=>10);
-        $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/preview?pretty',$params);
-        return $response['body'];
+    $json_object = json_encode($object);
+    $params = array(
+        'headers'           =>  [
+            'Content-Type'  => 'application/json',
+            'Accept'        =>  'application/json',
+            'Authorization' =>  'Bearer '.$token
+        ],
+        'body'  => $json_object,
+        'timeout'=>10);
+    $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/preview?pretty',$params);
+    return $response['body'];
 
 }
 
 function wpmelhorenvio_getTrackingAPI(){
     $body = new stdClass();
-    $body->orders = json_encode($_POST['tracking_codes']);;
+    $tracking_codes = array();
+    if(is_array($_POST['tracking_codes'])){
+        foreach ($_POST['tracking_codes'] as $tracking_code){
+            array_push($tracking_codes,sanitize_key($tracking_code));
+        }
+    }
+
+    $body->orders = json_encode($tracking_codes);
     $token = get_option('wpmelhorenvio_token');
     $client = new WP_Http();
     $params = array(
@@ -394,6 +401,7 @@ function wpmelhorenvio_getTrackingAPI(){
         'timeout'=>10);
     $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/tracking',$params);
     echo json_encode($response);
+
 }
 
 function wpmelhorenvio_getBalanceAPI(){
@@ -431,18 +439,21 @@ function wpmelhorenvio_getCustomerInfoAPI(){
 }
 
 function wpmelhorenvio_cancelTicketData(){
-    $trk = $_POST['tracking'];
-    echo $trk[0];
-    return wpmelhorenvio_data_deleteTracking($trk[0]);
+        $trk = sanitize_key($_POST['tracking']);
+        return wpmelhorenvio_data_deleteTracking($trk);
 }
 
 function wpmelhorenvio_removeFromCart()
 {
     $curl = curl_init();
     $token = get_option('wpmelhorenvio_token');
+    $tracking = '';
+    if(is_array($_POST['tracking'])){
+        $tracking = sanitize_key($_POST['tracking'][0]);
+    }
 
     curl_setopt_array($curl, array(
-        CURLOPT_URL => "https://www.melhorenvio.com.br/api/v2/me/cart/" . $_POST['tracking'],
+        CURLOPT_URL => "https://www.melhorenvio.com.br/api/v2/me/cart/" . $tracking,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_ENCODING => "",
         CURLOPT_MAXREDIRS => 10,
@@ -465,7 +476,7 @@ function wpmelhorenvio_removeFromCart()
     if ($err) {
         echo "cURL Error #:" . $err;
     } else {
-        wpmelhorenvio_data_deleteTracking($_POST['tracking']);
+        wpmelhorenvio_data_deleteTracking($tracking);
         return '{"succcess":true}';
     }
 }
