@@ -121,6 +121,12 @@ function wpmelhorenvio_buyShipment(){
 
 }
 
+function wpmelhorenvio_getFinalCotacao(){
+    $pedido_id = sanitize_key($_POST['pedido_id']);
+    $order = wc_get_order($pedido_id);
+    echo wpmelhorenvio_getCustomerCotacaoAPI($order);
+}
+
 function wpmelhorenvio_getCustomerCotacaoAPI($order){
     $client = new WP_Http();
 
@@ -147,7 +153,6 @@ function wpmelhorenvio_getCustomerCotacaoAPI($order){
             'insurance_value' => $seguro
         ],
         'timeout'=>10);
-
     $response = $client->get("https://www.melhorenvio.com.br/api/v2/calculator",$params);
     return is_array($response) ?  $response['body'] : [];
 }

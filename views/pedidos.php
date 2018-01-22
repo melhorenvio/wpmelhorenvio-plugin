@@ -948,6 +948,8 @@ if ( ! defined( 'ABSPATH' ) ) {
             finished:false,
             selected_payment_method: 99,
             updated:true,
+            security_read: '<?php echo wp_create_nonce( "wpmelhorenvio_read" ); ?>',
+            security_action: '<?php echo wp_create_nonce( "wpmelhorenvio_action" ); ?>',
             pedidos: [],
             loader:false,
             succes_desc: [],
@@ -1049,7 +1051,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 this.toogleLoader()
                 var data = {
                     action: 'wpmelhorenvio_ajax_removeTrackingAPI',
-                    tracking:tracking
+                    tracking:tracking,
+                    security:this.security_action
                 }
                 vm = this;
                 jQuery.post(ajaxurl,data,function (response) {
@@ -1103,6 +1106,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 }else{
                     if(this.selected_shipment[ind] < 3){
                         var data = {
+                            security: this.security_action,
                             action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
                             // valor_declarado: pedido.price,
                             service_id: this.selected_shipment[ind],
@@ -1128,6 +1132,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                         }
                     }else{
                         var data = {
+                            security: this.security_action,
                             action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
                             // valor_declarado: pedido.price,
                             service_id: this.selected_shipment[ind],
@@ -1203,7 +1208,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             verifyTracking: function(){
                 data = {
-                    action:'wpmelhorenvio_ajax_updateStatusTracking'
+                    action:'wpmelhorenvio_ajax_updateStatusTracking',
+                    security: this.security_action
                 }
 
                 jQuery.post(ajaxurl,data,function(response){
@@ -1212,7 +1218,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getAddress: function(){
                 data = {
-                    action: "wpmelhorenvio_ajax_getAddressAPI"
+                    action: "wpmelhorenvio_ajax_getAddressAPI",
+                    security: this.security_read
                 };
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
@@ -1238,7 +1245,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 this.toogleLoader();
                 data = {
                     action: 'wpmelhorenvio_ajax_cancelTicketAPI',
-                    tracking: this.cancel_tracking_codes[0]
+                    tracking: this.cancel_tracking_codes[0],
+                    security: this.security_action
                 };
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
@@ -1272,7 +1280,8 @@ if ( ! defined( 'ABSPATH' ) ) {
             printTicket: function(tracking){
                 data = {
                     action: 'wpmelhorenvio_ajax_ticketPrintingAPI',
-                    tracking: [tracking]
+                    tracking: [tracking],
+                    security: this.security_action
                 };
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
@@ -1291,7 +1300,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getOptionals: function(){
                 data = {
-                    action: "wpmelhorenvio_ajax_getOptionsAPI"
+                    action: "wpmelhorenvio_ajax_getOptionsAPI",
+                    security: this.security_read
                 };
                 vm = this;
                 jQuery.post(ajaxurl,data,function(response){
@@ -1304,6 +1314,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 this.pedidos.forEach(function (pedido){
                     var data = {
                         action:'wpmelhorenvio_ajax_getTrackingsData',
+                        security:this.security_read,
                         order_id: pedido.id,
                         timeout:30
                     };
@@ -1320,6 +1331,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getSpecificTracking: function(pedido){
                 var data = {
+                    security:this.security_read,
                     action:'wpmelhorenvio_ajax_getTrackingsData',
                     order_id: pedido.id,
                     timeout:30
@@ -1335,9 +1347,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                 });
             },
 
-
             payTicket: function(payment_method){
                 var data = {
+                    security: this.security_action,
                     action:'wpmelhorenvio_ajax_payTicketAPI',
                     orders: this.payment_tracking_codes,
                     gateway: payment_method
@@ -1392,6 +1404,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             updateTracking: function(tracking_code,status){
                 var data = {
+                    security: this.security_action,
                     action: "wpmelhorenvio_ajax_updateStatusData",
                     tracking_code:tracking_code,
                     status:status
@@ -1409,7 +1422,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 });
                 var data = {
                     action:'wpmelhorenvio_ajax_getTrackingAPI',
-                    tracking_codes: tracking_codes
+                    tracking_codes: tracking_codes,
+                    security: this.security_read
                 };
                 jQuery.post(ajaxurl, data, function(response) {
                     resposta = JSON.parse(response);
@@ -1419,6 +1433,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             addTracking: function(order_id,tracking,service){
                 var data = {
                     action: "wpmelhorenvio_ajax_addTrackingAPI",
+                    security:this.security_action,
                     order_id:order_id,
                     tracking:tracking,
                     service: service
@@ -1434,7 +1449,8 @@ if ( ! defined( 'ABSPATH' ) ) {
             getOrders: function(){
                 var data = {
                     action:'wpmelhorenvio_ajax_getJsonOrders',
-                    timeout:30
+                    timeout:30,
+                    security:this.security_read
                 };
 
                 vm = this;
@@ -1567,6 +1583,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     }else{
                         if(this.selected_shipment[ind] < 3){
                             var data = {
+                                security: this.security_action,
                                 action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
                                 // valor_declarado: pedido.price,
                                 service_id: this.selected_shipment[ind],
@@ -1592,6 +1609,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                             }
                         }else{
                             var data = {
+                                security: this.security_action,
                                 action: "wpmelhorenvio_ajax_ticketAcquirementAPI",
                                 // valor_declarado: pedido.price,
                                 service_id: this.selected_shipment[ind],
@@ -1645,6 +1663,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getUser: function(){
                 var data = {
+                    security:this.security_read,
                     action:'wpmelhorenvio_ajax_getCustomerInfoAPI',
                 };
                 vm = this;
@@ -1660,7 +1679,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getBalance: function(){
                 var data = {
-                    action:'wpmelhorenvio_ajax_getBalanceAPI'
+                    action:'wpmelhorenvio_ajax_getBalanceAPI',
+                    security:this.security_read
                 };
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
@@ -1679,7 +1699,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                 this.toogleLoader();
                 data = {
                     action:'wpmelhorenvio_ajax_cancelTicketData',
-                    tracking: tracking
+                    tracking: tracking,
+                    security:this.security_action
                 };
                 vm = this;
                 console.log(tracking);
@@ -1693,7 +1714,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getLimits: function(){
                 var data = {
-                    action:'wpmelhorenvio_ajax_getLimitsAPI'
+                    action:'wpmelhorenvio_ajax_getLimitsAPI',
+                    security:this.security_read
                 };
                 vm = this;
                 jQuery.post(ajaxurl, data, function(response) {
@@ -1711,7 +1733,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             getCompany: function(){
                 var data = {
-                    action:'wpmelhorenvio_ajax_getCompanyAPI'
+                    action:'wpmelhorenvio_ajax_getCompanyAPI',
+                    security: this.security_read
                 };
                 vm  = this;
                 jQuery.post(ajaxurl, data, function(response) {
@@ -1738,7 +1761,8 @@ if ( ! defined( 'ABSPATH' ) ) {
                     if(trackings.length > 0){
                         data = {
                             action: 'wpmelhorenvio_ajax_ticketPrintingAPI',
-                            tracking: trackings
+                            tracking: trackings,
+                            security: this.security_action
                         };
                         vm = this;
                         jQuery.post(ajaxurl,data,function(response){

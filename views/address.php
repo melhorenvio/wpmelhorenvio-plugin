@@ -41,8 +41,8 @@ if(isset($_POST['submit'])){
         $optionals->VD = isset($_POST['VD'])? true : false;
         $optionals->MR = isset($_POST['MR'])? true : false;
 
-        $optionals->DE = isset($_POST['DE'])? wp_filter_nohtml_kses(sanitize_text_field($_POST['DE'])) : "";
-        $optionals->PL = isset($_POST['PL'])? wp_filter_nohtml_kses(sanitize_text_field($_POST['PL'])) : "";
+        $optionals->DE = isset($_POST['DE'])? (int) wp_filter_nohtml_kses(sanitize_text_field($_POST['DE'])) : "";
+        $optionals->PL = isset($_POST['PL'])? (float) wp_filter_nohtml_kses(sanitize_text_field($_POST['PL'])) : "";
 
         if(wpmelhorenvio_defineConfig($address,json_encode($services),json_encode($optionals))){
             $url = admin_url('admin.php?page=wpmelhorenvio_melhor-envio-requests');
