@@ -40,19 +40,6 @@ if ( ! defined( 'ABSPATH' ) ) {
         position: fixed;
     }
 
-    @keyframes load {
-        0%{
-            transform: rotate(0deg);
-
-        }
-
-        100%{
-            transform: rotate(359deg);
-        }
-    }
-
-
-
     .mask{
         width: 100vw;
         height: 100vh;
@@ -614,42 +601,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 </style>
 <div id="app">
     <div class="loader">
-        <!--        <svg class="ico" width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc ">-->
-        <!--            <g fill="none" fill-rule="evenodd" stroke-width="2">-->
-        <!--                <circle cx="55" cy="55" r="1">-->
-        <!--                    <animate attributeName="r"-->
-        <!--                             begin="0s" dur="1.8s"-->
-        <!--                             values="1; 50"-->
-        <!--                             calcMode="spline"-->
-        <!--                             keyTimes="0; 1"-->
-        <!--                             keySplines="0.165, 0.84, 0.44, 1"-->
-        <!--                             repeatCount="indefinite" />-->
-        <!--                    <animate attributeName="stroke-opacity"-->
-        <!--                             begin="0s" dur="1.8s"-->
-        <!--                             values="1; 0"-->
-        <!--                             calcMode="spline"-->
-        <!--                             keyTimes="0; 1"-->
-        <!--                             keySplines="0.3, 0.61, 0.355, 1"-->
-        <!--                             repeatCount="indefinite" />-->
-        <!--                </circle>-->
-        <!--                <circle cx="55" cy="55" r="1">-->
-        <!--                    <animate attributeName="r"-->
-        <!--                             begin="-0.9s" dur="1.8s"-->
-        <!--                             values="1; 20"-->
-        <!--                             calcMode="spline"-->
-        <!--                             keyTimes="0; 1"-->
-        <!--                             keySplines="0.165, 0.84, 0.44, 1"-->
-        <!--                             repeatCount="indefinite" />-->
-        <!--                    <animate attributeName="stroke-opacity"-->
-        <!--                             begin="-0.9s" dur="1.8s"-->
-        <!--                             values="1; 0"-->
-        <!--                             calcMode="spline"-->
-        <!--                             keyTimes="0; 1"-->
-        <!--                             keySplines="0.3, 0.61, 0.355, 1"-->
-        <!--                             repeatCount="indefinite" />-->
-        <!--                </circle>-->
-        <!--            </g>-->
-        <!--        </svg>-->
     </div>
     <div class="content">
         <div class="data_client">
@@ -657,7 +608,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <h5>Usuário</h5>
                 <div class="profile">
                     <img :src="user_info.thumbnail" v-if="user_info.thumbnail" width="100px">
-                    <img src="https://www.melhorrastreio.com.br/img/bgpdr.png" v-if="!user_info.thumbnail" width="100px">
+                    <img src="<?=plugins_url("img/bgpdr.png",__DIR__ )?>" v-if="!user_info.thumbnail" width="100px">
                     <div class="about">
                         <h2>{{user_info.firstname}}</h2>
                         <ul>
@@ -833,18 +784,12 @@ if ( ! defined( 'ABSPATH' ) ) {
             </tr>
             </tfoot>
         </table>
-
-
-
-
         <div class="wpme_pagination_wrapper">
             <ul class="wpme_pagination" >
                 <li v-for="i in Math.ceil(total/perpage)" v-show="total > perpage" :class="{'active': i == page}">
                     <a href="javascript;"  @click.prevent="pagego(i)"  v-if="i < 2 && i != page || i < page+2 && i > page || i > page-2 && i < page  ||  i > (total / perpage)-1 && i != page || i == page" >{{i}}</a>
                     <span class="ret"  v-show="(i == page-2 | i == page+1) && (Math.ceil(total / perpage) > 4) && Math.ceil(total /perpage) > i+1" > ...  </span>
                 </li>
-
-
             </ul>
         </div>
         <div class="mask" v-show="show_mask" @click.prevent="toogleModal">
@@ -869,10 +814,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                         <h4>Pagar com Saldo</h4>
                         <p>Saldo <strong>{{user_info.balance}}</strong></p>
                     </div>
-
                 </label>
-
-
             </div>
             <a href="javascript;" class="btn pagar" @click.prevent="payTicket(selected_payment_method)"> Pagar </a>
         </div>
@@ -939,7 +881,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         </div>
     </div>
 </div>
-<script src="https://unpkg.com/vue"></script>
+<script src="https://unpkg.com/vue@2.5.13/dist/vue.js"></script>
 <script>
     var app = new Vue({
         el: '#app',
@@ -1002,12 +944,10 @@ if ( ! defined( 'ABSPATH' ) ) {
         },
 
         computed:{
-
             pedidos_page: function () {
                 this.total = this.pedidos.length;
                 return this.pedidos.slice(((this.page -1) * this.perpage), this.page*this.perpage);
             }
-
         },
 
         methods: {
@@ -1746,7 +1686,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             PrintMultiple: function(){
                 var trackings = [];
-
                 if(this.pedidos_checked.length < 1 || ! this.pedidos_checked.find(function(data){ return data == true;}) ){
                     vm.message.title = "Nenhuma etiqueta foi impressa";
                     vm.message.message = "Selecione as etiquetas para impressão";

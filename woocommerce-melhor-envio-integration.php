@@ -11,7 +11,7 @@
 Plugin Name: Melhor Envio - Cotação
 Plugin URI:  http://www.melhorenvio.com.br/integracoes/woocommerce
 Description: Plugin que permite a cotação de fretes utilizando a API do Melhor Envio. Ainda é possível disponibilizar as informações da cotação de frete diretamente para o consumidor final.
-Version:     2.0.0
+Version:     1.0.0
 Author:      Melhor Envio
 Author URI:  https://melhorenvio.com.br/
 License:     GPL2
@@ -54,7 +54,7 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
                 add_filter( "plugin_action_links_$plugin", 'plugin_add_settings_link' );
 
                 function wpmelhorenvio_addMenu(){
-                   add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpmelhorenvio_melhor-envio","wpmelhorenvio_pedidos", plugin_dir_url( __FILE__ )."mo.png");
+                   add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpmelhorenvio_melhor-envio",null, plugin_dir_url( __FILE__ )."mo.png");
                     add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpmelhorenvio_melhor-envio-requests", "wpmelhorenvio_pedidos");
                     add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpmelhorenvio_melhor-envio-config", "wpmelhorenvio_config");
                     add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Configurações da Conta", "Sua Conta Melhor Envio", "administrator", "wpmelhorenvio_melhor-envio-subscription", "wpmelhorenvio_cadastro");

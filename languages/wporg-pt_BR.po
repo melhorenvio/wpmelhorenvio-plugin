@@ -1,0 +1,40 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Melhor Envio - Cotação\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-01-25 12:53+0000\n"
+"PO-Revision-Date: 2018-01-25 12:54+0000\n"
+"Last-Translator: vitor <vsbbbeico@gmail.com>\n"
+"Language-Team: Portuguese (Brazil)\n"
+"Language: pt-BR\n"
+"Plural-Forms: nplurals=2; plural=n != 1\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco - https://localise.biz/"
+
+#. Name of the plugin
+msgid "Melhor Envio - Cotação"
+msgstr "Melhor Envio - Cotação"
+
+#. Description of the plugin
+msgid ""
+"Plugin que permite a cotação de fretes utilizando a API do Melhor Envio. "
+"Ainda é possível disponibilizar as informações da cotação de frete "
+"diretamente para o consumidor final."
+msgstr ""
+"Plugin que permite a cotação de fretes utilizando a API do Melhor Envio. "
+"Ainda é possível disponibilizar as informações da cotação de frete "
+"diretamente para o consumidor final."
+
+#. URI of the plugin
+msgid "http://www.melhorenvio.com.br/integracoes/woocommerce"
+msgstr "http://www.melhorenvio.com.br/integracoes/woocommerce"
+
+#. Author of the plugin
+msgid "Melhor Envio"
+msgstr "Melhor Envio"
+
+#. Author URI of the plugin
+msgid "https://melhorenvio.com.br/"
+msgstr "https://melhorenvio.com.br/"
