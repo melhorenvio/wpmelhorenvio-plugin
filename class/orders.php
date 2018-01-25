@@ -15,7 +15,7 @@ include_once plugin_dir_path(__FILE__).'quotation.php';
 include_once plugin_dir_path(__FILE__).'tracking.php';
 
 function wpmelhorenvio_getJsonOrders(){
-    $orders = wc_get_orders(['limit' => '600']);
+    $orders = wc_get_orders(['limit' => '200']);
     $dp    = is_null( null ) ? wc_get_price_decimals() : 2 ;
     $datas = array();
     foreach($orders as $order){
@@ -453,9 +453,8 @@ function wpmelhorenvio_removeFromCart()
     $curl = curl_init();
     $token = get_option('wpmelhorenvio_token');
     $tracking = '';
-    if(is_array($_POST['tracking'])){
-        $tracking = sanitize_key($_POST['tracking'][0]);
-    }
+        $tracking = sanitize_key($_POST['tracking']);
+
 
     curl_setopt_array($curl, array(
         CURLOPT_URL => "https://www.melhorenvio.com.br/api/v2/me/cart/" . $tracking,

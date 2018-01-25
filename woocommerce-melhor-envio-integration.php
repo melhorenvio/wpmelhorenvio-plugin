@@ -55,7 +55,7 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
 
                 function wpmelhorenvio_addMenu(){
                    add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpmelhorenvio_melhor-envio",null, plugin_dir_url( __FILE__ )."mo.png");
-                    add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpmelhorenvio_melhor-envio-requests", "wpmelhorenvio_pedidos");
+                    add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpmelhorenvio_melhor-envio", "wpmelhorenvio_pedidos");
                     add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpmelhorenvio_melhor-envio-config", "wpmelhorenvio_config");
                     add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Configurações da Conta", "Sua Conta Melhor Envio", "administrator", "wpmelhorenvio_melhor-envio-subscription", "wpmelhorenvio_cadastro");
                 }
