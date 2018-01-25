@@ -413,7 +413,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 vm = this;
                 jQuery.post(ajaxurl,data,function (response) {
                     resposta = JSON.parse(response);
-
+                    console.log(response);
                     if(resposta.succcess == true){
                         vm.pedidos_page[id].status = undefined;
                         vm.pedidos_page[id].bought_tracking = 0;

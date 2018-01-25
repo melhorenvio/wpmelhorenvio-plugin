@@ -1,0 +1,117 @@
+# Translation of Plugins - Melhor Envio &#8211; Cotação - Development Readme (trunk) in Portuguese (Brazil)
+# This file is distributed under the same license as the Plugins - Melhor Envio &#8211; Cotação - Development Readme (trunk) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: +0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: GlotPress/2.4.0-alpha\n"
+"Language: pt_BR\n"
+"Project-Id-Version: Plugins - Melhor Envio &#8211; Cotação - Development Readme (trunk)\n"
+
+#. Found in description paragraph.
+msgid "1.0.0 Versão de lançamento."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "[youtube https://www.youtube.com/watch?v=is-RqEIYDRA]"
+msgstr ""
+
+#. Found in description paragraph.
+msgid "Our methods require subscription on our platform and the use of this API. We ensure you that the data sent to our plugins will only be used to calculate the shipping costs and, ifyou wish, to use our intermediation service."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "The Woocommerce-melhor-envio-plugin relies on a 3rd Party API (https://www.melhorenvio.com.br/api/v2/) which uses the data sent to calculate and show you the best freight options."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "Nossos metodos necessitam que o usuário esteja cadastrado em nossa plataforma e necessitam do uso desta API. Nós lhe asseguramos que os dados enviados para o nosso plugin só serão usados para calculo de frete e , caso você deseje, para utilizar os nosso serviço de intermediação."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "O Plugin Woocommerce-melhor-envio-plugin depende de uma API externa (https://www.melhorenvio.com.br/api/v2/) a qual usa os dados enviados para calcular e lhe enviar as melhores opções de frete."
+msgstr ""
+
+#. Found in description header.
+msgid "Notas de Atualização"
+msgstr ""
+
+#. Found in description header.
+msgid "O que é a Melhor Envio?"
+msgstr ""
+
+#. Found in faq header.
+msgid "Installation Instructions"
+msgstr ""
+
+#. Found in changelog paragraph.
+msgid ""
+"*Primeira versão pública\n"
+"*Cálculo de frete para o cliente final\n"
+"*Compra de envios\n"
+"*Pagamento de etiquetas\n"
+"*Impressão de etiquetas"
+msgstr ""
+
+#. Found in installation paragraph, faq paragraph.
+msgid "Compatível com a versão 3.0.x do WooCommerce."
+msgstr ""
+
+#. Found in installation paragraph, faq paragraph.
+msgid "descrição da instalação"
+msgstr ""
+
+#. Found in installation paragraph, faq paragraph.
+msgid "Na página seguinte, você deverá clicar em Upload Plugin, Nessa página você poderá subir o arquivo do pacote do Melhor Envio. Escolha o arquivo baixado e clique em Install Now, o plugin será instalado completamente e caberá a você apenas configurá-lo."
+msgstr ""
+
+#. Found in installation paragraph, faq paragraph.
+msgid "Baixe o plugin pelo site do Melhor Envio na sessão de integrações (http://www.melhorenvio.com.br/integracoes/) ou pela página do plugin na loja do Wordpress. Após o download vá ao seu painel de administrador do Wordpress. Clique em Plugins &gt; Add New &gt;."
+msgstr ""
+
+#. Found in installation header, faq header.
+msgid "Compatibilidade"
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "Para habilitar a sua conta é necessário se cadastrar no site do Melhor Envio, dessa forma você tem acesso ao nosso painel de controle e pode gerenciar de la todos os seus envios."
+msgstr ""
+
+#. Found in faq paragraph.
+msgid "Os preços entregues pela plataforma são os preços de Balcão? Não, os preços entregues pela plataforma são os preços disponibilizados pela nossa API baseado no nosso contrato com os correios."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "O Melhor Envio torna o processo de envio mais simples e barato."
+msgstr ""
+
+#. Found in description paragraph.
+msgid "O plugin da Melhor Envio para o Woocommerce permite que você cote através de diversas transportadoras utilizando a API e os contratos do Melhor Envio."
+msgstr ""
+
+#. Found in faq list item.
+msgid "WordPress 4.4+"
+msgstr ""
+
+#. Found in faq list item.
+msgid "PHP version 5.6 or greater"
+msgstr ""
+
+#. Found in faq header.
+msgid "Minimum Requirements"
+msgstr ""
+
+#. Found in faq header.
+msgid "O que eu preciso fazer para habilitar a minha conta?"
+msgstr ""
+
+#. Short description.
+msgid "Integration between the Melhor Envio and WooCommerce"
+msgstr ""
+
+#. Plugin name.
+msgid "Melhor Envio - Cotação"
+msgstr ""
