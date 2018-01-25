@@ -54,37 +54,40 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
                 add_filter( "plugin_action_links_$plugin", 'plugin_add_settings_link' );
 
                 function wpmelhorenvio_addMenu(){
-                   add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpmelhorenvio_melhor-envio",null, plugin_dir_url( __FILE__ )."mo.png");
-                    add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpmelhorenvio_melhor-envio-requests", "wpmelhorenvio_pedidos");
+                    add_menu_page("Melhor Envio", "Melhor Envio", "administrator", "wpmelhorenvio_melhor-envio",null, plugin_dir_url( __FILE__ )."mo.png");
+                    add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Pedidos", "Pedidos", "administrator", "wpmelhorenvio_melhor-envio", "wpmelhorenvio_pedidos");
                     add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Configurações do Plugin", "Configurações", "administrator", "wpmelhorenvio_melhor-envio-config", "wpmelhorenvio_config");
                     add_submenu_page("wpmelhorenvio_melhor-envio","Melhor Envio - Configurações da Conta", "Sua Conta Melhor Envio", "administrator", "wpmelhorenvio_melhor-envio-subscription", "wpmelhorenvio_cadastro");
                 }
 
                 function wpmelhorenvio_cadastro(){
-                    include_once plugin_dir_path(__FILE__).'class/config.php';
+                    wp_enqueue_style('style', plugin_dir_url(__FILE__)."/assets/css/style.css");
+                    include_once plugin_dir_path(__FILE__).'classes/config.php';
                     include_once plugin_dir_path(__FILE__).'views/apikey.php';
                 }
-
+                
                 function wpmelhorenvio_config(){
                     if( get_option("wpmelhorenvio_token") == null){
                         wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpmelhorenvio_melhor-envio-subscription"));
                     }
-                    include_once plugin_dir_path(__FILE__).'class/config.php';
+                    wp_enqueue_style('style', plugin_dir_url(__FILE__)."/assets/css/style.css");
+                    include_once plugin_dir_path(__FILE__).'classes/config.php';
                     include_once plugin_dir_path(__FILE__).'views/address.php';
                 }
-
+                
                 function wpmelhorenvio_pedidos(){
                     if( get_option("wpmelhorenvio_token") == null){
                         wp_redirect(get_admin_url(get_current_blog_id(),"admin.php?page=wpmelhorenvio_melhor-envio-subscription"));
                     }
-                    include_once plugin_dir_path(__FILE__).'class/orders.php';
+                    wp_enqueue_style('style', plugin_dir_url(__FILE__)."/assets/css/style.css");
+                    include_once plugin_dir_path(__FILE__).'classes/orders.php';
                     include_once plugin_dir_path(__FILE__).'views/pedidos.php';
                 }
-                include_once plugin_dir_path(__FILE__).'class/shipping.php';
+                include_once plugin_dir_path(__FILE__).'classes/shipping.php';
             }
 
             //Ajax Calls
-            include_once plugin_dir_path(__FILE__).'class/orders.php';
+            include_once plugin_dir_path(__FILE__).'classes/orders.php';
 
             add_action( 'wp_ajax_wpmelhorenvio_ajax_getTracking', 'wpmelhorenvio_ajax_getTracking' );
                 function wpmelhorenvio_ajax_getTracking(){

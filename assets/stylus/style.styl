@@ -1,0 +1,45 @@
+@import "kouto-swiss"
+@import 'jeet'
+@import 'rupture'
+
+$mandy    = $mandy;
+
+@import 'views/*'
+
+::-webkit-scrollbar
+  background-color rgba(50,50,50,0.7)
+  width 8px
+  height 8px
+  border-radius 5px
+
+::-webkit-scrollbar-button
+  display none
+
+::-webkit-scrollbar-track
+::-webkit-scrollbar-track-piece
+::-webkit-scrollbar-thumb
+  background-color rgba(255,255,255,1)
+  border-radius 5px
+
+::-webkit-scrollbar-corner
+  display none
+
+::-webkit-resizer
+  display none
+
+.wpme_button
+  padding 8px 30px
+  border-radius 30px
+  border solid 1px $mandy
+  color $mandy
+  background-color #000000
+  font-size rem(20px)
+  display inline-block
+  transition .5s
+  margin 5px
+  cursor pointer
+  &:hover
+    color #FFFFFF
+    background-color $mandy
+  &:focus
+    outline none
