@@ -66,6 +66,10 @@
     margin 0 15px
     width 200px
     height 100px
+    &:hover
+      border-color rgba(50,180,250,1)
+      transition 300ms
+
     &.btn
       margin 30px 15px
       border-radius 30px
@@ -74,42 +78,36 @@
       font-size 1.2rem
       border solid 2px rgba(100,100,100,0.8)
       color rgba(100,100,100,0.8)
+      &:hover
+        background-color rgba(100,100,100,0.8)
+        color rgba(255,255,255,.9)
+        border-color rgba(100,100,100,0.1)
+
       &.cancelar
         border-radius 30px
         height 50px
         padding 15px
         color rgba(159,80,100,1)
         font-size 1.2rem
-        border solid 2px rgba(159,80,100,1)
+        border-color rgba(159,80,100,1)
         &:hover
           background-color rgba(159,80,100,1)
           color rgba(250,250,250,.9)
-          border solid 2px rgba(100,100,100,0.1)
-      &:hover
-        background-color rgba(100,100,100,0.8)
-        color rgba(255,255,255,.9)
-        border solid 2px rgba(100,100,100,0.1)
+          border-color rgba(100,100,100,0.1)
+          
       &.pagar
-        border-radius 30px
-        height 50px
-        padding 15px
         color rgba(100,190,100,1)
-        font-size 1.2rem
-        border solid 2px rgba(100,190,100,1)
+        border-color rgba(100,190,100,1)
         &:hover
           color rgba(245,240,255,1)
           background-color rgba(100,190,100,1)
-    &:hover
-      border solid 2px rgba(50,180,250,1)
-      transition 300ms
+
   .select
     display flex
     flex-wrap wrap
     padding 15px
     position relative
     align-items center
-    horiz-align center
-    vert-align middle
     width 750px
   label
     text-align center
@@ -131,7 +129,8 @@
     strong
       color rgba(50,205,50,1)
 
-.modal .close-modal ,.modal .close-modal:focus
+.modal .close-modal
+.modal .close-modal:focus
   color rgba(100,100,100,.8)
   position absolute
   font-size 3.100rem
@@ -294,29 +293,6 @@ tfoot
   margin 30px auto
   text-align center
   width 100%
-
-.wpme_address
-  text-align left
-  border-radius 5px
-  border solid 1px #cccccc
-  padding 20px
-  width 300px
-  box-sizing border-box
-  min-width 300px
-  margin 15px 7px
-  height 160px
-  background #fefeff
-  .wpme_address-top
-    width 100%
-    border-bottom solid 1px #ddddef
-    h2
-      display inline-block
-      padding 0 20px
-      margin 0 0 15px
-      text-align center
-      color #777789
-      font-weight 300
-      font-size 1.300rem
 
 .circle
   display inline-block
