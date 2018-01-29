@@ -58,30 +58,32 @@ if(isset($_POST['submit'])){
 }
 ?>
 
+<?php
+$addresses = wpmelhorenvio_getApiAddresses();
+$companies = wpmelhorenvio_getApiCompanies();
+
+$company_addresses = wpmelhorenvio_getApiCompanyAdresses();
+$addresses['data'] = array_merge($addresses['data'],$company_addresses);
+
+$saved_address = json_decode(str_replace("\\" ,"", get_option('wpmelhorenvio_address')));
+
+if($saved_address == null){
+    $saved_address = new stdClass();
+    $saved_address->id = '';
+}
+$saved_company =  json_decode(str_replace("\\",'',get_option('wpmelhorenvio_company')));
+if($saved_company == null){
+    $saved_company = new stdClass();
+    $saved_company->id = '';
+}
+wp_nonce_field('wpmelhorenvio_save_address');
+if(isset($addresses['data'])){?>
+
 <form action="<?=$_SERVER['REQUEST_URI']?>" method="post">
     <div class="wpme_config">
         <h2>Escolha o endereço para cálculo de frete</h2>
         <div class="wpme_flex">
-            <?php
-            $addresses = wpmelhorenvio_getApiAddresses();
-            $companies = wpmelhorenvio_getApiCompanies();
-
-            $company_addresses = wpmelhorenvio_getApiCompanyAdresses();
-            $addresses['data'] = array_merge($addresses['data'],$company_addresses);
-
-            $saved_address = json_decode(str_replace("\\" ,"", get_option('wpmelhorenvio_address')));
-
-            if($saved_address == null){
-                $saved_address = new stdClass();
-                $saved_address->id = '';
-            }
-            $saved_company =  json_decode(str_replace("\\",'',get_option('wpmelhorenvio_company')));
-            if($saved_company == null){
-                $saved_company = new stdClass();
-                $saved_company->id = '';
-            }
-            wp_nonce_field('wpmelhorenvio_save_address');
-            if(isset($addresses['data'])){
+    <?php
             foreach ($addresses['data'] as $address){
                 ?>
 
