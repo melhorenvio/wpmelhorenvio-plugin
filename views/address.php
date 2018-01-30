@@ -76,11 +76,10 @@
         $saved_company = new stdClass();
         $saved_company->id = '';
     }
-    wp_nonce_field('wpmelhorenvio_save_address');
 ?>
 <?php if(isset($addresses['data'])): ?>
 
-    <form action="<?=$_SERVER['REQUEST_URI']?>" method="post">
+    <form class="wpme_content" action="<?=$_SERVER['REQUEST_URI']?>" method="post">
         <div class="wpme_config">
             <h2>Escolha o endereço para cálculo de frete</h2>
             <div class="wpme_flex">
@@ -131,32 +130,35 @@
                 </ul>
             </div>
         </div>
+        
+        <div class="wpme_config">
+            <h2>Escolha a empresa para a compra de fretes</h2>
+            <div class="wpme_flex">
+                <?php foreach ($companies['data'] as $company): ?>
+                    <label>
+                        <ul class="wpme_address">
+                            <li>
+                                <div class="wpme_address-top">
+                                    <input type="radio" name="company" value='<?php echo json_encode($company) ?>' <?= $saved_company->id == $company->id? "checked":"" ?>>
+                                    <h2><?= $company->name?></h2>
+                                </div>
+                                <div class="wpme_address-body">
+                                    <ul>
+                                        <li>CNPJ: <?= $company->document?></li>
+                                        <li> IE: <?= $company->state_register?></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </label>
+                <?php endforeach; ?>
 
-        <h2>Escolha a empresa para a compra de fretes</h2>
-        <div class="wpme_flex">
-            <?php foreach ($companies['data'] as $company): ?>
-                <label>
-                    <ul class="wpme_address">
-                        <li>
-                            <div class="wpme_address-top">
-                                <input type="radio" name="company" value='<?php echo json_encode($company) ?>' <?= $saved_company->id == $company->id? "checked":"" ?>>
-                                <h2><?= $company->name?></h2>
-                            </div>
-                            <div class="wpme_address-body">
-                                <ul>
-                                    <li>CNPJ: <?= $company->document?></li>
-                                    <li> IE: <?= $company->state_register?></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </label>
-            <?php endforeach; ?>
-
-            <?php if(count($companies['data']) < 1): ?>
-                <p class="txtNoEmployee">Para cadastrar suas lojas no seu <a href='https://www.melhorenvio.com.br/painel/gerenciar/lojas'>painel de controle do Melhor Envio</a>.</p>
-            <?php endif; ?>
+                <?php if(count($companies['data']) < 1): ?>
+                    <p class="txtNoEmployee">Para cadastrar suas lojas no seu <a href='https://www.melhorenvio.com.br/painel/gerenciar/lojas'>painel de controle do Melhor Envio</a>.</p>
+                <?php endif; ?>
+            </div>
         </div>
+
         <div class="wpme_basepadding">
             <h2>Selecione seus métodos de envio</h2>
             <ul class="wpme_options">
@@ -193,6 +195,8 @@
                         $saved_optionals->DE = 0;
                         $saved_optionals->PL = 0;
                     }
+
+                    wp_nonce_field('wpmelhorenvio_save_address');
                 ?>
                 <h2>Funcionamento do Plugin</h2>
                 <div>
