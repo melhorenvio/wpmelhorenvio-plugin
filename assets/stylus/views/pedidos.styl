@@ -154,39 +154,39 @@ table
       margin 0px
       line-height 15px
 
-thead
+  tbody
+    tr
+      border-top 1px solid $ghost
+      &:first-child
+        border none
+
+  tr
+    width 100%
+    padding 0
+
+  th
+    border none 1px rgba(90,90,200,.12)
+    margin 0
+    padding 10px 20px
+
   td
-    background-color rgba(50,50,150,0.08) !important
-    text-align left
+    padding 10px
+    text-align center
+    margin 0
+    .btn
+      float none
 
-tr
-  width 100%
-  padding 0
-  transition 300ms
-  &:hover
-    background-color rgba(0,0,200,0.06)
-    transition 300ms
-  &:nth-child(even):hover
-    background-color rgba(0,0,200,0.06)
-    transition 300ms
-  &:nth-child(even)
-    background-color rgba(0,0,200,0.02)
-
-th
-  background-color rgba(90,90,200,.12)
-  border none 1px rgba(90,90,200,.12)
-  margin 0
-  padding 10px 20px
-
-td
-  padding 0 5px
-  text-align center
-  margin 0
-  input
-    border-radius 3px
-    border solid 1px rgba(210,210,210,.9)
-    line-height 20px
-    height 35px
+    label
+      column(1/2, $cycle: 2)
+      text-align left
+      margin-bottom 5px
+      strong
+        display block
+      input
+        border-radius 3px
+        border solid 1px rgba(210,210,210,.9)
+        line-height 20px
+        width 100%
 
 .btn
   display inline-block
@@ -197,38 +197,37 @@ td
   border-radius 25px
   color rgba(130,120,220,.9)
   transition 200ms
-        float:left
+  float left
   &:hover
     background-color rgba(130,130,220,.9)
     color rgba(255,255,255,.99)
-    transition 200ms
   &.comprar
-    border solid 1px rgba(80,190,130,1)
+    border-color rgba(80,190,130,1)
     color rgba(110,190,130,1)
     &:hover
       background-color rgba(80,200,130,1)
       color rgba(255,255,255,.9)
   &.comprar-hard
-    border solid 1px rgba(50,180,100,1)
+    border-color rgba(50,180,100,1)
     color rgba(110,190,130,1)
     &:hover
       background-color rgba(50,180,100,1)
       color rgba(255,255,255,.9)
   &.cancelar
-    border solid 1px rgba(160,10,50,.6)
+    border-color rgba(160,10,50,.6)
     color rgba(160,10,40,.6)
     &:hover
       background-color rgba(150,10,50,.6)
-      border solid 1px rgba(160,10,50,.1)
+      border-color rgba(160,10,50,.1)
       color rgba(255,255,255,.9)
   &.melhorenvio
-    border solid 1px rgba(30,140,160,1)
+    border-color rgba(30,140,160,1)
     color rgba(30,140,160,.9)
     &:hover
       background-color rgba(30,140,160,1)
       color rgba(255,255,255,.9)
   &.melhorrastreio
-    border solid 1px rgba(234,108,01,.8)
+    border-color rgba(234,108,01,.8)
     color rgba(234,108,01,.8)
     &:hover
       background-color rgba(234,108,01,.8)
@@ -236,20 +235,14 @@ td
 
 select
   box-shadow none
-  height 35px !important
-  line-height 40px !important
-  border-radius 7px !important
+  height 35px
+  line-height 40px
+  border-radius 3px
   padding 15px 35px
   font-size .940em
 
 .selected
   background-color rgba(40,230,150,0.3)
-
-tfoot
-  tr
-    td
-      background-color rgba(50,50,150,0.05) !important
-      text-align left
 
 .wpme_pagination
   display inline
@@ -270,15 +263,6 @@ tfoot
       text-decoration none
       color rgba(30,120,200,1)
       transition 200ms
-      &:hover
-        transition 200ms
-        background-color rgba(230,230,255,1)
-      &:active
-        outline none
-        box-shadow none
-      &:focus
-        outline none
-        box-shadow none
     &.active
       a
         background-color rgba(30,160,230,.8)
@@ -297,8 +281,7 @@ tfoot
 .circle
   display inline-block
   vertical-align middle
-  width 10px
-  height 10px
+  size 10px
   margin 0 5px
   border solid 1px rgba(240,50,50,.95)
   border-radius 50%
@@ -320,29 +303,75 @@ tfoot
   ul
     margin 0
 
-.data_client
+.data-client
   display flex
+  &__item
+    > div
+      box-sizing border-box
+      display inline-block
+      text-align left
+      border-radius 5px
+      border solid 1px #cccccc
+      padding 10px 15px
+      max-width 400px
+      min-width 300px
+      margin 0 7px 0 0
+      height 160px
+      background #fefeff
 
-.profile
-  box-sizing border-box
-  display inline-block
-  text-align left
-  border-radius 5px
-  border solid 1px #cccccc
-  padding 10px
-  max-width 400px
-  min-width 300px
-  margin 0 7px
-  height 160px
-  background #fefeff
-  img
-    border-radius 50%
-    float left
+    &.-profile
+      img
+        float left 
+        margin-right 20px
+        border-radius 50%
+      .about
+        padding 0 10px
+  p
+    margin-bottom 5px
+    line-height 1.1em
+  h5
+    font-size rem(14px)
+    margin-bottom 5px
+  h2
+    margin 0 0 20px 0
+  ul
+    margin 0
+    li
+      margin-bottom 0
+      span
+        display inline-block
+        vertical-align middle
+
+.table-pedidos
+  margin 20px 20px 20px 0
+
+.header-line
+  th
+    padding 20px 0 10px
+    span
+      display block
+      border-right 1px solid $paleSky
+      text-align center
+      padding 0 20px
+      line-height 1em
+    &:last-child
+      span
+        border none
+
+.action-line
+  td
+    text-align left
+    border-top 1px solid $ghost
+    border-bottom 1px solid $ghost
+  span
+  a
     display inline-block
-  .about
-    float left
-    padding 0 10px
-    display inline-block
+    vertical-align middle
+    margin-right 5px
+    float none
+
+.link-box
+  margin 10px 0
 
 .wpme_message
   position fixed
@@ -382,19 +411,12 @@ tfoot
     font-size 1.05rem
     display inline-block
     padding 10px 24px
-    border solid 1px rgba(100,150,250,1)
-    color rgba(100,150,250,1)
+    border solid 1px rgb(100,150,250)
+    color rgb(100,150,250)
     bottom 10px
     &:hover
-      text-decoration none
-      border-radius 20px
-      font-size 1.05rem
-      display inline-block
-      padding 10px 24px
-      border solid 1px rgba(100,150,250,1)
-      background-color rgba(100,150,250,1)
-      color rgba(250,250,250,1)
-      bottom 10px
+      background-color rgb(100,150,250)
+      color rgb(250,250,250)
 
 .wpme_message_action
   float left
@@ -405,19 +427,12 @@ tfoot
     font-size 1.05rem
     display inline-block
     padding 10px 24px
-    border solid 1px rgba(100,110,150,1)
-    color rgba(100,110,150,1)
+    border solid 1px rgb(100,110,150)
+    color rgb(100,110,150)
     bottom 10px
     &:hover
-      text-decoration none
-      border-radius 20px
-      font-size 1.05rem
-      display inline-block
-      padding 10px 24px
-      border solid 1px rgba(100,110,150,1)
-      background-color rgba(100,110,150,1)
-      color rgba(250,250,250,1)
-      bottom 10px
+      background-color rgb(100,110,150)
+      color rgb(250,250,250)
 
 .wpme_wrapper_center
   display inline-block

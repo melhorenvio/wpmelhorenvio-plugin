@@ -19,187 +19,199 @@ if ( ! defined( 'ABSPATH' ) ) {
     <div class="loader">
     </div>
     <div class="content">
-        <div class="data_client">
-            <div>
+        <div class="data-client">
+            <div class="data-client__item -profile">
                 <h5>Usuário</h5>
-                <div class="profile">
+                <div>
                     <img :src="user_info.thumbnail" v-if="user_info.thumbnail" width="100px">
                     <img src="<?=plugins_url("assets/img/bgpdr.png",__DIR__ )?>" v-if="!user_info.thumbnail" width="100px">
                     <div class="about">
                         <h2>{{user_info.firstname}}</h2>
                         <ul>
-                            <li>Saldo: R$  <strong>{{user_info.balance}}</strong></li>
-                            <li>Limite: <strong>{{user_info.shipments}}</strong></li>
-                            <li>Liberado:  <strong>{{user_info.available_shipments}}</strong></li>
+                            <li><p>Saldo: R$ <strong>{{user_info.balance}}</strong></p></li>
+                            <li><p>Limite: <strong>{{user_info.shipments}}</strong></p></li>
+                            <li><p>Liberado:  <strong>{{user_info.available_shipments}}</strong></p></li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <div>
+            <div class="data-client__item -address">
                 <h5>Endereço</h5>
-                <div class="wpme_address">
-                    <div class="wpme_address-top"><h2>{{endereco.label}}</h2>
-                    </div>
-                    <div class="wpme_address-body">
+                <div>
+                    <h2>{{endereco.label}}</h2>
+                    <div>
                         <ul>
-                            <li>{{endereco.address}}, {{endereco.number}} -{{endereco.complement}}</li>
-                            <li>{{endereco.district}} - {{ endereco.city.city}} / {{endereco.city.state.state_abbr}}</li>
-                            <li>CEP: {{endereco.postal_code}}</li>
+                            <li><p>{{endereco.address}}, {{endereco.number}} -{{endereco.complement}}</p></li>
+                            <li><p>{{endereco.district}} - {{ endereco.city.city}} / {{endereco.city.state.state_abbr}}</p></li>
+                            <li><p>CEP: {{endereco.postal_code}}</p></li>
                         </ul>
                     </div>
                 </div>
             </div>
-            <div>
+            <div class="data-client__item -options">
                 <h5>Opcionais</h5>
-                <div class="wpme_optionals">
+                <div>
                     <ul>
-                        <li>  Aviso de Recebimento :<span class="circle" :class="{'true' : opcionais.AR}"> </span></li>
-                        <li>  Disponível para o cliente:<span class="circle" :class="{'true' : opcionais.CF}"> </span></li>
-                        <li>  Dias extras: {{opcionais.DE}}</li>
-                        <li>  Mão Própria :<span class="circle" :class="{'true' : opcionais.MP}"> </span></li>
-                        <li>  Porcentagem de lucro {{opcionais.PL}}%</li>
-                        <li>  Valor Declarado:<span class="circle" :class="{'true' : opcionais.VD}"> </span></li>
+                        <li><p><span>Aviso de Recebimento:</span> <span class="circle" :class="{'true' : opcionais.AR}"></span></p></li>
+                        <li><p><span>Disponível para o cliente:</span> <span class="circle" :class="{'true' : opcionais.CF}"></span></p></li>
+                        <li><p><span>Dias extras:</span> <span>{{opcionais.DE}}</span></p></li>
+                        <li><p><span>Mão Própria:</span> <span class="circle" :class="{'true' : opcionais.MP}"></span></p></li>
+                        <li><p><span>Porcentagem de lucro</span> {{opcionais.PL}}%</p></li>
+                        <li><p><span>Valor Declarado:</span> <span class="circle" :class="{'true' : opcionais.VD}"></span></p></li>
                     </ul>
                 </div>
             </div>
-            <div><h5><a href="<?= get_admin_url(get_current_blog_id(),"/admin.php?page=wpme_melhor-envio-config")?>">Editar configurações</a></h5></div>
-
         </div>
+        <div class="link-box"><a href="<?= get_admin_url(get_current_blog_id(),"/admin.php?page=wpmelhorenvio_melhor-envio-config")?>">Editar configurações</a></div>
 
-        <div  v-if="pedidos.length < 1" class="wpme_nothing">
-            <template v-if="!finished"><h3 >
+        <div v-if="pedidos.length < 1" class="wpme_nothing">
+            <template v-if="!finished">
+                <h3>
                     <svg class="ico" width="150" height="150" viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg" stroke="#3598dc ">
                         <g fill="none" fill-rule="evenodd" stroke-width="2">
                             <circle cx="55" cy="55" r="1">
                                 <animate attributeName="r"
-                                         begin="0s" dur="1.8s"
-                                         values="1; 50"
-                                         calcMode="spline"
-                                         keyTimes="0; 1"
-                                         keySplines="0.165, 0.84, 0.44, 1"
-                                         repeatCount="indefinite" />
+                                            begin="0s" dur="1.8s"
+                                            values="1; 50"
+                                            calcMode="spline"
+                                            keyTimes="0; 1"
+                                            keySplines="0.165, 0.84, 0.44, 1"
+                                            repeatCount="indefinite" />
                                 <animate attributeName="stroke-opacity"
-                                         begin="0s" dur="1.8s"
-                                         values="1; 0"
-                                         calcMode="spline"
-                                         keyTimes="0; 1"
-                                         keySplines="0.3, 0.61, 0.355, 1"
-                                         repeatCount="indefinite" />
+                                            begin="0s" dur="1.8s"
+                                            values="1; 0"
+                                            calcMode="spline"
+                                            keyTimes="0; 1"
+                                            keySplines="0.3, 0.61, 0.355, 1"
+                                            repeatCount="indefinite" />
                             </circle>
                             <circle cx="55" cy="55" r="1">
                                 <animate attributeName="r"
-                                         begin="-0.9s" dur="1.8s"
-                                         values="1; 20"
-                                         calcMode="spline"
-                                         keyTimes="0; 1"
-                                         keySplines="0.165, 0.84, 0.44, 1"
-                                         repeatCount="indefinite" />
+                                            begin="-0.9s" dur="1.8s"
+                                            values="1; 20"
+                                            calcMode="spline"
+                                            keyTimes="0; 1"
+                                            keySplines="0.165, 0.84, 0.44, 1"
+                                            repeatCount="indefinite" />
                                 <animate attributeName="stroke-opacity"
-                                         begin="-0.9s" dur="1.8s"
-                                         values="1; 0"
-                                         calcMode="spline"
-                                         keyTimes="0; 1"
-                                         keySplines="0.3, 0.61, 0.355, 1"
-                                         repeatCount="indefinite" />
+                                            begin="-0.9s" dur="1.8s"
+                                            values="1; 0"
+                                            calcMode="spline"
+                                            keyTimes="0; 1"
+                                            keySplines="0.3, 0.61, 0.355, 1"
+                                            repeatCount="indefinite" />
                             </circle>
                         </g>
                     </svg>
-                </h3></template>
-            <template v-if="finished"><h3> Ainda não há nenhum pedido por aqui ...</h3></template>
+                </h3>
+            </template>
+            <template v-if="finished"><h3> Ainda não há nenhum pedido por aqui...</h3></template>
         </div>
 
-        <table  v-else>
-            <thead>
-            <tr>
-                <td width="10px"></td>
-                <td colspan="6">
-                    <a href="javascript;" class="btn comprar-hard" @click.prevent="addManyToCart()"> Adicionar ao Carrinho </a>
+        <div v-else class="table-pedidos">
+            <table>
+                <thead>
+                    <tr class="action-line">
+                        <td colspan="7">
+                            <span>SELECIONADOS:</span>
+                            <a href="javascript;" class="btn comprar-hard" @click.prevent="addManyToCart()"> Adicionar ao Carrinho </a>
+                            <a href="javascript;" class="btn melhorenvio" @click.prevent="openMultiplePaymentSelector()"> Pagar </a>
+                            <a href="javascript;" class="btn imprimir" @click.prevent="PrintMultiple()"> Imprimir </a>
+                        </td>
+                    </tr>
 
-                    <a href="javascript;" class="btn melhorenvio" @click.prevent="openMultiplePaymentSelector()"> Pagar </a>
+                    <tr class="header-line">
+                        <th width="10px"><input type="checkbox" @click="selectall" v-model="selectallatt"></th>
+                        <th width="50px"><span>Pedido</span></th>
+                        <th width="50px"><span>Data</span></th>
+                        <th width="300px"><span>Destinatário</span></th>
+                        <th width="200px"><span>Transportadora</span></th>
+                        <th><span>Dados adicionais</span></th>
+                        <th width="250px"><span>Opções</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(pedido, i) in pedidos_page" v-if="updated || !updated">
+                        <td>
+                            <input type="checkbox" v-model="pedidos_checked[i]" :value="pedido">
+                        </td>
+                        <td>
+                            {{pedido.id}}
+                        </td>
+                        <td>
+                            {{pedido.date_paid}}
+                        </td>
+                        <td>
+                            <ul>
+                                <li><strong>{{pedido.shipping.first_name}} {{pedido.shipping.last_name}} </strong></li>
+                                <li>{{pedido.shipping.address_1}} {{pedido.shipping.address_2}} - {{pedido.shipping.postcode}}</li>
+                                <li>{{pedido.shipping.neighborhood}} - {{pedido.shipping.city}}/{{pedido.shipping.state}}</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <span v-if="pedido.bought_tracking"  v-for="cotacao in pedido.cotacoes"><template v-if="(cotacao.id == pedido.bought_tracking)">{{cotacao.company.name}} {{cotacao.name}} |  {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</template></span>
 
-                    <a href="javascript;" class="btn imprimir" @click.prevent="PrintMultiple()"> Imprimir </a>
-                </td>
-            </tr>
-            <tr><th width="10px"><input type="checkbox" @click="selectall" v-model="selectallatt"></th>
-                <th width="50px">Pedido</th>
-                <th width="50px">Data</th>
-                <th width="300px">Destinatário</th>
-                <th width="200px">Transportadora</th>
-                <th>Dados adicionais</th>
-                <th width="250px">Opções</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(pedido,i) in pedidos_page" v-if="updated || !updated">
+                            <select class="select" v-model="selected_shipment[i]" v-if="!pedido.bought_tracking">
+                                <option v-for="cotacao in pedido.cotacoes"
+                                        v-if="(! cotacao.error )"
+                                        :class="{'selected': Array.isArray(pedido.shipping_lines) && pedido.shipping_lines[0].method_id == 'wpmelhorenvio_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}" :value="cotacao.id"
+                                >
+                                    {{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}
+                                </option>
+                            </select>
+                        </td>
+                        <td>
+                            <template v-if="!pedido.bought_tracking">
+                                <label>
+                                    <strong>Chave-NF:</strong>
+                                    <input v-model="pedidos_chave_nf[i]">
+                                </label>
+                                <label>
+                                    <strong>NF:</strong>
+                                    <input v-model="pedidos_nf[i]">
+                                </label>
+                                <label v-if="company.document == '' || company.document == null">
+                                    <strong>CNPJ:</strong>
+                                    <input v-model="pedidos_cnpj[i]">
+                                </label>
+                                <label v-if="company.state_register == '' || company.state_register == null">
+                                    <strong>IE:</strong>
+                                    <input v-model="pedidos_ie[i]">
+                                </label>
+                            </template>
+                            <template v-else><p>--</p></template>
+                        </td>
+                        <td>
+                            <template v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed' && pedido.status != 'waiting'">
+                                <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Adicionar ao carrinho </a>
+                            </template>
+                            <template v-if="pedido.status == 'cart'">
+                                <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
+                                <a href="javascript;" class="btn cancelar" @click.prevent="removeFromCart(i,pedido.tracking_code)" > Remover </a>
+                            </template>
+                            <template v-if="pedido.status == 'paid'">
+                                <a href="javascript;" class="btn imprimir" @click.prevent="printTicket(pedido.tracking_code)"> Imprimir </a>
+                                <a href="javascript;" class="btn cancelar" @click.prevent="openCancelTicketConfirmer(pedido.tracking_code)" > Cancelar </a>
+                            </template>
+                            <template v-if="pedido.status == 'waiting'">
+                                <a href="javascript;" class="btn cancelar" @click.prevent="deleteTracking([pedido.tracking_code])" > Cancelar Pagamento </a>
+                            </template>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="action-line">
+                        <td colspan="7">
+                            <span>SELECIONADOS: </span>
+                            <a href="javascript;" class="btn comprar-hard" @click.prevent="addManyToCart()"> Adicionar ao Carrinho </a>
+                            <a href="javascript;" class="btn melhorenvio"  @click.prevent="openMultiplePaymentSelector()"> Pagar </a>
+                            <a href="javascript;" class="btn imprimir" @click.prevent="PrintMultiple()"> Imprimir </a>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
 
-                <td><input type="checkbox" v-model="pedidos_checked[i]" :value="pedido"></td>
-                <td>{{pedido.id}}
-                </td>
-                <td>{{pedido.date_created}}23/09/2017 </td>
-                <td>
-                    <ul>
-                        <li><strong>{{pedido.shipping.first_name}} {{pedido.shipping.last_name}} </strong></li>
-                        <li>{{pedido.shipping.address_1}} {{pedido.shipping.address_2}} - {{pedido.shipping.postcode}}</li>
-                        <li>{{pedido.shipping.neighborhood}} - {{pedido.shipping.city}}/{{pedido.shipping.state}}</li>
-                    </ul>
-                </td>
-                <td>
-                    <span v-if="pedido.bought_tracking"  v-for="cotacao in pedido.cotacoes"><template v-if="(cotacao.id == pedido.bought_tracking)">{{cotacao.company.name}} {{cotacao.name}} |  {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</template></span>
-
-                    <select class="select" v-model="selected_shipment[i]" v-if="!pedido.bought_tracking">
-                        <option v-for="cotacao in pedido.cotacoes"
-                                v-if="(! cotacao.error )"
-                                :class="{'selected': Array.isArray(pedido.shipping_lines) && pedido.shipping_lines[0].method_id == 'wpmelhorenvio_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}" :value="cotacao.id"
-                        >{{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</option>
-                    </select>
-                </td>
-                <td>
-                    <template v-if="!pedido.bought_tracking">
-
-                        <strong>Chave-NF :</strong> <input v-model="pedidos_chave_nf[i]">
-                        <strong> NF :</strong> <input v-model="pedidos_nf[i]"><br>
-                        <template v-if="company.document == '' || company.document == null"><strong>CNPJ:</strong> <input v-model="pedidos_cnpj[i]"><br></template>
-                        <template v-if="company.state_register   == '' || company.state_register == null "><strong>IE:</strong><br> <input v-model="pedidos_ie[i]"><br></template>
-                    </template>
-                    <template v-if="pedido.bought_tracking" ><p>--</p></template>
-                </td>
-                <td>
-                    <template  v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed' && pedido.status != 'waiting'">
-                        <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Adicionar ao carrinho </a>
-                    </template>
-                    <template v-if="pedido.status == 'cart'">
-                        <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
-                        <a href="javascript;" class="btn cancelar" @click.prevent="removeFromCart(i,pedido.tracking_code)" > Remover </a>
-                    </template>
-                    <!--                    <a href="javascript;" class="btn comprar"> Comprar </a>-->
-                    <!--                    <a href="javascript;" class="btn melhorenvio" @click.prevent="payTicket(tracking_codes[pedido.id])"> Pagar </a>-->
-                    <template v-if="pedido.status == 'paid'">
-                        <a href="javascript;" class="btn imprimir" @click.prevent="printTicket(pedido.tracking_code)"> Imprimir </a>
-                        <a href="javascript;" class="btn cancelar" @click.prevent="openCancelTicketConfirmer(pedido.tracking_code)" > Cancelar </a>
-                    </template>
-
-                    <template v-if="pedido.status == 'waiting'">
-                        <a href="javascript;" class="btn cancelar" @click.prevent="deleteTracking([pedido.tracking_code])" > Cancelar Pagamento </a>
-                    </template>
-
-                    <!--                    <a href="javascript;" class="btn melhorrastreio"> Rastreio </a>-->
-                </td>
-            </tr>
-            </tbody>
-            <tfoot>
-            <tr>
-                <td></td>
-                <td colspan="6">
-                    <a href="javascript;" class="btn comprar-hard" @click.prevent="addManyToCart()"> Adicionar ao Carrinho </a>
-
-                    <a href="javascript;" class="btn melhorenvio"  @click.prevent="openMultiplePaymentSelector()"> Pagar </a>
-
-                    <a href="javascript;" class="btn imprimir" @click.prevent="PrintMultiple()"> Imprimir </a>
-                    <!--                    <a href="javascript;" class="btn cancelar"> Imprimir </a>-->
-                </td>
-            </tr>
-            </tfoot>
-        </table>
         <div class="wpme_pagination_wrapper">
             <ul class="wpme_pagination" >
                 <li v-for="i in Math.ceil(total/perpage)" v-show="total > perpage" :class="{'active': i == page}">
