@@ -1,0 +1,443 @@
+.wpme_nothing
+  text-align center
+  margin auto
+
+.content
+  display none
+
+.loader
+  width 100%
+        text-align:center
+  position absolute
+  svg
+    display inline-block
+    margin auto
+    top 50%
+    left 50%
+    position fixed
+
+.mask
+  width 100vw
+  height 100vh
+  background-color rgba(20,20,20,.6)
+  position fixed
+  top 0
+  left 0
+  display flex
+
+.wpme_loader
+  width 100vw
+  height 100vh
+  background-color rgba(20,20,20,.75)
+  position fixed
+  top 0
+  left 0
+  display flex
+  svg
+    display inline-block
+    margin auto
+    top 50%
+    left 50%
+    position fixed
+
+.modal
+  background-color rgba(250,250,255,.90)
+  max-width 80%
+  display block
+  width 800px
+  margin 0 -450px
+  left 50%
+  top 20%
+  height 290px
+  padding 20px
+  text-align center
+  position fixed
+  border-radius 10px
+  overflow hidden
+  h1
+    padding 15px
+  a
+    display inline-block
+    padding 15px
+    border-radius 8px
+    box-sizing border-box
+    border solid 2px rgba(50,180,250,0)
+    transition 300ms
+    margin 0 15px
+    width 200px
+    height 100px
+    &:hover
+      border-color rgba(50,180,250,1)
+      transition 300ms
+
+    &.btn
+      margin 30px 15px
+      border-radius 30px
+      height 50px
+      padding 15px
+      font-size 1.2rem
+      border solid 2px rgba(100,100,100,0.8)
+      color rgba(100,100,100,0.8)
+      &:hover
+        background-color rgba(100,100,100,0.8)
+        color rgba(255,255,255,.9)
+        border-color rgba(100,100,100,0.1)
+      &.fechar
+        float none
+      &.cancelar
+        border-radius 30px
+        height 50px
+        padding 15px
+        color rgba(159,80,100,1)
+        font-size 1.2rem
+        border-color rgba(159,80,100,1)
+        float none
+        &:hover
+          background-color rgba(159,80,100,1)
+          color rgba(250,250,250,.9)
+          border-color rgba(100,100,100,0.1)
+      &.pagar
+        color rgba(100,190,100,1)
+        border-color rgba(100,190,100,1)
+        float none
+        &:hover
+          color rgba(245,240,255,1)
+          background-color rgba(100,190,100,1)
+
+  .select
+    display flex
+    flex-wrap wrap
+    padding 15px
+    position relative
+    align-items center
+    width 750px
+  label
+    text-align center
+    margin auto
+    img
+      width 120px
+      margin auto
+      vertical-align middle
+
+.pgsaldo
+  height 60px
+  display inline-block
+  text-decoration none
+  h4
+    padding 0
+    font-size 1rem
+    margin 0
+  p
+    strong
+      color rgba(50,205,50,1)
+
+.modal .close-modal
+.modal .close-modal:focus
+  color rgba(100,100,100,.8)
+  position absolute
+  font-size 3.100rem
+  text-decoration none
+  border none !important
+  width 20px
+  height 10px
+  top 0
+  right 10px
+  box-shadow none
+
+table
+  width 100%
+  border-collapse collapse
+  margin 10px 0
+  ul
+    padding 0
+    margin 5px
+    li
+      padding 0px
+      margin 0px
+      line-height 15px
+
+  tbody
+    tr
+      border-top 1px solid $ghost
+      &:first-child
+        border none
+
+  tr
+    width 100%
+    padding 0
+
+  th
+    border none 1px rgba(90,90,200,.12)
+    margin 0
+    padding 10px 20px
+
+  td
+    padding 10px
+    text-align center
+    margin 0
+    .btn
+      float none
+
+    label
+      column(1/2, $cycle: 2)
+      text-align left
+      margin-bottom 5px
+      strong
+        display block
+      input
+        border-radius 3px
+        border solid 1px rgba(210,210,210,.9)
+        line-height 20px
+        width 100%
+
+.btn
+  display inline-block
+  padding 8px 18px
+  margin 13px 4px
+  text-decoration none
+  border solid 1px rgba(130,130,220,.9)
+  border-radius 25px
+  color rgba(130,120,220,.9)
+  transition 200ms
+  float left
+  &:hover
+    background-color rgba(130,130,220,.9)
+    color rgba(255,255,255,.99)
+  &.comprar
+    border-color rgba(80,190,130,1)
+    color rgba(110,190,130,1)
+    &:hover
+      background-color rgba(80,200,130,1)
+      color rgba(255,255,255,.9)
+  &.comprar-hard
+    border-color rgba(50,180,100,1)
+    color rgba(110,190,130,1)
+    &:hover
+      background-color rgba(50,180,100,1)
+      color rgba(255,255,255,.9)
+  &.cancelar
+    border-color rgba(160,10,50,.6)
+    color rgba(160,10,40,.6)
+    &:hover
+      background-color rgba(150,10,50,.6)
+      border-color rgba(160,10,50,.1)
+      color rgba(255,255,255,.9)
+  &.melhorenvio
+    border-color rgba(30,140,160,1)
+    color rgba(30,140,160,.9)
+    &:hover
+      background-color rgba(30,140,160,1)
+      color rgba(255,255,255,.9)
+  &.melhorrastreio
+    border-color rgba(234,108,01,.8)
+    color rgba(234,108,01,.8)
+    &:hover
+      background-color rgba(234,108,01,.8)
+      color rgba(255,255,255,.9)
+
+select
+  box-shadow none
+  height 35px
+  line-height 40px
+  border-radius 3px
+  padding 15px 35px
+  font-size .940em
+
+.selected
+  background-color rgba(40,230,150,0.3)
+
+.wpme_pagination
+  display inline
+  margin auto
+  width inherit
+  text-align center
+  li
+    display inline-block
+    text-align center
+    padding 0 0 0 -1px
+    a
+      border solid 1px rgba(190,190,190,.8)
+      box-sizing border-box
+      display inline-block
+      width 35px
+      padding 7px 0
+      background-color #fff
+      text-decoration none
+      color rgba(30,120,200,1)
+      transition 200ms
+    &.active
+      a
+        background-color rgba(30,160,230,.8)
+        color rgba(255,255,255,.95)
+    .ret
+      margin 5px
+      padding 3px
+      display inline-block
+
+.wpme_pagination_wrapper
+  display block
+  margin 30px auto
+  text-align center
+  width 100%
+
+.circle
+  display inline-block
+  vertical-align middle
+  size 10px
+  margin 0 5px
+  border solid 1px rgba(240,50,50,.95)
+  border-radius 50%
+  &.true
+    background-color rgba(50,180,40,1)
+    border solid 1px rgba(40,170,40,.95)
+
+.wpme_optionals
+  text-align left
+  border-radius 5px
+  border solid 1px #cccccc
+  padding 10px
+  width 300px
+  box-sizing border-box
+  min-width 300px
+  margin 15px 7px
+  background #fefeff
+  height 160px
+  ul
+    margin 0
+
+.data-client
+  display flex
+  &__item
+    > div
+      box-sizing border-box
+      display inline-block
+      text-align left
+      border-radius 5px
+      border solid 1px #cccccc
+      padding 10px 15px
+      max-width 400px
+      min-width 300px
+      margin 0 7px 0 0
+      height 160px
+      background #fefeff
+
+    &.-profile
+      img
+        float left 
+        margin-right 20px
+        border-radius 50%
+      .about
+        padding 0 10px
+  p
+    margin-bottom 5px
+    line-height 1.1em
+  h5
+    font-size rem(14px)
+    margin-bottom 5px
+  h2
+    margin 0 0 20px 0
+  ul
+    margin 0
+    li
+      margin-bottom 0
+      span
+        display inline-block
+        vertical-align middle
+
+.table-pedidos
+  margin 20px 20px 20px 0
+
+.header-line
+  th
+    padding 20px 0 10px
+    span
+      display block
+      border-right 1px solid $paleSky
+      text-align center
+      padding 0 20px
+      line-height 1em
+    &:last-child
+      span
+        border none
+
+.action-line
+  td
+    text-align left
+    border-top 1px solid $ghost
+    border-bottom 1px solid $ghost
+  span
+  a
+    display inline-block
+    vertical-align middle
+    margin-right 5px
+    float none
+
+.link-box
+  margin 10px 0
+
+.wpme_message
+  position fixed
+  text-align center
+  top 10%
+  left 50%
+  border-radius 5px
+  display inline-block
+  min-height 200px
+  width 500px
+  margin 0 -250px
+  max-width 80%
+  background-color rgba(244,255,255,.95)
+  line-height 1.2rem
+
+.wpme_message_header
+  font-size 1.65rem
+  line-height 1.8rem
+  padding 23px
+
+.wpme_success
+  color rgba(80,199,100,1)
+
+.wpme_error
+  color rgba(199,80,100,1)
+
+.wpme_message_body
+  vertical-align middle
+  padding 10px 15px 10px
+
+.wpme_message_comprar
+  float left
+  margin 10px
+  a
+    text-decoration none
+    border-radius 20px
+    font-size 1.05rem
+    display inline-block
+    padding 10px 24px
+    border solid 1px rgb(100,150,250)
+    color rgb(100,150,250)
+    bottom 10px
+    &:hover
+      background-color rgb(100,150,250)
+      color rgb(250,250,250)
+
+.wpme_message_action
+  float left
+  margin 10px
+  a
+    text-decoration none
+    border-radius 20px
+    font-size 1.05rem
+    display inline-block
+    padding 10px 24px
+    border solid 1px rgb(100,110,150)
+    color rgb(100,110,150)
+    bottom 10px
+    &:hover
+      background-color rgb(100,110,150)
+      color rgb(250,250,250)
+
+.wpme_wrapper_center
+  display inline-block
+  margin auto
+  width fit-content
+  text-align center
