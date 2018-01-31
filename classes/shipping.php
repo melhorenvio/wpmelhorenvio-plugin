@@ -13,7 +13,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                     $this->id = 'wpmelhorenvio_melhorenvioshipping';
                     $this->method_title = __("Melhor Envio","wpmelhorenvio_melhorenvioshipping");
                     $this->method_description = __("Várias transportadoras, descontos, coletas e rastreamentos","wpmelhorenvio_melhorenvioshipping");
-
+                    $this->supports = array('instance_shipping');
                     $this->wpmelhorenvio_init();
 
                     $this->enabled = isset( $this->settings['enabled'] ) ? $this->settings['enabled'] : 'yes';
