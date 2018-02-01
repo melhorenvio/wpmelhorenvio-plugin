@@ -23,6 +23,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 {
                     include_once plugin_dir_path(__FILE__).'quotation.php';
                     $rates = wpmelhorenvio_getCotacao($package);
+                    $rates = is_array($rates)? $rates : array($rates);
                     $optionals = wpmelhorenvio_getOptionals();
                     if($optionals->CF){
                         foreach($rates as $rating){
