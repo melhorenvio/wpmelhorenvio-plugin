@@ -252,7 +252,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <a href="javascript;" @click.prevent="toogleConfirmer" class="close-modal"> &times </a>
             <h1 class="wpme_error">Você tem certeza que deseja cancelar?</h1>
             <p>Ao clicar em "Quero Cancelar" a etiqueta se torna inutilizavel.</p>
-            <a href="javascript;" class="btn cancelar" @click.prevent="cancelTicket()">Quero cancelar</a>  <a href="javascript;" @click.prevent="toogleConfirmer" class="btn">Fechar</a>
+            <a href="javascript;" class="btn cancelar" @click.prevent="cancelTicket()">Quero cancelar</a>  <a href="javascript;" @click.prevent="toogleConfirmer" class="btn fechar">Fechar</a>
 
         </div>
 
