@@ -114,9 +114,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <tr class="action-line">
                         <td colspan="7">
                             <span>SELECIONADOS:</span>
-                            <a href="javascript;" class="btn comprar-hard" @click.prevent="addManyToCart()"> Adicionar ao Carrinho </a>
-                            <a href="javascript;" class="btn melhorenvio" @click.prevent="openMultiplePaymentSelector()"> Pagar </a>
-                            <a href="javascript;" class="btn imprimir" @click.prevent="PrintMultiple()"> Imprimir </a>
+                            <a href="javascript:;" class="btn comprar-hard" @click.prevent="addManyToCart()"> Adicionar ao Carrinho </a>
+                            <a href="javascript:;" class="btn melhorenvio" @click.prevent="openMultiplePaymentSelector()"> Pagar </a>
+                            <a href="javascript:;" class="btn imprimir" @click.prevent="PrintMultiple()"> Imprimir </a>
                         </td>
                     </tr>
 
@@ -183,18 +183,18 @@ if ( ! defined( 'ABSPATH' ) ) {
                         </td>
                         <td>
                             <template v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed' && pedido.status != 'waiting'">
-                                <a href="javascript;" class="btn comprar" @click.prevent="addToCart(i)" > Adicionar ao carrinho </a>
+                                <a href="javascript:;" class="btn comprar" @click.prevent="addToCart(i)" > Adicionar ao carrinho </a>
                             </template>
                             <template v-if="pedido.status == 'cart'">
-                                <a href="javascript;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
-                                <a href="javascript;" class="btn cancelar" @click.prevent="removeFromCart(i,pedido.tracking_code)" > Remover </a>
+                                <a href="javascript:;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
+                                <a href="javascript:;" class="btn cancelar" @click.prevent="removeFromCart(i,pedido.tracking_code)" > Remover </a>
                             </template>
                             <template v-if="pedido.status == 'paid'">
-                                <a href="javascript;" class="btn imprimir" @click.prevent="printTicket(pedido.tracking_code)"> Imprimir </a>
-                                <a href="javascript;" class="btn cancelar" @click.prevent="openCancelTicketConfirmer(pedido.tracking_code)" > Cancelar </a>
+                                <a href="javascript:;" class="btn imprimir" @click.prevent="printTicket(pedido.tracking_code)"> Imprimir </a>
+                                <a href="javascript:;" class="btn cancelar" @click.prevent="openCancelTicketConfirmer(pedido.tracking_code)" > Cancelar </a>
                             </template>
                             <template v-if="pedido.status == 'waiting'">
-                                <a href="javascript;" class="btn cancelar" @click.prevent="deleteTracking([pedido.tracking_code])" > Cancelar Pagamento </a>
+                                <a href="javascript:;" class="btn cancelar" @click.prevent="deleteTracking([pedido.tracking_code])" > Cancelar Pagamento </a>
                             </template>
                         </td>
                     </tr>
@@ -203,9 +203,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                     <tr class="action-line">
                         <td colspan="7">
                             <span>SELECIONADOS: </span>
-                            <a href="javascript;" class="btn comprar-hard" @click.prevent="addManyToCart()"> Adicionar ao Carrinho </a>
-                            <a href="javascript;" class="btn melhorenvio"  @click.prevent="openMultiplePaymentSelector()"> Pagar </a>
-                            <a href="javascript;" class="btn imprimir" @click.prevent="PrintMultiple()"> Imprimir </a>
+                            <a href="javascript:;" class="btn comprar-hard" @click.prevent="addManyToCart()"> Adicionar ao Carrinho </a>
+                            <a href="javascript:;" class="btn melhorenvio"  @click.prevent="openMultiplePaymentSelector()"> Pagar </a>
+                            <a href="javascript:;" class="btn imprimir" @click.prevent="PrintMultiple()"> Imprimir </a>
                         </td>
                     </tr>
                 </tfoot>
@@ -215,7 +215,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div class="wpme_pagination_wrapper">
             <ul class="wpme_pagination" >
                 <li v-for="i in Math.ceil(total/perpage)" v-show="total > perpage" :class="{'active': i == page}">
-                    <a href="javascript;"  @click.prevent="pagego(i)"  v-if="i < 2 && i != page || i < page+2 && i > page || i > page-2 && i < page  ||  i > (total / perpage)-1 && i != page || i == page" >{{i}}</a>
+                    <a href="javascript:;"  @click.prevent="pagego(i)"  v-if="i < 2 && i != page || i < page+2 && i > page || i > page-2 && i < page  ||  i > (total / perpage)-1 && i != page || i == page" >{{i}}</a>
                     <span class="ret"  v-show="(i == page-2 | i == page+1) && (Math.ceil(total / perpage) > 4) && Math.ceil(total /perpage) > i+1" > ...  </span>
                 </li>
             </ul>
@@ -223,7 +223,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         <div class="mask" v-show="show_mask" @click.prevent="toogleModal">
         </div>
         <div class="modal" v-show="show_modal">
-            <a href="javascript;" @click.prevent="toogleModal()" class="close-modal"> &times </a>
+            <a href="javascript:;" @click.prevent="toogleModal()" class="close-modal"> &times </a>
             <h1 >Escolha seu método de pagamento</h1>
             <div class="select">
                 <label>
@@ -244,15 +244,15 @@ if ( ! defined( 'ABSPATH' ) ) {
                     </div>
                 </label>
             </div>
-            <a href="javascript;" class="btn pagar" @click.prevent="payTicket(selected_payment_method)"> Pagar </a>
+            <a href="javascript:;" class="btn pagar" @click.prevent="payTicket(selected_payment_method)"> Pagar </a>
         </div>
         <div class="mask" v-show="show_confirm_mask" @click.prevent="toogleConfirmer">
         </div>
         <div class="modal" v-show="show_confirm_modal">
-            <a href="javascript;" @click.prevent="toogleConfirmer" class="close-modal"> &times </a>
+            <a href="javascript:;" @click.prevent="toogleConfirmer" class="close-modal"> &times </a>
             <h1 class="wpme_error">Você tem certeza que deseja cancelar?</h1>
             <p>Ao clicar em "Quero Cancelar" a etiqueta se torna inutilizavel.</p>
-            <a href="javascript;" class="btn cancelar" @click.prevent="cancelTicket()">Quero cancelar</a>  <a href="javascript;" @click.prevent="toogleConfirmer" class="btn fechar">Fechar</a>
+            <a href="javascript:;" class="btn cancelar" @click.prevent="cancelTicket()">Quero cancelar</a>  <a href="javascript:;" @click.prevent="toogleConfirmer" class="btn fechar">Fechar</a>
 
         </div>
 
@@ -263,9 +263,9 @@ if ( ! defined( 'ABSPATH' ) ) {
             <div class="wpme_message_body" v-html="message.message"   ></div>
             <div class="wpme_wrapper_center">
                 <template v-if="payment_tracking_codes.length > 0 ">
-                    <div class="wpme_message_comprar"><a href="javascript;" @click.prevent="goDirectPay">Pagar</a></div>
+                    <div class="wpme_message_comprar"><a href="javascript:;" @click.prevent="goDirectPay">Pagar</a></div>
                 </template>
-                <div class="wpme_message_action"><a href="javascript;" @click.prevent="toogleMessage">Fechar</a></div>
+                <div class="wpme_message_action"><a href="javascript:;" @click.prevent="toogleMessage">Fechar</a></div>
             </div>
         </div>
 
@@ -662,7 +662,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                         vm.message.type= "error";
                         vm.message.show_message = true;
                     }
-                });
+                },false);
             },
 
 
