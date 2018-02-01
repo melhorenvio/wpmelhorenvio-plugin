@@ -23,7 +23,7 @@
                         ?>
                         <div class="notice notice-error is-dismissible">
                             <h2>Token Inválido</h2>
-                            <p>Favor utilizar um Token Válido, siga o <a href="tutorial">tutorial</a> para descobrir como achar o seu token.</p>
+                            <p>Favor utilizar um token de acesso válido. Crie seu token de acesso através do <a href="https://www.melhorenvio.com.br/painel/gerenciar/tokens">Painel</a> no Melhor Envio.</p>
                         </div>
                         <?php
                     }
