@@ -54,9 +54,9 @@ function wpmelhorenvio_getPackage($package){
         $total += $valor ;
     }
     $side   =  ceil(pow($volume,1/3));
-    $pacote->width  = $side >= 12  ? $side : 12;
-    $pacote->height = $side >= 4   ? $side : 4;
-    $pacote->length = $side >= 17  ? $side : 17;
+    $pacote->width  = $side >= 12 || $side == null ? $side : 12;
+    $pacote->height = $side >= 4  || $side == null ? $side : 4;
+    $pacote->length = $side >= 17 || $side == null ? $side : 17;
     $pacote->weight = $weight;
     $pacote->value = $valor;
     return $pacote;
