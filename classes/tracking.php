@@ -1,5 +1,5 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) {
+if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
@@ -10,34 +10,39 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Time: 10:30
  */
 
-function wpmelhorenvio_data_getTracking($id){
+function wpmelhorenvio_data_getTracking($id)
+{
     global $wpdb;
-    $sql = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}tracking_codes_wpme where order_id = '%d'",$id);
+    $sql = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}tracking_codes_wpme where order_id = '%d'", $id);
     return $wpdb->get_results($sql);
 }
 
-function wpmelhorenvio_data_getAllTrackings(){
+function wpmelhorenvio_data_getAllTrackings()
+{
     global $wpdb;
 
-    $sql = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}tracking_codes_wpme limit 3000",array());
+    $sql = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}tracking_codes_wpme limit 3000", array());
 
     return $wpdb->get_results($sql);
 }
 
-function wpmelhorenvio_data_insertTracking($id,$tracking,$service){
+function wpmelhorenvio_data_insertTracking($id, $tracking, $service)
+{
     global $wpdb;
-    $sql = $wpdb->prepare("INSERT INTO {$wpdb->prefix}tracking_codes_wpme (order_id,tracking_id,service_id,status) VALUES ('%d','%s','%s','cart')",$id,$tracking,$service);
+    $sql = $wpdb->prepare("INSERT INTO {$wpdb->prefix}tracking_codes_wpme (order_id,tracking_id,service_id,status) VALUES ('%d','%s','%s','cart')", $id, $tracking, $service);
     return $wpdb->query($sql);
 }
 
-function wpmelhorenvio_data_deleteTracking($tracking){
+function wpmelhorenvio_data_deleteTracking($tracking)
+{
     global $wpdb;
 //    $sql = "DELETE FROM {$wpdb->prefix}tracking_codes_wpme WHERE tracking_id = '{$tracking}'";
-    return $wpdb->delete($wpdb->prefix.'tracking_codes_wpme' , array('tracking_id' => $tracking));
+    return $wpdb->delete($wpdb->prefix . 'tracking_codes_wpme', array('tracking_id' => $tracking));
 }
 
-function wpmelhorenvio_data_updateTracking($tracking,$valor){
+function wpmelhorenvio_data_updateTracking($tracking, $valor)
+{
     global $wpdb;
-    $sql = $wpdb->prepare("UPDATE {$wpdb->prefix}tracking_codes_wpme SET status='%s' WHERE tracking_id = '%s'",$valor,$tracking);
+    $sql = $wpdb->prepare("UPDATE {$wpdb->prefix}tracking_codes_wpme SET status='%s' WHERE tracking_id = '%s'", $valor, $tracking);
     return $wpdb->query($sql);
 }
