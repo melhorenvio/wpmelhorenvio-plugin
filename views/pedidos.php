@@ -149,16 +149,21 @@ if ( ! defined( 'ABSPATH' ) ) {
                             </ul>
                         </td>
                         <td>
-                            <span v-if="pedido.bought_tracking"  v-for="cotacao in pedido.cotacoes"><template v-if="(cotacao.id == pedido.bought_tracking)">{{cotacao.company.name}} {{cotacao.name}} |  {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</template></span>
+                            <template v-if="pedido.cotacoes.length > 0">
+                                <span v-if="pedido.bought_tracking"  v-for="cotacao in pedido.cotacoes"><template v-if="(cotacao.id == pedido.bought_tracking)">{{cotacao.company.name}} {{cotacao.name}} |  {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}</template></span>
 
-                            <select class="select" v-model="selected_shipment[i]" v-if="!pedido.bought_tracking">
-                                <option v-for="cotacao in pedido.cotacoes"
-                                        v-if="(! cotacao.error )"
-                                        :class="{'selected': Array.isArray(pedido.shipping_lines) && pedido.shipping_lines[0].method_id == 'wpmelhorenvio_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}" :value="cotacao.id"
-                                >
-                                    {{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}
-                                </option>
-                            </select>
+                                <select class="select" v-model="selected_shipment[i]" v-if="!pedido.bought_tracking">
+                                    <option v-for="cotacao in pedido.cotacoes"
+                                            v-if="(! cotacao.error )"
+                                            :class="{'selected': Array.isArray(pedido.shipping_lines) && pedido.shipping_lines[0].method_id == 'wpmelhorenvio_'.concat(cotacao.company.name).concat('_').concat(cotacao.name)}" :value="cotacao.id"
+                                    >
+                                        {{cotacao.company.name}} {{cotacao.name}} | {{cotacao.delivery_time}}  dia<template v-if="cotacao.delivery_time > 1">s</template> | {{cotacao.currency}} {{cotacao.price}}
+                                    </option>
+                                </select>
+                            </template>
+                            <template v-else>
+                                <a href="javascript:;" class="btn comprar" @click.prevent="getCotations(pedido.id,i)">Calcular Cotação</a>
+                            </template>
                         </td>
                         <td>
                             <template v-if="!pedido.bought_tracking">
@@ -182,19 +187,24 @@ if ( ! defined( 'ABSPATH' ) ) {
                             <template v-else><p>--</p></template>
                         </td>
                         <td>
-                            <template v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed' && pedido.status != 'waiting'">
-                                <a href="javascript:;" class="btn comprar" @click.prevent="addToCart(i)" > Adicionar ao carrinho </a>
+                            <template v-if="pedido.cotacoes.length > 0">
+                                <template v-if="pedido.status != 'cart' && pedido.status != 'paid' && pedido.status != 'printed' && pedido.status != 'waiting'">
+                                    <a href="javascript:;" class="btn comprar" @click.prevent="addToCart(i)" > Adicionar ao carrinho </a>
+                                </template>
+                                <template v-if="pedido.status == 'cart'">
+                                    <a href="javascript:;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
+                                    <a href="javascript:;" class="btn cancelar" @click.prevent="removeFromCart(i,pedido.tracking_code)" > Remover </a>
+                                </template>
+                                <template v-if="pedido.status == 'paid'">
+                                    <a href="javascript:;" class="btn imprimir" @click.prevent="printTicket(pedido.tracking_code)"> Imprimir </a>
+                                    <a href="javascript:;" class="btn cancelar" @click.prevent="openCancelTicketConfirmer(pedido.tracking_code)" > Cancelar </a>
+                                </template>
+                                <template v-if="pedido.status == 'waiting'">
+                                    <a href="javascript:;" class="btn cancelar" @click.prevent="deleteTracking([pedido.tracking_code])" > Cancelar Pagamento </a>
+                                </template>
                             </template>
-                            <template v-if="pedido.status == 'cart'">
-                                <a href="javascript:;" class="btn melhorenvio" @click.prevent="openSinglePaymentSelector(pedido.tracking_code)"> Pagar </a>
-                                <a href="javascript:;" class="btn cancelar" @click.prevent="removeFromCart(i,pedido.tracking_code)" > Remover </a>
-                            </template>
-                            <template v-if="pedido.status == 'paid'">
-                                <a href="javascript:;" class="btn imprimir" @click.prevent="printTicket(pedido.tracking_code)"> Imprimir </a>
-                                <a href="javascript:;" class="btn cancelar" @click.prevent="openCancelTicketConfirmer(pedido.tracking_code)" > Cancelar </a>
-                            </template>
-                            <template v-if="pedido.status == 'waiting'">
-                                <a href="javascript:;" class="btn cancelar" @click.prevent="deleteTracking([pedido.tracking_code])" > Cancelar Pagamento </a>
+                            <template v-else>
+                                <a href="javascript:;" @click.prevent="getCotations(pedido.id,i)" class="btn comprar">Calcular Cotação</a>
                             </template>
                         </td>
                     </tr>
@@ -768,6 +778,21 @@ if ( ! defined( 'ABSPATH' ) ) {
                         }
                     }
                 });
+            },
+
+            getCotations: function(id, ind){
+                data = {
+                    action: 'wpmelhorenvio_ajax_getFinalCotacao',
+                    id:id,
+                    security: this.security_read,
+                }
+
+                vm = this;
+                jQuery.post(ajaxurl, data, function(response) {
+                    resposta = JSON.parse(response);
+                    vm.pedidos_page[ind].cotacoes = resposta;
+                });
+
             },
 
             updateTracking: function(tracking_code,status){

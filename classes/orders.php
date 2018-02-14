@@ -97,7 +97,7 @@ function wpmelhorenvio_getJsonOrders(){
             );
             $data['shipping_lines'][] = $shipping_line;
         }
-        $data['cotacoes'] = json_decode(wpmelhorenvio_getCustomerCotacaoAPI($data));
+        $data['cotacoes'] = [];// json_decode(wpmelhorenvio_getCustomerCotacaoAPI($data));
         array_push($datas, $data);
     }
     return json_encode($datas);
@@ -121,10 +121,97 @@ function wpmelhorenvio_buyShipment(){
 
 }
 
-function wpmelhorenvio_getFinalCotacao(){
-    $pedido_id = sanitize_key($_POST['pedido_id']);
+function wpmelhorenvio_getJsonOrder($pedido_id){
     $order = wc_get_order($pedido_id);
-    echo wpmelhorenvio_getCustomerCotacaoAPI($order);
+    $dp    = is_null( null ) ? wc_get_price_decimals() : 2 ;
+    $data = array(
+        'id'                         => $order->get_id(),
+        'number'                     => $order->get_order_number(),
+        'currency'                   => $order->get_currency(),
+        'price'                      => $order->get_total(),
+        'date_modified'              => wc_rest_prepare_date_response( $order->get_date_modified() ), // v1 API used UTC.
+        'customer_id'                => $order->get_customer_id(),
+        'customer_email'             => $order->get_billing_email(),
+        'customer_phone'             => $order->get_billing_phone(),
+        'customer_document'          => $order->billing_cpf,
+        'customer_company_document'  => $order->billing_cnpj,
+        'customer_state_register'    => $order->billing_ie,
+        'cotacoes'                   => array(),
+        'shipping'                   => array(),
+        'customer_note'              => $order->get_customer_note(),
+        'date_completed'             => wc_rest_prepare_date_response( $order->get_date_completed(), false ), // v1 API used local time.
+        'date_paid'                  => wc_rest_prepare_date_response( $order->get_date_paid(), false ), // v1 API used local time.
+        'cart_hash'                  => $order->get_cart_hash(),
+        'line_items'                 => array(),
+    );
+    // Add addresses.
+    $data['shipping'] = $order->get_address( 'shipping' );
+    // Add line items.
+    foreach ( $order->get_items() as $item_id => $item ) {
+        $product      = $order->get_product_from_item( $item );
+        $product_id   = 0;
+        $variation_id = 0;
+        $product_sku  = null;
+        // Check if the product exists.
+        if ( is_object( $product ) ) {
+            $product_id   = $item->get_product_id();
+            $variation_id = $item->get_variation_id();
+            $product_sku  = $product->get_sku();
+            $product_height = $product->get_height();
+            $product_width = $product->get_width();
+            $product_length = $product->get_length();
+            $product_weight = $product->get_weight();
+
+        }
+        $item_meta = array();
+        $hideprefix = 'true' === false ? null : '_';
+        foreach ( $item->get_formatted_meta_data( $hideprefix, true ) as $meta_key => $formatted_meta ) {
+            $item_meta[] = array(
+                'key'   => $formatted_meta->key,
+                'label' => $formatted_meta->display_key,
+                'value' => wc_clean( $formatted_meta->display_value ),
+            );
+        }
+        $line_item = array(
+            'id'           => $item_id,
+            'name'         => $item['name'],
+            'sku'          => $product_sku,
+            'product_id'   => (int) $product_id,
+            'height'       =>  max($product_height , 0),
+            'width'        =>  max($product_width,0),
+            'length'       =>  max($product_length,0),
+            'weight'       =>  max($product_weight,1),
+            'variation_id' => (int) $variation_id,
+            'quantity'     => wc_stock_amount( $item['qty'] ),
+            'tax_class'    => ! empty( $item['tax_class'] ) ? $item['tax_class'] : '',
+            'price'        => wc_format_decimal( $order->get_item_total( $item, false, false ), $dp ),
+        );
+
+    }
+    $data['line_items'][] = $line_item;
+
+    // Add shipping.
+    foreach ( $order->get_shipping_methods() as $shipping_item_id => $shipping_item ) {
+        $shipping_line = array(
+            'id'           => $shipping_item_id,
+            'method_title' => $shipping_item['name'],
+            'method_id'    => $shipping_item['method_id'],
+            'total'        => wc_format_decimal( $shipping_item['cost'], $dp ),
+            'total_tax'    => wc_format_decimal( '', $dp ),
+            'taxes'        => array(),
+        );
+        $data['shipping_lines'][] = $shipping_line;
+    }
+
+    return $data;
+}
+
+function wpmelhorenvio_getFinalCotacao(){
+    $pedido_id = sanitize_key($_POST['id']);
+    $data = wpmelhorenvio_getJsonOrder($pedido_id);
+
+//    var_dump($order);
+   echo wpmelhorenvio_getCustomerCotacaoAPI($data);
 }
 
 function wpmelhorenvio_getCustomerCotacaoAPI($order){
@@ -154,7 +241,7 @@ function wpmelhorenvio_getCustomerCotacaoAPI($order){
         ],
         'timeout'=>10);
     $response = $client->get("https://www.melhorenvio.com.br/api/v2/calculator",$params);
-    return is_array($response) ?  $response['body'] : [];
+    return is_array($response) ?  $response['body'] : [''];
 }
 
 function wpmelhorenvio_getPackageInternal($package){
@@ -499,12 +586,16 @@ function wpmelhorenvio_makeItemDeclaration(){
 }
 
 function wpmelhorenvio_updateStatusTracking(){
+
     $trackings = wpmelhorenvio_data_getAllTrackings();
-
     $update_request = array();
-
     foreach ($trackings as $tracking){
         array_push($update_request,$tracking->tracking_id);
+    }
+
+    if(count($update_request) < 1){
+        echo 'success';
+        die;
     }
     $object = new stdClass();
     $object->orders = $update_request;

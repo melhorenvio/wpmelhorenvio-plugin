@@ -19,7 +19,7 @@ function wpmelhorenvio_data_getTracking($id){
 function wpmelhorenvio_data_getAllTrackings(){
     global $wpdb;
 
-    $sql = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}tracking_codes_wpme limit 3000");
+    $sql = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}tracking_codes_wpme limit 3000",array());
 
     return $wpdb->get_results($sql);
 }

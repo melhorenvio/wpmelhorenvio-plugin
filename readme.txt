@@ -1,8 +1,8 @@
 === Melhor Envio - Cotação ===
 Contributors: Vitor Soares
-Requires at least: 4.0
-Requires PHP: 5.6
-Tested up to: 4.9
+Requires at least: 4.7
+Tested up to: 4.9.4
+Requires PHP: 5.6 or greater
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -50,14 +50,33 @@ Para habilitar a sua conta é necessário se cadastrar no site do Melhor Envio, 
 
 == Changelog ==
 
-= 1.0 =
+= 1.0.0 =
 
-*Primeira versão pública
-*Cálculo de frete para o cliente final
-*Compra de envios
-*Pagamento de etiquetas
-*Impressão de etiquetas
+* Primeira versão pública
+* Cálculo de frete para o cliente final
+* Compra de envios
+* Pagamento de etiquetas
+* Impressão de etiquetas
+
+= 1.0.1 =
+
+* Correção na organização das pastas do wordpress
+* Mudanças na organização das telas
 
 == Notas de Atualização ==
 
 1.0.0 Versão de lançamento.
+
+= 1.0.1 =
+
+* Ajustes no Layout
+* Melhorias no cálculo de frete
+
+= 1.0.2 =
+
+* Melhorias na tela de pedidos
+* Ajustes na tela de configurações
+* Melhorias no calculo de fretes
+* Adicionada proteção para a chave de API
+* Melhoria no tempo de carregamento dos pedidos
+* Correção no sistema de status

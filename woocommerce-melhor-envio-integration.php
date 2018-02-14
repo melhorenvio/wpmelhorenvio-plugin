@@ -231,6 +231,13 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
                 die();
             }
 
+            add_action('wp_ajax_wpmelhorenvio_ajax_getFinalCotacao','wpmelhorenvio_ajax_getFinalCotacao');
+            function wpmelhorenvio_ajax_getFinalCotacao(){
+                check_ajax_referer('wpmelhorenvio_read','security');
+                echo wpmelhorenvio_getFinalCotacao();
+                die();
+            }
+
 
 
         }
