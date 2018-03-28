@@ -29,11 +29,13 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                             if(isset($rating->price)){
                                 $rating->price = $rating->price * (100+$optionals->PL) / 100;
                                 $rating->delivery_time = $rating->delivery_time + (int) $optionals->DE;
-                                $label = $rating->delivery_time > 1 ? " (".$rating->delivery_time." Dias)" : " (".$rating->delivery_time." Dia)";
+                                $label = _n(" (%d Day)", " (%d Days)", $rating->delivery_time, "wpmelhorenvio_melhorenvioshipping");
+                                $label = $rating->company->name." ".$rating->name.sprintf($label, $rating->delivery_time);
+
                                 if($rating->price > 0){
                                     $rate = array(
                                         'id'       => "wpmelhorenvio_".$rating->company->name."_".$rating->name,
-                                        'label'    => $rating->company->name." ".$rating->name.$label,
+                                        'label'    => apply_filters('wpmelhorenvio_rate_label', $label, $rating->company->name, $rating->name, $rating->delivery_time),
                                         'cost'     => $rating->price,
                                         'calc_tax' => 'per_item'
                                     );
