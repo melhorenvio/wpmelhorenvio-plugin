@@ -18,11 +18,13 @@ function wpmelhorenvio_getCotacao($package){
     $pacote =  wpmelhorenvio_getPackage($package);
     $opcionais = wpmelhorenvio_getOptionals();
     $seguro = wpmelhorenvio_getValueInsurance($pacote->value,$opcionais->VD);
+    $from = wpmelhorenvio_getFrom($package);
+
     $params = array(
         'headers'=>['Content-Type'  => 'application/json',
             'Accept'        =>'application/json',
             'Authorization' => 'Bearer '.$token],
-        'body'  =>['from'   => wpmelhorenvio_getFrom(),
+        'body'  =>['from'   => $from,
             'to'        => wpmelhorenvio_getTo($package),
             'width'     => $pacote->width,
             'height'    => $pacote->height,
@@ -62,11 +64,11 @@ function wpmelhorenvio_getPackage($package){
     return $pacote;
 }
 
-function wpmelhorenvio_getFrom(){
+function wpmelhorenvio_getFrom($package){
     $remetente = json_decode(str_replace("\\" ,"", get_option('wpmelhorenvio_address')));
     $from = $remetente->postal_code;
 
-    return $from;
+    return apply_filters('wpmelhorenvio_getFrom', $from, $package);
 }
 
 function wpmelhorenvio_getTo($package){
