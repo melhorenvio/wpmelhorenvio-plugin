@@ -64,7 +64,7 @@ function wpmelhorenvio_getPackage($package){
     return $pacote;
 }
 
-function wpmelhorenvio_getFrom($package){
+function wpmelhorenvio_getFrom($package = array()){
     $remetente = json_decode(str_replace("\\" ,"", get_option('wpmelhorenvio_address')));
     $from = $remetente->postal_code;
 
