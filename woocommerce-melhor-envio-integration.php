@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: VHSoa
- * Date: 27/11/2017
- * Time: 09:28
- */
-
 /*
  *
 Plugin Name: Melhor Envio - Cotação
