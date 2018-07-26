@@ -34,6 +34,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                                     $rate = array(
                                         'id'       => "wpmelhorenvio_".$rating->company->name."_".$rating->name,
                                         'label'    => $rating->company->name." ".$rating->name.$label,
+                                        //'label'    => apply_filters('wpmelhorenvio_rate_label', $label, $rating->company->name, $rating->name, $rating->delivery_time),
                                         'cost'     => $rating->price,
                                         'calc_tax' => 'per_item'
                                     );
@@ -47,15 +48,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
             }
         }
     }
-    add_action( 'woocommerce_shipping_init', 'wpmelhorenvio_shipping');
+    add_action( 'woocommerce_shipping_init', 'wpmelhorenvio_shipping');  
     function wpmelhorenvio_add_shipping( $methods ) {
-        $methods['Wpmelhorenvio_Shipping_Method'] = 'wpmelhorenvio_Shipping_Method';
         return $methods;
     }
 
     add_filter('woocommerce_shipping_methods', 'wpmelhorenvio_add_shipping');
-
-
 }
-
-?>

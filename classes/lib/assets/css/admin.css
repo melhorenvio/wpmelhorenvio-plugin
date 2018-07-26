@@ -1,0 +1,8 @@
+.inline-edit-group.shipping-calculator-field label{clear: both !important;}
+.inline-edit-group.shipping-calculator-field span{width: 8em !important; }
+.inline-quick-edit.shipping-calculator-fields label{clear: both !important;}
+.inline-quick-edit.shipping-calculator-fields span{width: 16em !important; }
+.wp_melhor_envio_table tr td{padding-bottom: 15px;}
+.input_field{width:150px;}
+label.px{font-size: 12px;font-style: italic;font-weight: bold;text-transform: lowercase;}
+.wp_melhor_envio_table tr td.setting{  border-bottom: 2px solid #000;    color: #000;    font-size: 15px;    font-weight: bold;    padding-bottom: 5px;}

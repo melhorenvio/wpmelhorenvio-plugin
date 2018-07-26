@@ -5,7 +5,7 @@ Requires at least: 4.0.
 
 Tested up to: 4.8.
 
-Stable tag: 1.0.0.
+Stable tag: 1.0.6
 
 License: GPLv2 or later.
 
@@ -15,7 +15,7 @@ Text Domain: MelhorEnvio.
 
 Tags: Woocommerce, Shipping, Delivery, Melhor envio, Envios, Correios, Transportadoras, Frete
 
-Integration between the Melhor Envio and WooCommerce.
+Melhor Envio é o meio de fretes do e-commerce brasileiro: Tenha fretes mais baratos com Correios e transportadoras privadas, através dos nossos contratos. O serviço é grátis e a integração também.
 
 ## Description
 O plugin da Melhor Envio para o Woocommerce permite que você cote através de diversas transportadoras utilizando a API e os contratos do Melhor Envio.

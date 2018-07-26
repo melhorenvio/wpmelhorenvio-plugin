@@ -40,7 +40,7 @@
             <?php wp_nonce_field('wpmelhorenvio_apikey_nonce'); ?>
             <textarea type="text" class="wpme_inputtext" name="wpmelhorenvio_token" ><?=get_option('wpmelhorenvio_token')?></textarea> <br>
             <p>Para utilizar o Plugin é necessário estar cadastrado no <a href="https://melhorenvio.com.br">Melhor Envio</a>.</p>
-            <p>Encontre seu <a href="https://www.melhorenvio.com.br/painel/gerenciar/tokens"> Token de Acesso</a></p>
+            <p>Encontre seu <a target="_blank" href="https://www.melhorenvio.com.br/painel/gerenciar/tokens"> Token de Acesso</a></p>
             <button class="wpme_button" type="submit">Salvar</button>
         </form>
     </div>
