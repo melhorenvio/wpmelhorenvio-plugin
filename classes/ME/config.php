@@ -15,9 +15,17 @@ include_once ABSPATH.WPINC.'/option.php';
 //Função de update dos dados do usuário
 function wpmelhorenvio_updateUserData($token)
 {
-    $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
+    $params = array('headers'=>[
+        'Content-Type' => 'application/json',
+        'Accept'=>'application/json',
+        'Authorization' => 'Bearer '.$token],
+    );
     $client = new WP_Http();
-    $response = $client->get('https://www.melhorenvio.com.br/api/v2/me',$params);
+
+    $url = $client->make_absolute_url('https://www.melhorenvio.com.br/api/v2/me', $params);
+    
+    $response = $client->get($url, $params);
+
     if(! $response instanceof WP_Error){
         if($response['response']['code'] == "200"){
             wpmelhorenvio_updateOptionalData(json_decode($response['body']));
@@ -53,7 +61,11 @@ function wpmelhorenvio_clearOptionalData(){
 
 function wpmelhorenvio_getApiAddresses(){
     $token = get_option('wpmelhorenvio_token');
-    $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
+    $params = array('headers'=>[
+        'Content-Type' => 'application/json',
+        'Accept'=>'application/json',
+        'Authorization' => 'Bearer '.$token],
+    );
     $client = new WP_Http();
     $response = $client->get('https://www.melhorenvio.com.br/api/v2/me/addresses',$params);
     if( $response instanceof WP_Error){
@@ -65,7 +77,11 @@ function wpmelhorenvio_getApiAddresses(){
 
 function wpmelhorenvio_getApiCompanies(){
     $token = get_option('wpmelhorenvio_token');
-    $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
+    $params = array('headers'=>[
+        'Content-Type' => 'application/json',
+        'Accept'=>'application/json',
+        'Authorization' => 'Bearer '.$token],
+    );
     $client = new WP_Http();
     $response = $client->get('https://www.melhorenvio.com.br/api/v2/me/companies',$params);
     if( $response instanceof WP_Error){
@@ -79,8 +95,16 @@ function wpmelhorenvio_getApiCompanyAdresses(){
     $companies = wpmelhorenvio_getApiCompanies();
     $address = array();
     $token = get_option('wpmelhorenvio_token');
-    $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
+    $params = array('headers'=>[
+        'Content-Type' => 'application/json',
+        'Accept'=>'application/json',
+        'Authorization' => 'Bearer '.$token]);
     $client = new WP_Http();
+
+    if (!is_array($companies['data'])) {
+        return [];
+    }
+
     foreach ($companies['data'] as $company){
         $response = $client->get('https://www.melhorenvio.com.br/api/v2/me/companies/'.$company->id.'/addresses',$params);
         if( $response instanceof WP_Error){
@@ -99,7 +123,10 @@ function wpmelhorenvio_getApiCompanyAdresses(){
 
 function wpmelhorenvio_getApiShippingServices(){
     $token = get_option('wpmelhorenvio_token');
-    $params = array('headers'=>['Content-Type' => 'application/json','Accept'=>'application/json','Authorization' => 'Bearer '.$token]);
+    $params = array('headers'=>[
+        'Content-Type' => 'application/json',
+        'Accept'=>'application/json',
+        'Authorization' => 'Bearer '.$token]);
     $client = new WP_Http();
     $response = $client->get('https://www.melhorenvio.com.br/api/v2/me/shipment/services',$params);
     if( $response instanceof WP_Error){
@@ -110,14 +137,12 @@ function wpmelhorenvio_getApiShippingServices(){
 }
 
 function wpmelhorenvio_defineConfig($address,$services,$pluginconfig){
-    if(
-      update_option('wpmelhorenvio_address',$address)
-    | update_option('wpmelhorenvio_services',$services)
-    | update_option('wpmelhorenvio_pluginconfig',$pluginconfig)
-    ){
-        return true;
-    }
-    return false;
+
+    update_option('wpmelhorenvio_address',$address);
+    update_option('wpmelhorenvio_services',$services);
+    update_option('wpmelhorenvio_pluginconfig',$pluginconfig);
+    
+    return true;
 }
 
 function wpmelhorenvio_getAgencies($country,$state,$city = null){
@@ -153,4 +178,19 @@ function wpmelhorenvio_getAgencies($country,$state,$city = null){
     }else{
         return (array) json_decode($response['body']);
     }
+}
+
+function getSllVerifyConfig() {
+
+    $response = json_decode(get_option('wpmelhorenvio_pluginconfig'));
+    
+    if (!$response) {
+        return false;
+    }
+
+    if (!isset($response->SSL)) {
+        return false;
+    }
+
+    return $response->SSL;
 }

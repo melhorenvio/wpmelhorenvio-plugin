@@ -35,17 +35,26 @@
             //Optionals plugin configuration
             //As it isn't saved nor accessed just verified the existance of the variable I didn't filter.
             $optionals = new stdClass();
-            $optionals->CF = isset($_POST['CF'])? true : false;
-            $optionals->AR = isset($_POST['AR'])? true : false;
-            $optionals->MP = isset($_POST['MP'])? true : false;
-            $optionals->VD = isset($_POST['VD'])? true : false;
-            $optionals->MR = isset($_POST['MR'])? true : false;
+            $optionals->CF  = isset($_POST['CF'])? true : false;
+            $optionals->AR  = isset($_POST['AR'])? true : false;
+            $optionals->MP  = isset($_POST['MP'])? true : false;
+            $optionals->VD  = isset($_POST['VD'])? true : false;
+            $optionals->MR  = isset($_POST['MR'])? true : false;
+            $optionals->AA  = isset($_POST['AA'])? true : false;
+            $optionals->SDP = isset($_POST['SDP'])? true : false;
+            $optionals->SSL = isset($_POST['SSL'])? true : false;
+
+            $optionals->largura_padrao     = isset($_POST['largura_padrao'])? $_POST['largura_padrao'] : 12;
+            $optionals->comprimento_padrao = isset($_POST['comprimento_padrao'])? $_POST['comprimento_padrao'] : 17;
+            $optionals->altura_padrao      = isset($_POST['altura_padrao'])? $_POST['altura_padrao'] : 4;
+            $optionals->peso_padrao        = isset($_POST['peso_padrao'])? $_POST['peso_padrao'] : 0.5;
 
             $optionals->DE = isset($_POST['DE'])? (int) wp_filter_nohtml_kses(sanitize_text_field($_POST['DE'])) : "";
             $optionals->PL = isset($_POST['PL'])? (float) wp_filter_nohtml_kses(sanitize_text_field($_POST['PL'])) : "";
 
             if(wpmelhorenvio_defineConfig($address,json_encode($services),json_encode($optionals))){
-                $url = admin_url('admin.php?page=wpmelhorenvio_melhor-envio');
+                // $url = admin_url('admin.php?page=wpmelhorenvio_melhor-envio-config');
+                $url = admin_url('admin.php?page=wc-settings&tab=shipping');
                 wp_redirect($url);
             }else{
                 echo  '<div class="notice notice-error is-dismissible\">
@@ -63,6 +72,11 @@
     $companies = wpmelhorenvio_getApiCompanies();
 
     $company_addresses = wpmelhorenvio_getApiCompanyAdresses();
+
+    if (!is_array($addresses['data'])) {
+        return;
+    }
+
     $addresses['data'] = array_merge($addresses['data'],$company_addresses);
 
     $saved_address = json_decode(str_replace("\\" ,"", get_option('wpmelhorenvio_address')));
@@ -160,28 +174,11 @@
         </div>
 
         <div class="wpme_basepadding">
-            <h2>Selecione seus métodos de envio</h2>
-            <ul class="wpme_options">
-                <?php
-                    $services = wpmelhorenvio_getApiShippingServices();
-                    $active_services = is_array(json_decode(get_option('wpmelhorenvio_services')))? json_decode(get_option('wpmelhorenvio_services')) : array();
-                ?>
-                <?php foreach($services as $i => $service): ?>
-                    <li>
-                        <label>
-                            <div class="wpme_service">
-                                <div class="wpme_service_header">
-                                    <input type="checkbox" name="services[<?= $i ?>]" value="<?= $service->id ?>" <?= in_array($service->id,$active_services)? "checked" : ""?> >
-                                    <h2><?= $service->company->name?>  <?= $service->name?></h2>
-                                </div>
-                                <div class="wpme_service_body">
-                                    <img src="<?= $service->company->picture ?>">
-                                </div>
-                            </div>
-                        </label>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
+            <!-- <h2>Métodos de envio</h2> 
+            <span>Você precisa definir quais os métodos de envio deseja utilizar, clique no link abaixo para escolher os métodos de envio.</span></br>
+            <a target="_blank" class="btn comprar-hard" href="admin.php?page=wc-settings&tab=shipping">Definir metódos de envio</a>
+            </br>
+            </br> -->
 
             <div class="wpme_pluginconf">
                 <?php
@@ -191,46 +188,68 @@
                         $saved_optionals->CF = true;
                         $saved_optionals->AR = false;
                         $saved_optionals->MP = false;
+                        $saved_optionals->AA = false;
                         $saved_optionals->VD = true;
+                        $saved_optionals->SSL = true;
+                        $saved_optionals->SDP = false;
                         $saved_optionals->DE = 0;
                         $saved_optionals->PL = 0;
+                        $saved_optionals->largura_padrao = 11;
+                        $saved_optionals->comprimento_padrao = 16;
+                        $saved_optionals->altura_padrao = 2;
+                        $saved_optionals->peso_padrao = 0.5;
                     }
 
                     wp_nonce_field('wpmelhorenvio_save_address');
                 ?>
+                </br>
+                <hr>
+
                 <h2>Funcionamento do Plugin</h2>
                 <div>
-                    <input type="checkbox" class="toggle" id="calculo_fretes" name="CF" <?= $saved_optionals->CF ? "checked" : "" ?>>
-                    <label title="Disponibiliza o método de envio para o seu cliente" for="calculo_fretes">Calculo de fretes</label>
+                    <input type="checkbox" class="toggle" id="autocomplete_address" name="AA" <?= $saved_optionals->AA ? "checked" : "" ?>>
+                    <label title="Usar autocomplete de endereço" for="autocomplete_address">Usar autocomplete de endereço</label>
                 </div>
-                <div>
-                    <input type="checkbox" class="toggle" id="aviso_recebimento" name="AR" <?= $saved_optionals->AR ? "checked" : "" ?>>
-                    <label title="Adiciona o aviso de recebimento na cotação de frete" for="aviso_recebimento">Aviso de Recebimento</label>
-                </div>
-                <div>
-                    <input type="checkbox" class="toggle" id="mao_propria" name="MP" <?= $saved_optionals->MP ? "checked" : "" ?>>
-                    <label title="Adiciona mão própria na cotação de frete" for="mao_propria">Mão Propria</label>
-                </div>
-                <div>
-                    <input type="checkbox" class="toggle" id="valor_declarado" name="VD" <?= $saved_optionals->VD ? "checked" : "" ?>>
-                    <label title="Declara o valor dos produtos enviados para a transportadora" for="valor_declarado">Valor Declarado</label>
-                </div>
-            </div>
+                <hr>
 
-            <div class="wpme_divtext">
-                <div>
-                    <label>Dias extras</label>
-                    <span>Dias a mais a serem adicionados na exibição do Prazo de Entrega.</span>
-                    <input type="number" name="DE" value="<?= $saved_optionals->DE ?>">
-                </div>
-                <div>
-                    <label>Porcentagem de lucro</label>
-                    <span>Porcentagem a ser adicionada sobre o valor do frete pra você lojista.</span>
-                    <input type="number" name="PL" value="<?= $saved_optionals->PL ?>">
-                </div>
+                <h2>Medidas para embalagens padrão</h2>
+                <span>Essas medidas são usadas quando o produto não tiver tamanhos cadastrados. As medidas do produto são de extrema importância para a cotaçaõ do valor do frete.</span>
+                </br>
+               
+                <!-- Matheus Thomaz, ajuda para otimizar isso para os padrões de Frontend do projeto -->
+                <table>
+                    <tr>
+                        <td>
+                            <label style="text-align:center;" title="Largura padrão" for="largura_padrao">Largura padrão (em cm)</label>
+                            <input style="text-align:center; width: 50%;" type="number" class="toggle input_packages" id="largura_padrao" name="largura_padrao" value="<?php echo $saved_optionals->largura_padrao ?>" />
+                        </td>
+                        <td> 
+                            <label style="text-align:center;" title="Comprimento padrão" for="comprimento_padrao">Comprimento padrão (em cm)</label>
+                            <input style="text-align:center; width: 50%;" type="number" class="toggle input_packages" id="comprimento_padrao" name="comprimento_padrao" value="<?php echo $saved_optionals->comprimento_padrao ?>" />
+                        </td>
+                        <td>
+                            <label style="text-align:center;" title="Altura padrão" for="altura_padrao">Altura padrão (em cm)</label>
+                            <input style="text-align:center; width: 50%;" type="number" class="toggle input_packages" id="altura_padrao" name="altura_padrao" value="<?php echo $saved_optionals->altura_padrao ?>" />
+                        </td>
+                        <td> 
+                            <label style="text-align:center;" title="Peso padrão" for="peso_padrao">Peso padrão  (em g)</label>
+                            <input style="text-align:center; width: 50%;" type="number" class="toggle input_packages" id="peso_padrao" name="peso_padrao" value="<?php echo $saved_optionals->peso_padrao ?>" />
+                        </td>
+                    </tr>
+                </table>
+
             </div>
+            <hr>
+
+            <h2>Exibir simulação de cotação da tela de detalhes do produto</h2>
+                <div>
+                    <input type="checkbox" class="toggle" id="simulate_detail_product" name="SDP" <?= $saved_optionals->SDP ? "checked" : "" ?>>
+                    <label title="Usar autocomplete de endereço" for="simulate_detail_product">Exibir</label>
+                </div>
+            </br>
+            
             <div>
-                <button class="wpme_button" type="submit" name="submit">Salvar</button>
+                <button class="wpme_button" type="submit" name="submit">Salvar e definir métodos de envio</button>
             </div>
         </div>
     </form>

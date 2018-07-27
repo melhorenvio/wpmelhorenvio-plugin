@@ -1,16 +1,16 @@
 === Melhor Envio - Cotação ===
 Contributors: Vitor Soares
-Requires at least: 4.7
-Tested up to: 4.9.4
-Requires PHP: 5.6 or greater
-Stable tag: 1.0.0
+Requires at least: 4.0
+Requires PHP: 5.6
+Tested up to: 4.9
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: MelhorEnvio
 Tags: Woocommerce, Shipping, Delivery, Melhor envio, Envios, Correios, Transportadoras, Frete, Jadlog
 
 
-Integration between the Melhor Envio and WooCommerce
+Melhor Envio é o meio de fretes do e-commerce brasileiro: Tenha fretes mais baratos com Correios e transportadoras privadas, através dos nossos contratos. O serviço é grátis e a integração também.
 
 == Description ==
 O plugin da Melhor Envio para o Woocommerce permite que você cote através de diversas transportadoras utilizando a API e os contratos do Melhor Envio.
@@ -50,33 +50,22 @@ Para habilitar a sua conta é necessário se cadastrar no site do Melhor Envio, 
 
 == Changelog ==
 
-= 1.0.0 =
+= 1.3.12 =
 
-* Primeira versão pública
-* Cálculo de frete para o cliente final
-* Compra de envios
-* Pagamento de etiquetas
-* Impressão de etiquetas
+* Implementaçaõ de classes de envio
 
-= 1.0.1 =
+= 1.3.13 =
 
-* Correção na organização das pastas do wordpress
-* Mudanças na organização das telas
+* ajuste na exibição de prazos para mostrar o intervalo de entrega.  
+
+= 1.3.14 =
+
+* ajuste prazos Jadlog.  
+
+= 1.3.15 =
+
+* ajuste dias extras no prazo de Jadlog.Com.  
 
 == Notas de Atualização ==
 
 1.0.0 Versão de lançamento.
-
-= 1.0.1 =
-
-* Ajustes no Layout
-* Melhorias no cálculo de frete
-
-= 1.0.2 =
-
-* Melhorias na tela de pedidos
-* Ajustes na tela de configurações
-* Melhorias no calculo de fretes
-* Adicionada proteção para a chave de API
-* Melhoria no tempo de carregamento dos pedidos
-* Correção no sistema de status
