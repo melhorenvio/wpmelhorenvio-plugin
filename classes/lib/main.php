@@ -29,9 +29,10 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
             /* hook for calculate shipping with ajax */
             add_action('wp_ajax_nopriv_ajax_calc_shipping', array($this, 'ajax_calc_shipping'));
             add_action('wp_ajax_ajax_calc_shipping', array($this, 'ajax_calc_shipping'));
+
             /* hook update shipping method */
-            add_action('wp_ajax_nopriv_update_shipping_method', array($this, 'update_shipping_method'));
-            add_action('wp_ajax_update_shipping_method', array($this, 'update_shipping_method'));
+            // add_action('wp_ajax_nopriv_update_shipping_method', array($this, 'update_shipping_method'));
+            // add_action('wp_ajax_update_shipping_method', array($this, 'update_shipping_method'));
 
             /* wp_footer hook */
             add_action("wp_footer", array($this, "wp_footer"));
@@ -85,30 +86,23 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
 
             WC_Shortcode_Cart::calculate_shipping();
 
-            if (isset($_POST["product_id"]) && $this->check_product_incart($_POST["product_id"]) === false) {
+            $qty = (isset($_POST['current_qty']) && $_POST['current_qty'] > 0) ? $_POST['current_qty'] : 1;
+            insertLogErrorMelhorEnvioGeneric('#' . $_POST["product_id"] . ' Quantidade: ' . $qty);
 
-                $qty = (isset($_POST['current_qty']) && $_POST['current_qty'] > 0) ? $_POST['current_qty'] : 1;
-                insertLogErrorMelhorEnvioGeneric('#' . $_POST["product_id"] . ' Quantidade: ' . $qty);
-
-                if (isset($_POST['variation_id']) && $_POST['variation_id'] != "" && $_POST['variation_id'] > 0) {
-                    $cart_item_key = WC()->cart->add_to_cart(sanitize_text_field($_POST["product_id"]), $qty, sanitize_text_field($_POST['variation_id']));
-                } else {
-                    $cart_item_key = WC()->cart->add_to_cart(sanitize_text_field($_POST["product_id"]), $qty);
-                }
-
-                $packages = WC()->cart->get_shipping_packages();
-                $packages = WC()->shipping->calculate_shipping($packages);
-                $available_methods = WC()->shipping->get_packages();
-
-                WC()->cart->remove_cart_item($cart_item_key);
+            if (isset($_POST['variation_id']) && $_POST['variation_id'] != "" && $_POST['variation_id'] > 0) {
+                $cart_item_key = WC()->cart->add_to_cart(sanitize_text_field($_POST["product_id"]), $qty, sanitize_text_field($_POST['variation_id']));
             } else {
-                $packages = WC()->cart->get_shipping_packages();
-                $packages = WC()->shipping->calculate_shipping($packages);
-                $available_methods = WC()->shipping->get_packages();
+                $cart_item_key = WC()->cart->add_to_cart(sanitize_text_field($_POST["product_id"]), $qty);
             }
 
-            wc_clear_notices();
+            $packages = WC()->cart->get_shipping_packages();
+            $packages = WC()->shipping->calculate_shipping($packages);
+            $available_methods = WC()->shipping->get_packages();
 
+            $product = $packages[0]['contents'][$cart_item_key]['data'];
+            WC()->cart->remove_cart_item($cart_item_key);
+
+            wc_clear_notices();
 
             insertLogErrorMelhorEnvioGeneric('Chegamos até aqui, amigos.');
 
@@ -116,7 +110,14 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
             $client = new WP_Http();
 
             $address = str_replace("\\" ,"", get_option('wpmelhorenvio_address'));
-    
+
+            $responseCep = json_decode(file_get_contents('https://location.melhorenvio.com.br/' . $_POST['calc_shipping_postcode']));
+
+            if(is_null($responseCep)){
+                insertLogErrorMelhorEnvioGeneric('Erro! CEP '.$_POST['calc_shipping_postcode'].' invalido');
+                return  '<p>Ocorreu um erro, CEP inválido</p>';
+            }
+
             $body = [
                 "from" => [
                     "postal_code" => json_decode($address)->postal_code
@@ -125,10 +126,10 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
                     'postal_code' => $_POST['calc_shipping_postcode']
                 ],
                 'package' => [
-                    "weight" => 1,
-                    "width" => 12,
-                    "height" => 4,
-                    "length" => 17
+                    "weight" => $product->get_weight(),
+                    "width"  => $product->get_width(),
+                    "height" => $product->get_height(),
+                    "length" => $product->get_length()
                 ],
                 "services" => "1,2,3,4"
             ];
@@ -140,47 +141,96 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
                     'Authorization' =>  'Bearer '.$token
                 ],
                 'body'  => json_encode($body),
-                'timeout'=>1000);
+                'timeout'=>100000);
 
-            $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/calculate',$params);
+            try {
+                $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/calculate',$params);
 
-            if (is_wp_error($response)) {
-                insertLogErrorMelhorEnvioGeneric('#1 time out');
-                echo '<p>Ocorreu um erro ao conectar com os servidores, tente novamente</p>';
-            }
-
-            if (!is_wp_error($response)) {
-
-                if ($response['response']['code'] == 500) {
-                    insertLogErrorMelhorEnvioGeneric('Erro 500');
-                    echo  '<p>Ocorreu um erro ao conectar com os servidores, tente novamente</p>';
-                    die;
-                }
-
-                if ($response['response']['code'] == 200) {
-
-                    $resposta = json_decode($response['body']);
-                    
-                    $stringResponse = '';
-                    foreach ($resposta as $item) {
-
-                        if (!is_null($item->error)) {
-                            insertLogErrorMelhorEnvioGeneric('#' . $$item->name . ' MOTIVO: ' . $item->error);
-                            continue;
+                if($response->errors) {
+                    foreach ($response->errors as $code => $error) {
+                        $count = count($error) - 1;
+                        for ($x=0; $x<= $count; $x++) {
+                            insertLogErrorMelhorEnvioGeneric($error[$x]);
                         }
-                        $stringResponse = $stringResponse . '<p>'.$item->name.': R$' .$item->price . '</p>';
                     }
-                    echo $stringResponse;
-                    die;
-                } else {
-                    insertLogErrorMelhorEnvioGeneric('#2 time out');
-                    echo  '<p>Ocorreu um erro ao conectar com os servidores, tente novamente</p>';
+                    return '<p>Ops! Ocorreu um erro ao conectar com os servidores, tente novamente</p>';
                 }
+                
+
+                if ($response['body']) {
+                    $resposta = json_decode($response['body']);
+
+                    $stringResponse = $this->setLabelShipping($resposta);
+                    return $stringResponse;
+                    die;
+                }
+
+                if (is_wp_error($response)) {
+
+                    foreach ($response->errors as $code => $error) {
+                        $count = count($error) - 1;
+                        for ($x=0; $x<= $count; $x++) {
+                            insertLogErrorMelhorEnvioGeneric($error[$x]);
+                        }
+                    }
+                    return '<p>Ocorreu um erro ao conectar com os servidores, tente novamente</p>';
+                    die;
+                }
+
+                if (!is_wp_error($response)) {
+
+                    if ($response['response']['code'] == 500) {
+                        insertLogErrorMelhorEnvioGeneric('Erro 500');
+                        return  '<p>Ocorreu um erro ao conectar com os servidores. (Error 500)</p>';
+                        die;
+                    }
+                    
+                    if ($response['response']['code'] == 404) {
+                        insertLogErrorMelhorEnvioGeneric('Erro 404');
+                        return  '<p>Ocorreu um erro ao conectar com os servidores. (Error 404)</p>';
+                        die;
+                    }
+
+                    else {
+                        insertLogErrorMelhorEnvioGeneric('#2 time out');
+                        return  '<p>Ocorreu um erro ao conectar com os servidores.</p>';
+                        die;
+                    }
+                }
+            }
+            catch(Exception $e) {
+                insertLogErrorMelhorEnvioGeneric($e->getMessage());
+                return '<p>Ocorreu um erro ao conectar com os servidores. (error 3)</p>';
             }
             die();
         }
 
-        /* function for display shipping calculator on product page */
+        public function setLabelShipping($resposta) 
+        {
+            $stringResponse = '';
+            foreach ($resposta as $item) {
+
+                if (!$item->price) {
+                    continue;
+                }
+
+                $time = null;
+                if ($item->delivery_range->min == 1 && $item->delivery_range->max == 1) {
+                    $time = ' (1 dia útil)';   
+                }
+
+                if (($item->delivery_range->min == $item->delivery_range->max) && $item->delivery_range->min > 1 ) {
+                    $time = ' ('. $item->delivery_range->min .' dia útil)';   
+                }
+
+                if ($item->delivery_range->min > 1 &&  $item->delivery_range->max > $item->delivery_range->min) {
+                    $time = ' ('. $item->delivery_range->min .' à ' . $item->delivery_range->max . ' dias úteis)';   
+                }
+
+                $stringResponse = $stringResponse . '<p><b>'.$item->name.'</b>: R$' .number_format($item->price, 2, ',', '.') . $time . '</p>';
+            }
+            return $stringResponse;
+        }
 
         public function display_shipping_calculator()
         {
