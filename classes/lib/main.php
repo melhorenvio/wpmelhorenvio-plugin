@@ -23,16 +23,9 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
             /* load shipping calculator setting */
             $this->wp_melhor_envioship_settings = get_option(self::$wp_melhor_envioship_option_key);
 
-            /* create admin menu for shipping calculator setting */
-            // add_action("admin_menu", array($this, "admin_menu"));
-
             /* hook for calculate shipping with ajax */
             add_action('wp_ajax_nopriv_ajax_calc_shipping', array($this, 'ajax_calc_shipping'));
             add_action('wp_ajax_ajax_calc_shipping', array($this, 'ajax_calc_shipping'));
-
-            /* hook update shipping method */
-            // add_action('wp_ajax_nopriv_update_shipping_method', array($this, 'update_shipping_method'));
-            // add_action('wp_ajax_update_shipping_method', array($this, 'update_shipping_method'));
 
             /* wp_footer hook */
             add_action("wp_footer", array($this, "wp_footer"));
@@ -56,14 +49,6 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
                 add_action('woocommerce_single_product_summary', array(&$this, 'display_shipping_calculator'), 20);
             else
                 add_action('woocommerce_single_product_summary', array(&$this, 'display_shipping_calculator'), 8);
-
-
-            add_action('woocommerce_product_bulk_edit_end', array($this, 'output_bulk_shipping_fields'));
-            add_action('woocommerce_product_bulk_edit_save', array($this, 'save_bulk_shipping_fields'));
-
-            add_action('manage_product_posts_custom_column', array($this, 'output_quick_shipping_values'));
-            add_action('woocommerce_product_quick_edit_end', array($this, 'output_quick_shipping_fields'));
-            add_action('woocommerce_product_quick_edit_save', array($this, 'save_quick_shipping_fields'));
         }
 
         
@@ -80,6 +65,7 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
         public function update_shipping_method()
         {
             include_once plugin_dir_path(__FILE__).'classes/ME/error.php';
+            include_once plugin_dir_path(__FILE__).'classes/services/config.php';
             insertLogErrorMelhorEnvioGeneric('#######################################################');
             insertLogErrorMelhorEnvioGeneric('Entrou na funcao de calculo de frete na tela do produto');
             insertLogErrorMelhorEnvioGeneric('PHP: ' . phpversion());
@@ -111,19 +97,14 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
 
             $address = str_replace("\\" ,"", get_option('wpmelhorenvio_address'));
 
-            $responseCep = json_decode(file_get_contents('https://location.melhorenvio.com.br/' . $_POST['calc_shipping_postcode']));
-
-            if(is_null($responseCep)){
-                insertLogErrorMelhorEnvioGeneric('Erro! CEP '.$_POST['calc_shipping_postcode'].' invalido');
-                return  '<p>Ocorreu um erro, CEP inválido</p>';
-            }
+            $methodsUseds = $this->getMethodsUseds();
 
             $body = [
                 "from" => [
                     "postal_code" => json_decode($address)->postal_code
                 ],
                 'to' => [
-                    'postal_code' => $_POST['calc_shipping_postcode']
+                    'postal_code' => str_replace('-', '',$_POST['calc_shipping_postcode'])
                 ],
                 'package' => [
                     "weight" => $product->get_weight(),
@@ -131,7 +112,7 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
                     "height" => $product->get_height(),
                     "length" => $product->get_length()
                 ],
-                "services" => "1,2,3,4"
+                "services" => $methodsUseds
             ];
 
             $params = array(
@@ -142,6 +123,8 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
                 ],
                 'body'  => json_encode($body),
                 'timeout'=>100000);
+
+            insertLogErrorMelhorEnvioGeneric(json_encode($body));
 
             try {
                 $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/calculate',$params);
@@ -156,10 +139,8 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
                     return '<p>Ops! Ocorreu um erro ao conectar com os servidores, tente novamente</p>';
                 }
                 
-
                 if ($response['body']) {
                     $resposta = json_decode($response['body']);
-
                     $stringResponse = $this->setLabelShipping($resposta);
                     return $stringResponse;
                     die;
@@ -205,10 +186,34 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
             die();
         }
 
+        public function getMethodsUseds()
+        {
+            include_once plugin_dir_path(__FILE__).'classes/services/config.php';
+            $response = '';
+            $delivery_zones = WC_Shipping_Zones::get_zones();
+            foreach (end($delivery_zones)['shipping_methods'] as $method) {
+                $code = getCodeServiceByMethodId($method->id);
+                if (!$code) {
+                    continue;
+                }
+                $response = $response . $code . ',';
+            }
+            return rtrim($response,",");
+        }
+
         public function setLabelShipping($resposta) 
         {
+            include_once plugin_dir_path(__FILE__).'classes/services/config.php';
+
             $stringResponse = '';
             foreach ($resposta as $item) {
+
+                $name = getCustomName($item->id);
+
+                if ($item->error) {
+                    $stringResponse = $stringResponse . '<p><b>'. $name.'</b>: ' . $item->error . '</p>';
+                    continue;
+                }
 
                 if (!$item->price) {
                     continue;
@@ -227,8 +232,9 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
                     $time = ' ('. $item->delivery_range->min .' à ' . $item->delivery_range->max . ' dias úteis)';   
                 }
 
-                $stringResponse = $stringResponse . '<p><b>'.$item->name.'</b>: R$' .number_format($item->price, 2, ',', '.') . $time . '</p>';
+                $stringResponse = $stringResponse . '<p><b>'. $name.'</b>: R$' .number_format($item->price, 2, ',', '.') . $time . '</p>';
             }
+
             return $stringResponse;
         }
 
@@ -345,7 +351,6 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
 
         public function wp_footer()
         {
-            wp_enqueue_script('wc-country-select');
             wp_enqueue_script(self::$plugin_slug, self::$plugin_url . "classes/lib/assets/js/shipping-calculator.js");
         }
 
@@ -357,21 +362,7 @@ if (!class_exists('wp_melhor_envio_shipping_calculator')) {
             add_submenu_page($wc_page, self::$plugin_title, self::$plugin_title, "install_plugins", self::$plugin_slug, array($this, "calculator_setting_page"));
         }
 
-        /* admin setting page for shipping calculator  */
-
-        /* public function calculator_setting_page()
-        {
-
-            
-            if (isset($_POST[self::$plugin_slug])) {
-                $this->saveSetting();
-            }
-            
-            include_once self::$plugin_dir . "classes/lib/views/shipping-setting.php";
-        } */
-
         /* function for save setting */
-
         public function saveSetting()
         {
             $arrayRemove = array(self::$plugin_slug, "btn-wp_melhor_envioship-submit");

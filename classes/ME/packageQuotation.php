@@ -76,13 +76,27 @@ function wpmelhorenviopackage_getPackageInternal($package = [], $service, $ar = 
     $params = array(
         'headers'           =>  [
             'Content-Type'  => 'application/json',
-            'Accept'        =>  'application/json',
-            'Authorization' =>  'Bearer '.$token
+            'Accept'        => 'application/json',
+            'Authorization' => 'Bearer '.$token,
+            'user-agent'    => sprintf("WordPress/%s; WooCommerce/%s; MelhorEnvio/%s (PHP %s); %s", 
+                get_bloginfo('version'), 
+                $woocommerce->version, 
+                VERSION_PLUGIN_MELHOR_ENVIO, 
+                phpversion(),
+                "http://$_SERVER[HTTP_HOST]"
+            )
         ],
         'body'  => json_encode($body),
-        'timeout'=>10);
+        'timeout'=>10
+    );
 
     $response = $client->post('https://www.melhorenvio.com.br/api/v2/me/shipment/calculate',$params);
+
+    if (isset($response['headers']['X-Warning']) && !empty($response['headers']['X-Warning'])) {
+        add_option('outdated_melhor_envio', VERSION_PLUGIN_MELHOR_ENVIO, true, true);
+    } else {
+        delete_option('outdated_melhor_envio');
+    }
 
     if (!is_wp_error($response)) {
         if ($response['response']['code'] == 200) {

@@ -8,7 +8,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 			include('abstract-wc-melhor-envio-shipping.php');
 
-			class WC_Jadlog_com_Shipping_Method extends Wc_Melhor_Envio_Shipping {
+			class WC_Jadlog_com_Shipping_Method extends WC_Shipping_Method {
 
                 protected $code = '4';
 				/**
@@ -18,11 +18,9 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 				 * @return void
 				 */
 				public function __construct($instance_id = 0) {
-					$this->id  = "jadlog_com_" . $_GET['instance_id']; 
-
-					// $this->instance_id = absint( $instance_id );
-					parent::__construct( $instance_id );
-			
+					
+					$this->id  = "jadlog_com"; 
+					$this->instance_id = absint( $instance_id );
                     $this->method_title       = "Jadlog Com (Melhor envio)"; 
 					$this->method_description = ".Com, serviço de entregas expressas da Jadlog";
 					$this->enabled            = "yes"; 

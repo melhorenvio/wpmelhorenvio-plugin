@@ -22,13 +22,16 @@ function wpmelhorenvio_getPrefixService($service_id) {
         case 7  :
             return 'wpmelhorenvio_Jamef_Rodoviário_';
             break;
+        case 9  :
+            return 'wpmelhorenvio_via_brasil_';
+            break;
         default:
             return null;
     }
 }
 
 function getCodeServiceByMethodId($name) {
-
+    
     //TODO check it
     if ($name == 'wpmelhorenvio_Correios_PAC') {
         return 1;
@@ -52,6 +55,30 @@ function getCodeServiceByMethodId($name) {
 
     if ($name == 'wpmelhorenvio_Jamef_Rodoviário') {
         return 7;
+    }
+
+    if ($name == 'wpmelhorenvio_via_brasil') {
+        return 9;
+    }
+
+    if ($name == 'pac') {
+        return 1;
+    }
+
+    if ($name == 'sedex') {
+        return 2;
+    }
+
+    if ($name == 'jadlog_package') {
+        return 3;
+    }
+
+    if ($name == 'jadlog_com') {
+        return 4;
+    }
+
+    if ($name == 'via_brasil') {
+        return 9;
     }
 
     return null;
@@ -83,6 +110,39 @@ function getnameServiceByCode($code) {
         return 'wpmelhorenvio_Jamef_Rodoviário';
     }
 
+    if ($code == 9) {
+        return 'wpmelhorenvio_via_brasil';
+    }
+
+    return null;
+}
+
+function getnameDisplayServiceByCode($code) {
+
+    if ($code == 1) {
+        return 'Pac';
+    }
+
+    if ($code == 2) {
+        return 'Sedex';
+    }
+
+    if ($code == 3) {
+        return 'Jadlog Package';
+    }
+
+    if ($code == 4) {
+        return 'Jadlog .Com';
+    }
+
+    if ($code == 7) {
+        return 'Jamef';
+    }
+
+    if ($code == 9) {
+        return 'Via Brasil';
+    }
+
     return null;
 }
 
@@ -108,11 +168,15 @@ function getPrefixServiceByCode($code) {
         return 'jamef';
     }
 
+    if ($code == 9) {
+        return 'via_brasil';
+    }
+
     return null;
 }
 
 function getServicesActive() {
-    return ['1', '2', '3', '4', '7'];
+    return ['1', '2', '3', '4', '7', '9'];
 }
 
 /**
@@ -133,3 +197,13 @@ function get_shipping_classes_options() {
     return $options;
 }
 
+function getCustomName($service_id) {
+    $prefix = getPrefixServiceByCode($service_id);
+    $name = get_option('woocommerce_' . $prefix . '_title_custom_shipping');
+
+    if (!$name) {
+        return getnameDisplayServiceByCode($service_id);
+    }
+
+    return $name;
+}

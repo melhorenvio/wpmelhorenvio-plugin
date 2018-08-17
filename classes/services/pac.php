@@ -244,7 +244,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 	if (isset($_GET['page']) && $_GET['page'] == 'wc-settings' && isset($_GET['tab']) && $_GET['tab'] == 'shipping' && isset($_GET['instance_id']) ) {
 
 		if (isset($_POST['woocommerce_pac_shipping_class'])) {
-			update_option_value_jamef('woocommerce_pac_class_option', $_POST['woocommerce_pac_shipping_class']);
+			update_option_value_pac('woocommerce_pac_class_option', $_POST['woocommerce_pac_shipping_class']);
 		}
 
 		if (isset($_POST['woocommerce_pac_title_custom_shipping'])) {

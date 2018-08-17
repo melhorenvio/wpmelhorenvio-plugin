@@ -1,6 +1,7 @@
 (function ($) {
 
     $(document).ready(function () {
+        
         $(".btn_shipping").click(function () {
             $(".wp_melhor_envio_shiiping_form").toggle("slow");
         });
@@ -22,7 +23,7 @@
                 success: function (data) {  
                     $(".loaderimage").hide();
                     $(".wp_melhor_envio_message").removeClass("wp_melhor_envio_error").removeClass("wp_melhor_envio_success");
-                    $(".price").html(data);
+                    $("#responseMelhorEnvio").html(data);
                 }
             });
             return false;

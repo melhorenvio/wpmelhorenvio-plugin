@@ -10,6 +10,7 @@ include_once WC_ABSPATH.'/includes/wc-order-functions.php';
 function wpmelhorenvio_getQuotation($order_id) {
 
     $quotation = wpmelhorenvio_getQuotationDataBase($order_id);
+
     //Check if exists quotation o database
     if ($quotation != null) {
         return $quotation;
@@ -332,64 +333,9 @@ function getProductsByOrder($order_id) {
     }
 
     $order_data = $wcOrder->get_data();
-    // $weight      = 0;
-    // $valor       = 0;
-    // $valorTotal  = 0;
-    // $weightTotal = 0;
+
     $pacote = new stdClass();
 
-    // $products = [];
-    // foreach($items as $key => $item) { 
-
-    //     $weightProd = wc_get_product($item['product_id'])->get_weight();
-    //     if (empty($weightProd) || $weightProd == 0) {
-    //         if (!isset($saved_optionals->peso_padrao)) {
-    //             $saved_optionals->peso_padrao = 2;
-    //         }
-    //         $weightProd = $saved_optionals->peso_padrao;
-    //     }
-
-    //     $widthProd = wc_get_product($item['product_id'])->get_width();
-    //     if (empty($widthProd) || $widthProd == 0) {
-    //         if (!isset($saved_optionals->largura_padrao)) {
-    //             $saved_optionals->largura_padrao = 17;
-    //         }
-    //         $widthProd = $saved_optionals->largura_padrao;
-    //     }
-
-    //     $heightProd = wc_get_product($item['product_id'])->get_height();
-    //     if (empty($heightProd) || $heightProd == 0) {
-    //         if (!isset($saved_optionals->altura_padrao)) {
-    //             $saved_optionals->altura_padrao = 4;
-    //         }
-    //         $heightProd = $saved_optionals->altura_padrao;
-    //     }
-
-    //     $lengthProd = wc_get_product($item['product_id'])->get_length();
-    //     if (empty($lengthProd) || $lengthProd == 0) {
-    //         if (!isset($saved_optionals->comprimento_padrao)) {
-    //             $saved_optionals->comprimento_padrao = 12;
-    //         }
-    //         $lengthProd = $saved_optionals->comprimento_padrao;
-    //     }
-
-
-    //     $weightTotal = $weightTotal + $weightProd;
-    //     $weight = $weight + $weightProd;
-    //     $valor = wc_get_product($item['product_id'])->get_price();
-
-    //     $products[] = [
-    //         "id"       => $item['product_id'], 
-    //         "weight"   => $weightProd,
-    //         "width"    => $widthProd, 
-    //         "height"   => $heightProd, 
-    //         "length"   => $lengthProd,
-    //         "quantity" => $item['quantity'], 
-    //         "insurance_value" => wc_get_product($item['product_id'])->get_price()
-    //     ];
-
-    //     $valorTotal = $valorTotal + wc_get_product($item['product_id'])->get_price();
-    // } 
     $result = wpmelhorenvio_getProducts($items);
 
     return [
@@ -404,7 +350,7 @@ function get_option_company($code, $option) {
 
     $prefix = getPrefixServiceByCode($code);
     $data = get_option('woocommerce_' . $prefix . '_' . $option . '_custom_shipping');
-   
+
     if (!$data) {
         return false;
     }

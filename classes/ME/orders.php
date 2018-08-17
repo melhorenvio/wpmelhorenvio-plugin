@@ -57,7 +57,8 @@ function wpmelhorenvio_getJsonOrders() {
         $data['shipping'] = $order->get_address('shipping');
 
         // Add line items.
-        if (!empty( $wcOrder->get_items())) {
+        $itemsOrdersWc = $wcOrder->get_items();
+        if (!empty( $itemsOrdersWc )) {
 
             $line_item = [];
             foreach ( $wcOrder->get_items() as $item_id => $item ) {
@@ -414,7 +415,12 @@ function wpmelhorenvio_getObjectPackage(){
     $return->width =  $side > 12 ? $side : 12;
     $return->height = $side > 4 ? $side : 4;
     $return->length = $side > 17 ? $side : 17;
+
+    $unit = get_option('woocommerce_weight_unit');
     $return->weight = $weightTotal;
+    if ($unit ==  'g') {
+        $return->weight = $weightTotal / 1000;
+    }
 
     return $return;
 }

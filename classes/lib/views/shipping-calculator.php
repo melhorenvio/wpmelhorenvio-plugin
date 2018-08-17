@@ -30,6 +30,7 @@
     }
         
 </style>
+
 <div id="wp_melhor_envio_shipping_calculator">
     <div class="wp_melhor_envio_shipping_button"><a href="javascript:void(0);" class="button btn_shipping"><img src="<?php echo self::$plugin_url ?>assets/img/truck.png"><?php echo  "Simular frete"; ?></a></div>
     <div class="wp_melhor_envio_shiiping_form">
@@ -47,7 +48,7 @@
                 <?php } ?>
             
                 <p class="form-row form-row-wide shipping_postcode">
-                    <input type="number" maxlength="8" class="input-text" value="<?php echo esc_attr(WC()->customer->get_shipping_postcode()); ?>" placeholder="<?php echo 'CEP'; ?>" name="calc_shipping_postcode" id="calc_shipping_postcode" />
+                    <input type="text" maxlength="9" placeholder="00000-000" class="input-text cep" value="<?php echo esc_attr(WC()->customer->get_shipping_postcode()); ?>" placeholder="<?php echo 'CEP'; ?>" name="calc_shipping_postcode" id="calc_shipping_postcode" />
                 </p>
 
                 <p class="form-row form-row-wide shippingmethod_container">
@@ -67,6 +68,9 @@
                 <?php wp_nonce_field('woocommerce-cart'); ?>
             </section>
         </form>
+
+        <div id="responseMelhorEnvio">
+        </div>
     </div>
 
 </div>

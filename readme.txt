@@ -66,6 +66,50 @@ Para habilitar a sua conta é necessário se cadastrar no site do Melhor Envio, 
 
 * ajuste dias extras no prazo de Jadlog.Com.  
 
+= 1.3.16 =
+
+* Ajustes na função de cotação na tela do produto  
+
+= 1.3.17 =
+
+* Ajustes no formato do cep na tela do produto
+
+= 1.3.18 =
+
+* Fix Cep inválido
+
+= 1.3.19 =
+
+* Remoção jamef
+* Adição de Via Brasil
+
+= 1.3.20 =
+
+* Ajustes nos métodos de envios
+
+
+= 1.3.21 =
+
+* Correção de Bugs
+* Ajuste nos metodos de envios utilizados para cotação na tela do produto
+
+= 1.3.22 =
+* Correção de Bugs
+
+
+= 1.3.23 =
+* Ajustes opções de entrega
+
+= 1.3.24 =
+* Ajustes o nome dos serviços na cotação do frete na tela do produto
+
+= 1.3.25 =
+* Correções de Bugs
+* Notificação de plugin desatualizado
+
+= 1.3.26 =
+* Correções de conversões de medidas
+
 == Notas de Atualização ==
 
 1.0.0 Versão de lançamento.

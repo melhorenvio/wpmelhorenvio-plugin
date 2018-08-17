@@ -1,11 +1,10 @@
 <?php
-
 /*
  *
 Plugin Name: Melhor Envio
 Plugin URI:  http://www.melhorenvio.com.br/integracoes/woocommerce
 Description: Plugin que permite a cotação de fretes utilizando a API do Melhor Envio. Ainda é possível disponibilizar as informações da cotação de frete diretamente para o consumidor final.
-Version:     1.3.15
+Version:     1.3.26
 Author:      Melhor Envio
 Author URI:  https://melhorenvio.com.br/
 License:     GPL2
@@ -13,6 +12,8 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: wporg
 Domain Path: /languages
 */
+
+CONST VERSION_PLUGIN_MELHOR_ENVIO = '1.3.26';
 
 if( !class_exists('woocommerce-melhor-envio-integration')):
     /* Register plugin status hooks */
@@ -25,11 +26,13 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
     include_once plugin_dir_path(__FILE__).'classes/ME/docs.php';
     include_once plugin_dir_path(__FILE__).'classes/services/JadlogPackage.php';
     include_once plugin_dir_path(__FILE__).'classes/services/JadlogCom.php';
-    include_once plugin_dir_path(__FILE__).'classes/services/Jamef.php';
+    // include_once plugin_dir_path(__FILE__).'classes/services/Jamef.php';
+    include_once plugin_dir_path(__FILE__).'classes/services/viaBrasil.php';
     include_once plugin_dir_path(__FILE__).'classes/services/pac.php';
     include_once plugin_dir_path(__FILE__).'classes/services/sedex.php';
     include_once plugin_dir_path(__FILE__).'classes/services/config.php';
 
+    
 
     $saved_optionals = json_decode(get_option('wpmelhorenvio_pluginconfig'));
     if ( $saved_optionals->SDP === true) {
@@ -109,6 +112,7 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
                     include_once plugin_dir_path(__FILE__).'classes/ME/orders.php';
                     // include_once plugin_dir_path(__FILE__).'views/dados.php';
                     include_once plugin_dir_path(__FILE__).'views/dados2.php';
+                    // include_once plugin_dir_path(__FILE__).'views/dados3.php';
                 }
                 include_once plugin_dir_path(__FILE__).'classes/ME/shipping.php';
             }
@@ -294,6 +298,20 @@ if( !class_exists('woocommerce-melhor-envio-integration')):
                 }
                 return $statuses;
             }
+
+            // Notificação sobre plugin desatualizado
+            function plugin_melhor_envio_is_updated() {
+
+                $outdated_melhor_envio = get_option('outdated_melhor_envio');
+                if ($outdated_melhor_envio) {
+                    ?>
+                    <div class="notice notice-warning is-dismissible">
+                        <p><?php _e( 'Atualize o seu plugin Melhor Envio (' . $outdated_melhor_envio . ') do WooCommerce para continuar utilizando o mesmo. <a href="https://wordpress.org/plugins/melhor-envio-cotacao/">Versão atualizada</a>' ); ?></p>
+                    </div>
+                    <?php
+                }
+            }
+            add_action( 'admin_notices', 'plugin_melhor_envio_is_updated' );
 
             $wpmelhorenvio_pluginconfig = json_decode(get_option('wpmelhorenvio_pluginconfig'));
             if (isset($wpmelhorenvio_pluginconfig->AA) && $wpmelhorenvio_pluginconfig->AA == true) {

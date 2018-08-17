@@ -326,12 +326,12 @@ $tags           = wpmelhorenvio_getStatusTags();
                                     </a>
                                 <?php  } ?>
                                     
-                                 <!-- Botão de atualizar cotação -->
-                                 <?php if ($status_me == 'waiting') { ?>
+                                <!-- Botão de atualizar cotação -->
+                                <?php //if (is_null($status_me) ) { ?>
                                     <a href="javascript:void(0);" class="btnTable updateQuotation" data-order="<?php echo $order->get_id(); ?>" data-order="<?php echo $order->get_id(); ?>">
                                         <img class="imgBtnSmall" alt="Atualizar cotação" title="Atualizar cotação" src="<?=plugins_url("assets/img/ico_refresh.png",__DIR__ )?>" /> 
                                     </a>
-                                <?php } ?>
+                                <?php //} ?>
 
                                 <!-- Botão de excluir o item -->
                                 <?php if ( ($status_me == 'cart' || $status_me == 'waiting' || $status_me != 'printed') && (!is_null($status_me) && $status_me != 'removed' ) ) {  ?>
